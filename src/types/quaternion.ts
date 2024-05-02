@@ -162,4 +162,37 @@ export class Quaternion{
     }
 
     // TODO: Quaternion to Euler
+
+  // Convert quaternion to a rotation matrix
+  toRotationMatrix(): number[][] {
+    const x = this.x,
+      y = this.y,
+      z = this.z,
+      w = this.w;
+    return [
+      [1 - 2 * y * y - 2 * z * z, 2 * x * y - 2 * z * w, 2 * x * z + 2 * y * w],
+      [2 * x * y + 2 * z * w, 1 - 2 * x * x - 2 * z * z, 2 * y * z - 2 * x * w],
+      [2 * x * z - 2 * y * w, 2 * y * z + 2 * x * w, 1 - 2 * x * x - 2 * y * y],
+    ];
+  }
+
+  toRotationMatrixAlternative(): number[][] {
+    return [
+      [
+        this.w * this.w + this.x * this.x - this.y * this.y - this.z * this.z,
+        2 * (this.x * this.y - this.w * this.z),
+        2 * (this.x * this.z + this.w * this.y),
+      ],
+      [
+        2 * (this.x * this.y + this.w * this.z),
+        this.w * this.w - this.x * this.x + this.y * this.y - this.z * this.z,
+        2 * (this.y * this.z - this.w * this.x),
+      ],
+      [
+        2 * (this.x * this.z - this.w * this.y),
+        2 * (this.y * this.z + this.w * this.x),
+        this.w * this.w - this.x * this.x - this.y * this.y + this.z * this.z,
+      ],
+    ];
+  }
 }
