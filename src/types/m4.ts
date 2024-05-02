@@ -1,3 +1,5 @@
+import Vector3 from "./vector3";
+
 class M4 {
   // ATTRIBUTES
   private length = 4;
@@ -7,10 +9,6 @@ class M4 {
     [0, 0, 0, 0],
     [0, 0, 0, 0],
   ];
-  public determinant: number | null = null;
-  public inverse: M4 | null = null;
-  public modifiedDeterminant: boolean = false;
-  public modifiedInverse: boolean = false;
 
   // CONSTRUCTOR
   constructor(matrix?: number[][]) {
@@ -26,6 +24,13 @@ class M4 {
     }
   }
 
+  static fromColumnMajor(matrix: number[][]): M4 {
+    let result = new M4();
+    result.matrix = matrix;
+    result = result.transpose();
+    return result;
+  }
+
   // METHODS
   get(row: number, col: number): number {
     if (row < 0 || row >= this.length || col < 0 || col >= this.length) {
@@ -39,8 +44,6 @@ class M4 {
       throw new Error("Index out of bounds");
     }
     this.matrix[row][col] = value;
-    this.modifiedDeterminant = true;
-    this.modifiedInverse = true;
   }
 
   static identity(): M4 {
@@ -73,10 +76,7 @@ class M4 {
     return M4.isEqual(this, M4.identity());
   }
 
-  calculateDeterminant(): number {
-    if (this.determinant !== null && !this.modifiedDeterminant) {
-      return this.determinant;
-    }
+  determinant(): number {
     const m = this.matrix; // Shortcut to refer to the matrix array
     // Expansion by minors for 4x4 determinant
     const minors = [];
@@ -113,8 +113,6 @@ class M4 {
       // Sum the products for the first row
       det += m[0][i] * minors[0][i];
     }
-    this.determinant = det;
-    this.modifiedDeterminant = false;
     return det;
   }
 
@@ -128,12 +126,8 @@ class M4 {
   }
 
   // Calculates the inverse of the matrix.
-  calculateInverse(): M4 {
-    if (this.inverse !== null && !this.modifiedInverse) {
-      return this.inverse;
-    }
-
-    let det = this.calculateDeterminant();
+  inverse(): M4 {
+    let det = this.determinant();
     if (det === 0) throw new Error("Matrix is not invertible.");
 
     let cofactorMatrix = []; // Array to store cofactors.
@@ -169,8 +163,6 @@ class M4 {
       }
     }
 
-    this.inverse = adjugateMatrix;
-    this.modifiedInverse = false;
     return adjugateMatrix; // Return the inverse matrix
   }
 
@@ -227,6 +219,289 @@ class M4 {
 
   static transpose(a: M4): M4 {
     return a.transpose();
+  }
+
+  getColumn(idx: number): number[] {
+    let col = [];
+    for (let i = 0; i < this.length; i++) {
+      col.push(this.matrix[i][idx]);
+    }
+    return col;
+  }
+
+  getRow(idx: number): number[] {
+    return this.matrix[idx];
+  }
+
+  // Method to get the position vector from the matrix
+  getPosition(): number[] {
+    return [
+      this.matrix[0][3], // x component
+      this.matrix[1][3], // y component
+      this.matrix[2][3], // z component
+    ];
+  }
+
+  // Method to transform a position vector by the matrix
+  transformPosition(position: Vector3): Vector3 {
+    // Convert the 3D position to a 4D vector with the fourth component as 1
+    let vector = [position.x, position.y, position.z, 1];
+    let result = [0, 0, 0, 0];
+
+    // Perform matrix multiplication
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        result[i] += this.matrix[i][j] * vector[j];
+      }
+    }
+
+    // Return only the x, y, z components, discarding the homogeneous coordinate
+    return new Vector3(result);
+  }
+
+  // Method to transform a direction vector by the matrix
+  transformDirection(direction: Vector3): Vector3 {
+    // Initialize the result vector with zeros
+    let result = [0, 0, 0];
+    let arrDirection = direction.getVector();
+
+    // Only use the top-left 3x3 part of the matrix for transformation
+    for (let i = 0; i < 3; i++) {
+      // Iterate over the rows of the matrix
+      for (let j = 0; j < 3; j++) {
+        // Iterate over the columns of the matrix
+        result[i] += this.matrix[i][j] * arrDirection[j];
+      }
+    }
+
+    return new Vector3(result);
+  }
+
+  setColumn(index: number, column: number[]): void {
+    if (index < 0 || index >= this.length || column.length !== this.length) {
+      throw new Error("Invalid column index or column length.");
+    }
+    for (let i = 0; i < this.length; i++) {
+      this.matrix[i][index] = column[i];
+    }
+  }
+
+  setRow(index: number, row: number[]): void {
+    if (index < 0 || index >= this.length || row.length !== this.length) {
+      throw new Error("Invalid row index or row length.");
+    }
+    this.matrix[index] = [...row];
+  }
+
+  // Sets this matrix to a translation, rotation, and scaling matrix
+  setTRS(translation: number[], rotation: M4, scale: number[]): void {
+    // Clear the matrix to identity
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        this.matrix[i][j] = i === j ? 1 : 0;
+      }
+    }
+    // Apply scaling
+    for (let i = 0; i < 3; i++) {
+      this.matrix[i][i] = scale[i];
+    }
+    // Apply rotation
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        this.matrix[i][j] *= rotation.matrix[i][j];
+      }
+    }
+    // Apply translation
+    for (let i = 0; i < 3; i++) {
+      this.matrix[i][3] = translation[i];
+    }
+  }
+
+  // Returns a formatted string for this matrix
+  toString(): string {
+    return this.matrix.map((row) => row.join("\t")).join("\n");
+  }
+
+  // Transforms a plane in space
+  transformPlane(plane: { normal: Vector3; d: number }): {
+    normal: Vector3;
+    d: number;
+  } {
+    const transformedNormal = this.transformDirection(plane.normal);
+    const planeNormalArr = plane.normal.getVector();
+    const transformedNormalArr = transformedNormal.getVector();
+    const pointOnPlane = planeNormalArr.map((value, index) => value * plane.d);
+    const transformedPoint = this.transformPosition(new Vector3(pointOnPlane));
+    const transformedPointArr = transformedPoint.getVector();
+    const newD = transformedNormalArr.reduce(
+      (acc, n, i) => acc + n * transformedPointArr[i],
+      0
+    );
+    return { normal: transformedNormal, d: newD };
+  }
+
+  // Checks if this matrix is a valid transform matrix (not considering perspective distortions)
+  validTRS(): boolean {
+    // Check if last row is [0, 0, 0, 1]
+    const lastRow = [0, 0, 0, 1];
+    return lastRow.every((val, index) => this.matrix[3][index] === val);
+  }
+
+  // STATIC METHODS
+  // creates a projection matrix that defines a viewable region known as a frustum, which resembles a truncated pyramid. In a perspective projection, objects closer to the viewer appear larger, and objects further away appear smaller.
+  static frustum(
+    left: number,
+    right: number,
+    bottom: number,
+    top: number,
+    near: number,
+    far: number
+  ): M4 {
+    const m = new M4();
+    m.matrix[0][0] = (2 * near) / (right - left);
+    m.matrix[1][1] = (2 * near) / (top - bottom);
+    m.matrix[0][2] = (right + left) / (right - left);
+    m.matrix[1][2] = (top + bottom) / (top - bottom);
+    m.matrix[2][2] = -(far + near) / (far - near);
+    m.matrix[3][2] = -1;
+    m.matrix[2][3] = -(2 * far * near) / (far - near);
+    m.matrix[3][3] = 0;
+    return m;
+  }
+
+  // An affine matrix includes rotation, scaling, translation, and shearing, but retains lines and parallelism (lines remain lines, parallel lines remain parallel).
+  inverse3DAffine(): M4 {
+    // Assumes matrix is affine: Last row is [0, 0, 0, 1]
+    // Not implemented here due to complexity, use calculateInverse() if affine.
+    return this.inverse();
+  }
+
+  // used for camera transformations in graphics
+  // Orients the scene so that the desired object or location is centered in the viewport.
+  static lookAt(eye: Vector3, center: Vector3, up: Vector3): M4 {
+    const f = center.substract(eye).normalize();
+    const s = f.cross(up.normalize());
+    const u = s.cross(f);
+
+    const m = new M4();
+    m.matrix[0][0] = s.x;
+    m.matrix[1][0] = s.y;
+    m.matrix[2][0] = s.z;
+    m.matrix[0][1] = u.x;
+    m.matrix[1][1] = u.y;
+    m.matrix[2][1] = u.z;
+    m.matrix[0][2] = -f.x;
+    m.matrix[1][2] = -f.y;
+    m.matrix[2][2] = -f.z;
+    m.matrix[3][0] = -s.dot(eye);
+    m.matrix[3][1] = -u.dot(eye);
+    m.matrix[3][2] = f.dot(eye);
+    m.matrix[3][3] = 1;
+    return m;
+  }
+
+  // An orthogonal projection matrix flattens 3D space into 2D without perspective, maintaining parallel lines
+  static ortho(
+    left: number,
+    right: number,
+    bottom: number,
+    top: number,
+    near: number,
+    far: number
+  ): M4 {
+    const m = new M4();
+    m.matrix[0][0] = 2 / (right - left);
+    m.matrix[1][1] = 2 / (top - bottom);
+    m.matrix[2][2] = -2 / (far - near);
+    m.matrix[0][3] = -(right + left) / (right - left);
+    m.matrix[1][3] = -(top + bottom) / (top - bottom);
+    m.matrix[2][3] = -(far + near) / (far - near);
+    m.matrix[3][3] = 1;
+    return m;
+  }
+
+  // Similar to the frustum, but specified with a field of view angle (fovY), aspect ratio, and near and far distances.
+  // Focuses on depth and angle of view.
+  static perspective(
+    fovY: number,
+    aspect: number,
+    near: number,
+    far: number
+  ): M4 {
+    const f = 1.0 / Math.tan(fovY / 2);
+    const m = new M4();
+    m.matrix[0][0] = f / aspect;
+    m.matrix[1][1] = f;
+    m.matrix[2][2] = (far + near) / (near - far);
+    m.matrix[2][3] = (2 * far * near) / (near - far);
+    m.matrix[3][2] = -1;
+    m.matrix[3][3] = 0;
+    return m;
+  }
+
+  // Creates a translation matrix
+  static translate(pos: Vector3): M4 {
+    let m = M4.identity();
+    m.matrix[0][3] = pos.x;
+    m.matrix[1][3] = pos.y;
+    m.matrix[2][3] = pos.z;
+    return m;
+  }
+
+  // Creates a scaling matrix
+  static scale(s: Vector3): M4 {
+    let m = M4.identity();
+    m.matrix[0][0] = s.x;
+    m.matrix[1][1] = s.y;
+    m.matrix[2][2] = s.z;
+    return m;
+  }
+
+  // Multiplies this matrix by another matrix
+  static multiply(a: M4, b: M4): M4 {
+    let result = new M4();
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        result.matrix[i][j] = 0;
+        for (let k = 0; k < 4; k++) {
+          result.matrix[i][j] += a.matrix[i][k] * b.matrix[k][j];
+        }
+      }
+    }
+    return result;
+  }
+
+  // Static version of TRS combining translate, rotate (from Quaternion), and scale
+  public static TRS(pos: Vector3, q: Quaternion, s: Vector3): M4 {
+    let translation = M4.translate(pos);
+    let rotation = M4.fromQuaternion(q);
+    let scaling = M4.scale(s);
+
+    // The order of multiplication depends on specific needs: usually translate * rotate * scale
+    return M4.multiply(translation, M4.multiply(rotation, scaling));
+  }
+
+  // Converts a quaternion to a rotation matrix and embeds it in an M4
+  private static fromQuaternion(q: Quaternion): M4 {
+    let matrix = new M4();
+    let rot = q.toRotationMatrix();
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        matrix.matrix[i][j] = rot[i][j];
+      }
+    }
+    matrix.matrix[3][3] = 1;
+    return matrix;
+  }
+
+  public static flatten(matrix: M4): number[] {
+    let result = [];
+    for (let i = 0; i < matrix.length; i++) {
+      for (let j = 0; j < matrix.length; j++) {
+        result.push(matrix.matrix[j][i]);
+      }
+    }
+    return result;
   }
 }
 

@@ -1,3 +1,6 @@
+import Vector3 from "../types/vector3";
+import M4 from "../types/m4";
+
 class node {
   private _position: Vector3 = new Vector3();
   private _rotation: Vector3 = new Vector3();
