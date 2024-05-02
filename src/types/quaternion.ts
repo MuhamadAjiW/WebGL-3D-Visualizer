@@ -140,16 +140,18 @@ export class Quaternion{
         return Math.acos(cos);
     }
 
+    // TODO: Euler in one axis to Quaternion
     public static angleAxis(angle: number, axis: Vector3): Quaternion {
         const half = angle/2;
-        const sinH = Math.sin(half);
-        const cosH = Math.cos(half);
-        return new Quaternion(cosH
-                            , axis.x * sinH
-                            , axis.y * sinH
-                            , axis.z * sinH)
+        const sinHalf = Math.sin(half);
+        const cosHalf = Math.cos(half);
+        return new Quaternion(cosHalf
+                            , axis.x * sinHalf
+                            , axis.y * sinHalf
+                            , axis.z * sinHalf)
     }
 
+    // TODO: Euler to Quaternion 
     public static Euler(v: Vector3): Quaternion {
         let q = Quaternion.identity;
         q = Quaternion.multiply(q, Quaternion.angleAxis(v.x, Vector3.right));
@@ -158,4 +160,6 @@ export class Quaternion{
 
         return q;
     }
+
+    // TODO: Quaternion to Euler
 }
