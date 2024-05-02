@@ -99,8 +99,8 @@ export class Vector3 {
     public static readonly forward: Vector3 = new Vector3(0,0,1);
     public static readonly back: Vector3 = new Vector3(0,0,-1);
     
-    public static readonly left: Vector3 = new Vector3(1,0,0);
-    public static readonly right: Vector3 = new Vector3(-1,0,0);
+    public static readonly right: Vector3 = new Vector3(1,0,0);
+    public static readonly left: Vector3 = new Vector3(-1,0,0);
 }
 
 export default Vector3;

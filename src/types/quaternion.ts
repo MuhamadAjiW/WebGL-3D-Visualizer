@@ -88,7 +88,7 @@ export class Quaternion{
             && this.z == q.z;
     }
 
-    public mul(q: Quaternion): Quaternion{
+    public multiply(q: Quaternion): Quaternion{
         return new Quaternion(
             this.w * q.w - this.x * q.x - this.y * q.y - this.z * q.z,
             this.w * q.x + this.x * q.w + this.z * q.y - this.y * q.z,
