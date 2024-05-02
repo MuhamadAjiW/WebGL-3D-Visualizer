@@ -1,3 +1,4 @@
+import { Quaternion } from "./quaternion";
 import Vector3 from "./vector3";
 
 class M4 {
