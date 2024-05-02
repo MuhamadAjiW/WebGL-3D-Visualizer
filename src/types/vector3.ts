@@ -1,4 +1,4 @@
-class Vector3 {
+export class Vector3 {
     x: number;
     y: number;
     z: number;
@@ -80,6 +80,19 @@ class Vector3 {
     public scale(v3: Vector3): Vector3 {
         return new Vector3(this.x * v3.x, this.y * v3.y, this.z * v3.z);
     }
+
+    // STATIC
+    public static readonly one: Vector3 = new Vector3(1,1,1);
+    public static readonly zero: Vector3 = new Vector3(0,0,0);
+
+    public static readonly up: Vector3 = new Vector3(0,1,0);
+    public static readonly down: Vector3 = new Vector3(0,-1,0);
+
+    public static readonly forward: Vector3 = new Vector3(0,0,1);
+    public static readonly back: Vector3 = new Vector3(0,0,-1);
+    
+    public static readonly left: Vector3 = new Vector3(1,0,0);
+    public static readonly right: Vector3 = new Vector3(-1,0,0);
 }
 
 export default Vector3;
