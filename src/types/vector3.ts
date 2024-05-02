@@ -3,15 +3,23 @@ export class Vector3 {
     y: number;
     z: number;
 
-    public constructor(
-        x: number = 0,
-        y: number = 0,
-        z: number = 0
-    ) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    constructor(x: number, y: number, z: number);
+    constructor(point: number[]);
+    constructor(arg1: number | number[], arg2?: number, arg3?: number) {
+        if (Array.isArray(arg1)) {
+            if (arg1.length !== 3) {
+                throw new Error('Point array must contain exactly three elements (x, y, z).');
+            }
+            this.x = arg1[0];
+            this.y = arg1[1];
+            this.z = arg1[2];
+        } else {
+            this.x = arg1;
+            this.y = arg2 || 0;
+            this.z = arg3 || 0;
+        }
     }
+
 
     public getVector(): [number, number, number] {
         return [this.x, this.y, this.z];
