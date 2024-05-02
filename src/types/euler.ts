@@ -72,6 +72,10 @@ class Euler {
   }
 
   setFromVector3(vector: Vector3, order?: string): this {
+    this.x = vector.x;
+    this.y = vector.y;
+    this.z = vector.z;
+    this.order = order ?? this.order
     return this;
   }
 
