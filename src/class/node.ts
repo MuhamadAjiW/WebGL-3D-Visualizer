@@ -7,8 +7,8 @@ class node {
   private _scale: Vector3 = new Vector3(1, 1, 1);
   private _localMatrix: M4 = M4.identity();
   private _worldMatrix: M4 = M4.identity();
-  private _parent?: Node;
-  private _children: Node[] = [];
+  private _parent?: node;
+  private _children: node[] = [];
   visible = true;
 
   // Public getter, prevent re-instance new object
@@ -76,7 +76,7 @@ class node {
    * Jika node sudah memiliki parent, maka node akan
    * dilepas dari parentnya terlebih dahulu.
    */
-  add(node: Node): Node {
+  add(node: node): node {
     if (node.parent !== this) {
       node.removeFromParent();
       node.parent = this;
@@ -85,7 +85,7 @@ class node {
     return this;
   }
 
-  remove(node: Node) {
+  remove(node: node) {
     // TODO: hapus node dari this.children (jangan lupa set node.parent = null)
     return this;
   }
@@ -95,3 +95,5 @@ class node {
     return this;
   }
 }
+
+export default node;
