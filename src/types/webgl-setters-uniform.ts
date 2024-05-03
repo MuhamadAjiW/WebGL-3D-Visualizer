@@ -15,17 +15,32 @@ function createUniformSetters(gl: WebGLRenderingContext, program: WebGLProgram):
             gl.bindBuffer(gl.ARRAY_BUFFER, buf);
             const type = info.type as keyof typeof UniformSetterWebGLType;
             const v = values[0];
+            
+            // console.log(v);
+            // console.log(info.name);
+            // console.log(`${type}`);
+            // console.log(`uniform${UniformSetterWebGLType[type]}`);
 
-            if (v instanceof Float32Array || typeof v === 'number')
-                if (type >= WebGLRenderingContext.FLOAT_MAT2)
+            if (v instanceof Float32Array){
+                if (type >= WebGLRenderingContext.FLOAT_MAT2){
                     (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, false, v);
-                else
-                    (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
-            else
-                if (type >= WebGLRenderingContext.FLOAT_MAT2)
-                    (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, false, ...values);
-                else
-                    (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, ...values);
+                }
+                else{
+                    (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, ...v);
+                }
+            }
+            else if (typeof v === 'number'){
+                (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
+            }
+            else{
+                gl.uniform2f
+                if (type >= WebGLRenderingContext.FLOAT_MAT2){
+                    (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, false, ...v);
+                }
+                else{
+                    (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, ...v);
+                }
+            }
         }
     }
 

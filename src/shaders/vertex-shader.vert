@@ -32,6 +32,4 @@ void main(){
     // Set viewer position based on projection and world
     v_position = (u_projectionMatrix * u_world * a_position);
     gl_Position = v_position;
-
-    // gl_Position = a_position;
 }

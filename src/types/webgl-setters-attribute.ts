@@ -18,18 +18,20 @@ function createAttributeSetters(gl: WebGLRenderingContext, program: WebGLProgram
             if (v instanceof BufferAttribute) {
                 if (v.isDirty) {
                     // Data Changed Time (note that buffer is already binded)
-                    console.log("Mark")
                     gl.bufferData(gl.ARRAY_BUFFER, v.data, gl.STATIC_DRAW);
                     v.consume();
                 }
                 gl.enableVertexAttribArray(loc);
                 gl.vertexAttribPointer(loc, v.size, v.dtype, v.normalize, v.stride, v.offset);
             } else {
+                // TODO: Fix, even though this is from the guidebook, This is seems faulty
                 gl.disableVertexAttribArray(loc);
-                if (v instanceof Float32Array)
+                if (v instanceof Float32Array){
                     (gl as any)[`vertexAttrib${v.length}fv`](loc, v);
-                else
+                }
+                else{
                     (gl as any)[`vertexAttrib${values.length}f`](loc, ...values);
+                }
             }
         }
     }

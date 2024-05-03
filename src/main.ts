@@ -23,7 +23,6 @@ function adjustCanvas(){
 adjustCanvas();
 window.addEventListener('resize', adjustCanvas);
 
-// // TODO: Delete, this is for testing purposes
 const vertexShader = WebGLUtil.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
 const fragmentShader = WebGLUtil.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
 const program = WebGLUtil.createProgram(gl, vertexShader, fragmentShader);
@@ -34,10 +33,21 @@ let programInfo: ProgramInfo = {
   attributeSetters: createAttributeSetters(gl, program)
 }
 
+// TODO: Delete, this is for testing purposes
 const dummyUniformsData = {
-  u_projectionMatrix: new Float32Array(16),
-  u_lightWorldPos: [1.0, 2.0, 3.0],
-  u_world: new Float32Array(16),
+  u_projectionMatrix: new Float32Array([
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1
+  ]),
+  u_world: new Float32Array([
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1
+  ]),
+  u_lightWorldPos: new Float32Array([1.0, 2.0, 3.0]),
   u_viewInverse: new Float32Array(16),
   u_worldInverseTranspose: new Float32Array(16),
   u_lightColor: [1.0, 1.0, 1.0, 1.0],
@@ -49,13 +59,14 @@ const dummyUniformsData = {
 };
 
 var positions = [
-  0, 0,
-  0, 0.5,
-  0.7, 0,
+  0, 0, 0, 1,
+  1, 0, 0, 1,
+  0.5, 1, 0, 1,
+  0.5, 1, 0, 1
 ]
 const dummyAttributesData = {
   a_position: new BufferAttribute(
-    new Float32Array(positions), 2, 
+    new Float32Array(positions), 4, 
     {dtype: gl.FLOAT, normalize: false, stride: 0, offset: 0} 
   ),
   a_normal: [
@@ -76,14 +87,10 @@ const dummyAttributesData = {
   ],
 };
 
-setUniforms(programInfo, dummyUniformsData);
-setAttributes(programInfo, dummyAttributesData);
-
 gl.useProgram(program);
+setAttributes(programInfo, dummyAttributesData);
+setUniforms(programInfo, dummyUniformsData);
+
 gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-console.log(dummyUniformsData.u_world)
-console.log(dummyUniformsData.u_projectionMatrix)
-console.log(dummyAttributesData.a_position)
-
-console.log("Finished");
+console.log("Done");
