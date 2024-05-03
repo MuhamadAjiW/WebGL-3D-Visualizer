@@ -186,4 +186,5 @@ class BufferGeometry {
   }
 }
 
+export type { TypedArray }
 export { BufferAttribute, BufferGeometry };
