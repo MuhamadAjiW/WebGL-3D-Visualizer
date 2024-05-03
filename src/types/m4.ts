@@ -14,7 +14,8 @@ class M4 {
   // CONSTRUCTOR
   constructor(matrix?: number[][]) {
     if (matrix) {
-      this.matrix = matrix;
+      // deep copy
+      this.matrix = matrix.map((row) => [...row]);
     } else {
       this.matrix = [
         [0, 0, 0, 0],
@@ -26,8 +27,7 @@ class M4 {
   }
 
   static fromColumnMajor(matrix: number[][]): M4 {
-    let result = new M4();
-    result.matrix = matrix;
+    let result = new M4(matrix);
     result = result.transpose();
     return result;
   }
@@ -227,11 +227,11 @@ class M4 {
     for (let i = 0; i < this.length; i++) {
       col.push(this.matrix[i][idx]);
     }
-    return col;
+    return [...col];
   }
 
   getRow(idx: number): number[] {
-    return this.matrix[idx];
+    return [...this.matrix[idx]];
   }
 
   // Method to get the position vector from the matrix
@@ -377,6 +377,12 @@ class M4 {
     return this.inverse();
   }
 
+  // Method to clone the current matrix
+  clone(): M4 {
+    // Using the constructor to create a new M4 instance with a copied matrix
+    return new M4(this.matrix.map((row) => row.slice()));
+  }
+
   // used for camera transformations in graphics
   // Orients the scene so that the desired object or location is centered in the viewport.
   static lookAt(eye: Vector3, center: Vector3, up: Vector3): M4 {
@@ -441,7 +447,7 @@ class M4 {
   }
 
   // Creates a translation matrix
-  static translate(pos: Vector3): M4 {
+  static translation3d(pos: Vector3): M4 {
     let m = M4.identity();
     m.matrix[0][3] = pos.x;
     m.matrix[1][3] = pos.y;
@@ -450,7 +456,7 @@ class M4 {
   }
 
   // Creates a scaling matrix
-  static scale(s: Vector3): M4 {
+  static scale3d(s: Vector3): M4 {
     let m = M4.identity();
     m.matrix[0][0] = s.x;
     m.matrix[1][1] = s.y;
@@ -472,18 +478,30 @@ class M4 {
     return result;
   }
 
+  static mul(...matrices: M4[]): M4 {
+    if (matrices.length < 2) {
+      throw new Error("Need at least two matrices to multiply.");
+    }
+
+    let result = matrices[0];
+    for (let i = 1; i < matrices.length; i++) {
+      result = M4.multiply(result, matrices[i]);
+    }
+    return result;
+  }
+
   // Static version of TRS combining translate, rotate (from Quaternion), and scale
   public static TRS(pos: Vector3, q: Quaternion, s: Vector3): M4 {
-    let translation = M4.translate(pos);
-    let rotation = M4.fromQuaternion(q);
-    let scaling = M4.scale(s);
+    let translation = M4.translation3d(pos);
+    let rotation = M4.rotation3d(q);
+    let scaling = M4.scale3d(s);
 
     // The order of multiplication depends on specific needs: usually translate * rotate * scale
     return M4.multiply(translation, M4.multiply(rotation, scaling));
   }
 
   // Converts a quaternion to a rotation matrix and embeds it in an M4
-  private static fromQuaternion(q: Quaternion): M4 {
+  static rotation3d(q: Quaternion): M4 {
     let matrix = new M4();
     let rot = q.toRotationMatrix();
     for (let i = 0; i < 3; i++) {
