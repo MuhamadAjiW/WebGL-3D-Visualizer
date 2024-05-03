@@ -1,7 +1,7 @@
 import { Quaternion } from "./quaternion";
 import Vector3 from "./vector3";
 
-class M4 {
+class M4 implements Saveable {
   // ATTRIBUTES
   private length = 4;
   public matrix: number[][] = [
@@ -503,6 +503,16 @@ class M4 {
       }
     }
     return result;
+  }
+
+  // SAVE AND LOAD
+  static fromJSON(json: string): M4 {
+    const matrixData = JSON.parse(json);
+    return new M4(matrixData);
+  }
+
+  static toJSON(matrix: M4): string {
+    return JSON.stringify(matrix.matrix);
   }
 }
 
