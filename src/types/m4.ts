@@ -1,7 +1,7 @@
 import { Quaternion } from "./quaternion";
 import Vector3 from "./vector3";
 
-class M4 implements Saveable {
+class M4 {
   // ATTRIBUTES
   private length = 4;
   public matrix: number[][] = [
@@ -331,7 +331,7 @@ class M4 implements Saveable {
     const transformedNormal = this.transformDirection(plane.normal);
     const planeNormalArr = plane.normal.getVector();
     const transformedNormalArr = transformedNormal.getVector();
-    const pointOnPlane = planeNormalArr.map((value, index) => value * plane.d);
+    const pointOnPlane = planeNormalArr.map((value, _index) => value * plane.d);
     const transformedPoint = this.transformPosition(new Vector3(pointOnPlane));
     const transformedPointArr = transformedPoint.getVector();
     const newD = transformedNormalArr.reduce(
