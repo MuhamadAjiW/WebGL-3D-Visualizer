@@ -1,5 +1,6 @@
 import { MathUtil } from "../util/math-util";
 import { Vector3 } from "./vector3";
+import { Euler } from "./euler"
 
 export class Quaternion{
   // Note: Angles should be in radiant, convert it beforehand
@@ -153,28 +154,29 @@ export class Quaternion{
     return Math.acos(cos);
   }
 
-  // TODO: Euler in one axis to Quaternion
-  public static angleAxis(angle: number, axis: Vector3): Quaternion {
-    const half = angle/2;
-    const sinHalf = Math.sin(half);
-    const cosHalf = Math.cos(half);
-    return new Quaternion(cosHalf
-                  , axis.x * sinHalf
-                  , axis.y * sinHalf
-                  , axis.z * sinHalf)
-  }
-
   // TODO: Euler to Quaternion 
-  public static Euler(v: Vector3): Quaternion {
-    let q = Quaternion.identity;
-    q = Quaternion.multiply(q, Quaternion.angleAxis(v.x, Vector3.right));
-    q = Quaternion.multiply(q, Quaternion.angleAxis(v.y, Vector3.up));
-    q = Quaternion.multiply(q, Quaternion.angleAxis(v.z, Vector3.forward));
+  public static Euler(e: Euler): Quaternion {
+    const cr = Math.cos(e.x * 0.5)
+    const sr = Math.sin(e.x * 0.5)
+
+    const cp = Math.cos(e.y * 0.5)
+    const sp = Math.sin(e.y * 0.5)
+
+    const cy = Math.cos(e.z * 0.5)
+    const sy = Math.sin(e.z * 0.5)
+
+    const q = new Quaternion()
+    q.set(
+      cr * cp * cy + sr * sp * sy,
+      sr * cp * cy - cr * sp * sy,
+      cr * sp * cy + sr * cp * sy,
+      cr * cp * sy - sr * sp * cy
+    )
 
     return q;
   }
 
-  // TODO: Quaternion to Euler
+  // TODO: Quaternion to Euler => harusnya tinggal panggil dari euler
 
   // Convert quaternion to a rotation matrix
   toRotationMatrix(): number[][] {
