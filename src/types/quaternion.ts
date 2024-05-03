@@ -11,11 +11,24 @@ export class Quaternion{
   public z: number = 0;
   
   // Constructor
-  constructor(w: number=0, x: number=0, y: number=0, z: number=0){
-    this.w = w;
-    this.x = x;
-    this.y = y;
-    this.z = z;
+  constructor();
+  constructor(w: number, x: number, y: number, z: number);
+  constructor(point: number[]);
+  constructor(arg1?: number | number[], arg2?: number, arg3?: number, arg4?: number) {
+    if (Array.isArray(arg1)) {
+      if (arg1.length !== 4) {
+        throw new Error('Point array must contain exactly four elements (w, x, y, z).');
+      }
+      this.w = arg1[0];
+      this.x = arg1[1];
+      this.y = arg1[2];
+      this.z = arg1[3];
+    } else {
+      this.w = arg1 || 0;
+      this.x = arg2 || 0;
+      this.y = arg3 || 0;
+      this.z = arg4 || 0;
+    }
   }
   
   // Set-getter
