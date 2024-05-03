@@ -2,7 +2,7 @@ import M4 from "./m4";
 import { Quaternion } from "./quaternion";
 import Vector3 from "./vector3";
 
-class Euler {
+export class Euler {
   x: number = 0;
   y: number = 0;
   z: number = 0;
