@@ -331,7 +331,7 @@ class M4 {
     const transformedNormal = this.transformDirection(plane.normal);
     const planeNormalArr = plane.normal.getVector();
     const transformedNormalArr = transformedNormal.getVector();
-    const pointOnPlane = planeNormalArr.map((value, index) => value * plane.d);
+    const pointOnPlane = planeNormalArr.map((value, _index) => value * plane.d);
     const transformedPoint = this.transformPosition(new Vector3(pointOnPlane));
     const transformedPointArr = transformedPoint.getVector();
     const newD = transformedNormalArr.reduce(
@@ -503,6 +503,16 @@ class M4 {
       }
     }
     return result;
+  }
+
+  // SAVE AND LOAD
+  static fromJSON(json: string): M4 {
+    const matrixData = JSON.parse(json);
+    return new M4(matrixData);
+  }
+
+  static toJSON(matrix: M4): string {
+    return JSON.stringify(matrix.matrix);
   }
 }
 
