@@ -3,7 +3,7 @@ import M4 from "../types/m4";
 import { Euler } from "../types/euler";
 import { Quaternion } from "../types/quaternion";
 
-class Node {
+export class Node {
   private _position: Vector3 = new Vector3();
   private _rotation: Euler = new Euler(0, 0, 0, "xyz");
   private _scale: Vector3 = new Vector3(1, 1, 1);
@@ -114,14 +114,19 @@ class Node {
   traverse(node: Node){
     this.processElements(node);
 
-    this.children.forEach(node => {
-      this.traverse(node);
+    this.children.forEach(child => {
+      child.traverse(node);
     });
   }
 
   // TODO: Implement
   processElements(node: Node){
 
+  }
+
+  // TODO: Implement
+  public toJson(): void {
+    throw new Error("Method not implemented.");
   }
 }
 

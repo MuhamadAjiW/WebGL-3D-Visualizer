@@ -33,8 +33,8 @@ void main() {
 
     vec4 outColor;
 
-    // // Basic
-    if(u_materialType == 0) {
+    // Basic
+    if(u_materialType == 1) {
         // Only diffuse color here
         outColor = diffuseColor;
     }
@@ -64,30 +64,29 @@ void main() {
         );
     }
 
-    // Get light direction vector from vertex shader
-    // vec3 surfaceToLight = normalize(v_surfaceToLight);
-    
-    // // Get viewer direction vector from vertex shader
-    // vec3 surfaceToView = normalize(v_surfaceToView);
-
-    // // Get half vector
-    // vec3 halfVector = normalize(surfaceToLight + surfaceToView);
-
-    // // Calculate light values
-    // vec4 litR = lit(dot(a_normal, surfaceToLight)
-    //                 , dot(a_normal, halfVector), u_shininess);
-
-    // // Get final color
-    // outColor = vec4(
-    //     (u_lightColor * (
-    //         diffuseColor * u_ambient +
-    //         diffuseColor * litR.y + 
-    //         u_specular * litR.z * u_specularFactor)).rgb,
-    //     diffuseColor.a
-    // );
-
-    // outColor = diffuseColor;
-
-
     gl_FragColor = outColor;
 }
+
+// Get light direction vector from vertex shader
+// vec3 surfaceToLight = normalize(v_surfaceToLight);
+
+// // Get viewer direction vector from vertex shader
+// vec3 surfaceToView = normalize(v_surfaceToView);
+
+// // Get half vector
+// vec3 halfVector = normalize(surfaceToLight + surfaceToView);
+
+// // Calculate light values
+// vec4 litR = lit(dot(a_normal, surfaceToLight)
+//                 , dot(a_normal, halfVector), u_shininess);
+
+// // Get final color
+// outColor = vec4(
+//     (u_lightColor * (
+//         diffuseColor * u_ambient +
+//         diffuseColor * litR.y + 
+//         u_specular * litR.z * u_specularFactor)).rgb,
+//     diffuseColor.a
+// );
+
+// outColor = diffuseColor;

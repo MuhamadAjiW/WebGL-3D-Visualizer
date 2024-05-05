@@ -5,6 +5,7 @@ export class UniformKeys {
   public static SPECULAR: string = "u_specular";
   public static SHINYNESS: string = "u_shininess";
   public static SPECULAR_FACTOR: string = "u_specularFactor";
+  public static MATERIAL_TYPE: string = "u_materialType";
   public static PROJECTION_MATRIX: string = "u_projectionMatrix";
   public static LIGHT_WORLD_POSITION: string = "u_lightWorldPos";
   public static WORLD: string = "u_world";

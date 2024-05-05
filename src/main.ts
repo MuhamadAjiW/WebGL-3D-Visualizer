@@ -9,7 +9,12 @@ import { BufferAttribute } from './class/webgl/attribute';
 import { BufferUniform } from './class/webgl/uniform';
 import { PlaneGeometry } from './class/geometry/plane-geometry';
 import { Color } from './types/color';
-import { WebGLCanvas } from './class/webgl/webgl-canvas';
+import { Scene } from './class/scene';
+import { Mesh } from './class/mesh';
+import { Texture } from './class/texture/texture';
+import { TextureLoader } from './class/texture/texture-loader';
+import { BasicMaterial } from './class/material/basic-material';
+import { AttributeKeys } from './types/webgl-keys';
 
 
 const canvas: HTMLCanvasElement = document.querySelector<HTMLCanvasElement>('#webgl-canvas') as HTMLCanvasElement;
@@ -93,7 +98,7 @@ const dummyUniformsData = {
     ]),
     1, gl.FLOAT_VEC4
   ),
-  u_diffuse: new BufferUniform(
+  u_texture: new BufferUniform(
     new Float32Array([
       1, 1, 1, 1
     ]),
@@ -151,32 +156,50 @@ const dummyAttributesData = {
 
 gl.useProgram(program);
 
+const scene = new Scene();
+const geometry = new PlaneGeometry(1, 1);
+
+geometry.setAttribute(AttributeKeys.POSITION, dummyAttributesData.a_position);
+geometry.setAttribute(AttributeKeys.TEXTURE_COORDS, dummyAttributesData.a_texcoord);
+geometry.setAttribute(AttributeKeys.NORMAL, dummyAttributesData.a_normal);
+
+const texture = await TextureLoader.load("res/f-texture.png");
+const material = new BasicMaterial({texture: texture});
+const mesh = new Mesh(geometry, material);
+
+scene.add(mesh);
+
+setUniforms(programInfo, dummyUniformsData);
+WebGLUtil.compile(gl, programInfo, scene);
+WebGLUtil.render(gl, programInfo, scene);
+
+
 // const plane = new PlaneGeometry(1, 1);
 // setAttributes(programInfo, plane.attributes);
 // setUniforms(programInfo, dummyUniformsData);
 
-const image = new Image();
-image.src = "res/f-texture.png";
-image.onload = function() {
-  // Create a texture
-  var texture = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, texture);
+// const image = new Image();
+// image.src = "res/f-texture.png";
+// image.onload = function() {
+//   // Create a texture
+//   var texture = gl.createTexture();
+//   gl.bindTexture(gl.TEXTURE_2D, texture);
   
-  // Set the parameters so we can render any size image.
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+//   // Set the parameters so we can render any size image.
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-  // Fill the texture with a 1x1 blue pixel.
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, image);
-  console.log("image loaded")
+//   // Fill the texture with a 1x1 blue pixel.
+//   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, image);
+//   console.log("image loaded")
 
-  setAttributes(programInfo, dummyAttributesData);
-  setUniforms(programInfo, dummyUniformsData);
+//   setAttributes(programInfo, dummyAttributesData);
+//   setUniforms(programInfo, dummyUniformsData);
   
-  gl.drawArrays(gl.TRIANGLES, 0, 6);
-}
+//   gl.drawArrays(gl.TRIANGLES, 0, 6);
+// }
 
 
 

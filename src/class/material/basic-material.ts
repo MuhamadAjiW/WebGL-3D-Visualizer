@@ -1,6 +1,8 @@
 import { Color } from "../../types/color";
+import { UniformKeys } from "../../types/webgl-keys";
 import { Texture } from "../texture/texture";
 import { TextureLoader } from "../texture/texture-loader";
+import { BufferUniform } from "../webgl/uniform";
 import { ShaderMaterial } from "./shader-material";
 
 export class BasicMaterial extends ShaderMaterial {
@@ -8,30 +10,21 @@ export class BasicMaterial extends ShaderMaterial {
     color?: Color,
     texture?: Texture
   }){
-    const savedTexture: Texture = options?.texture || TextureLoader.load();
+    const savedTexture: Texture = options?.texture || TextureLoader.create();
     const color = options?.color || new Color(0xffffff);
     super(0, color, savedTexture);
   }
 
-  // public load(){
-  //   if(!this.texture.used) this.texture.use();
-  //   const gl: WebGLRenderingContext = WebGLCanvas.instance.gl;
-    
-  //   gl.bindTexture(gl.TEXTURE_2D, this.texture.glTexture);
-  //   const image: HTMLImageElement | null = this.texture.image;
-  //   if(image){
-  //     if(image.complete){
-  //       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-  //     } else{
-  //       image.onload = () => {
-  //         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-  //       }
-  //     }
-  //   } else{
-  //     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
-  //       new Uint8Array(this.color.get()));
-  //   }
-  // }
+  public activate(): void {
+    this.isActive = true;
+   
+    let materialType = this.getUniform(UniformKeys.MATERIAL_TYPE);
+
+    if(!materialType) {
+      materialType = new BufferUniform(this.materialType, 1);
+    }
+    this.setUniform(UniformKeys.MATERIAL_TYPE, materialType);
+  }
 
   // TODO: Implement
   public toJson(): void {

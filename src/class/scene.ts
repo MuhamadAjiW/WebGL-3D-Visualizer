@@ -1,5 +1,8 @@
 import Node from "./node.ts";
 
-class Scene extends Node {
-    
+export class Scene extends Node {
+  // TODO: Implement
+  public toJson(): void {
+    throw new Error("Method not implemented.");
+  }
 }
