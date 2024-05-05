@@ -1,3 +1,5 @@
-import node from "./node.ts";
+import Node from "./node.ts";
 
-class Scene extends node {}
+class Scene extends Node {
+    
+}

@@ -1,4 +1,4 @@
-import { BufferUniform } from "../class/uniform";
+import { BufferUniform } from "../class/webgl/uniform";
 import { ProgramInfo } from "./webgl-program-info";
 import { UniformSetterWebGLType } from "./webgl-types";
 

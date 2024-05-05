@@ -5,11 +5,24 @@ import { ProgramInfo } from './types/webgl-program-info';
 import { WebGLUtil } from './util/webgl-util';
 import { createUniformSetters, setUniforms } from './types/webgl-setters-uniform';
 import { createAttributeSetters, setAttributes } from './types/webgl-setters-attribute';
-import { BufferAttribute } from './class/geometry';
-import { BufferUniform } from './class/uniform';
+import { BufferAttribute } from './class/webgl/attribute';
+import { BufferUniform } from './class/webgl/uniform';
+import { PlaneGeometry } from './class/geometry/plane-geometry';
+import { Color } from './types/color';
+import { WebGLCanvas } from './class/webgl/webgl-canvas';
+
 
 const canvas: HTMLCanvasElement = document.querySelector<HTMLCanvasElement>('#webgl-canvas') as HTMLCanvasElement;
 const gl: WebGLRenderingContext = canvas.getContext("webgl") as WebGLRenderingContext;
+const vertexShader = WebGLUtil.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+const fragmentShader = WebGLUtil.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+const program = WebGLUtil.createProgram(gl, vertexShader, fragmentShader);
+
+let programInfo: ProgramInfo = {
+  program: program,
+  uniformSetters: createUniformSetters(gl, program),
+  attributeSetters: createAttributeSetters(gl, program)
+}
 
 function adjustCanvas(){
   const dw = window.innerWidth - 10;
@@ -23,16 +36,6 @@ function adjustCanvas(){
 
 adjustCanvas();
 window.addEventListener('resize', adjustCanvas);
-
-const vertexShader = WebGLUtil.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-const fragmentShader = WebGLUtil.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
-const program = WebGLUtil.createProgram(gl, vertexShader, fragmentShader);
-
-let programInfo: ProgramInfo = {
-  program: program,
-  uniformSetters: createUniformSetters(gl, program),
-  attributeSetters: createAttributeSetters(gl, program)
-}
 
 // TODO: Delete, this is for testing purposes
 const dummyUniformsData = {
@@ -49,7 +52,7 @@ const dummyUniformsData = {
     new Float32Array([
       1, 0, 0, 0,
       0, 1, 0, 0,
-      0, 0, 1, 0,
+      0, 0, 0, 0,
       0, 0, 0, 1
     ]),
     1, gl.FLOAT_MAT4
@@ -106,40 +109,75 @@ const dummyUniformsData = {
   u_specularFactor: 0.5,
 };
 
+
+
 const dummyAttributesData = {
   a_position: new BufferAttribute(
     new Float32Array([
-      0, 0, 0, 1,
-      1, 0, 0, 1,
-      0.5, 1, 0, 1,
-      0.5, 1, 0, 1
-    ]), 4, 
-    {dtype: gl.FLOAT, normalize: false, stride: 0, offset: 0} 
+      -0.5, -0.5, 0,
+      -0.5, 0.5, 0,
+      0.5, -0.5, 0,
+      -0.5, 0.5, 0,
+      0.5, 0.5, 0,
+      0.5, -0.5, 0,
+    ]), 3
   ),
   a_normal: new BufferAttribute(
     new Float32Array([
-      0, 0, 0, 1,
-      1, 0, 0, 1,
-      0.5, 1, 0, 1,
-      0.5, 1, 0, 1
-    ]), 4, 
+      -0.5, -0.5, 0,
+      -0.5, 0.5, 0,
+      0.5, -0.5, 0,
+      -0.5, 0.5, 0,
+      0.5, 0.5, 0,
+      0.5, -0.5, 0,
+    ]), 3,
     {dtype: gl.FLOAT, normalize: false, stride: 0, offset: 0} 
   ),
+
+  // Note: 0,0 is top left
   a_texcoord: new BufferAttribute(
     new Float32Array([
-      0, 0, 0, 1,
-      1, 0, 0, 1,
-      0.5, 1, 0, 1,
-      0.5, 1, 0, 1
-    ]), 4, 
+      0, 1,
+      0, 0,
+      1, 1,
+      0, 0,
+      1, 0,
+      1, 1,
+    ]), 2,
     {dtype: gl.FLOAT, normalize: false, stride: 0, offset: 0} 
   ),
 };
 
-gl.useProgram(program);
-setAttributes(programInfo, dummyAttributesData);
-setUniforms(programInfo, dummyUniformsData);
 
-gl.drawArrays(gl.TRIANGLES, 0, 3);
+gl.useProgram(program);
+
+// const plane = new PlaneGeometry(1, 1);
+// setAttributes(programInfo, plane.attributes);
+// setUniforms(programInfo, dummyUniformsData);
+
+const image = new Image();
+image.src = "res/f-texture.png";
+image.onload = function() {
+  // Create a texture
+  var texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  
+  // Set the parameters so we can render any size image.
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+  // Fill the texture with a 1x1 blue pixel.
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, image);
+  console.log("image loaded")
+
+  setAttributes(programInfo, dummyAttributesData);
+  setUniforms(programInfo, dummyUniformsData);
+  
+  gl.drawArrays(gl.TRIANGLES, 0, 6);
+}
+
+
 
 console.log("Done");

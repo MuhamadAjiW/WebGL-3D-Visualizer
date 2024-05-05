@@ -1,14 +1,16 @@
 import Vector3 from "../types/vector3";
 import M4 from "../types/m4";
+import { Euler } from "../types/euler";
+import { Quaternion } from "../types/quaternion";
 
-class node {
+class Node {
   private _position: Vector3 = new Vector3();
-  private _rotation: Vector3 = new Vector3();
+  private _rotation: Euler = new Euler(0, 0, 0, "xyz");
   private _scale: Vector3 = new Vector3(1, 1, 1);
   private _localMatrix: M4 = M4.identity();
   private _worldMatrix: M4 = M4.identity();
-  private _parent?: node;
-  private _children: node[] = [];
+  private _parent?: Node;
+  private _children: Node[] = [];
   visible = true;
 
   // Public getter, prevent re-instance new object
@@ -46,7 +48,7 @@ class node {
   computeLocalMatrix() {
     this._localMatrix = M4.mul(
       M4.translation3d(this._position),
-      M4.rotation3d(this._rotation),
+      M4.rotation3d(Quaternion.Euler(this._rotation)),
       M4.scale3d(this._scale)
     );
   }
@@ -76,7 +78,7 @@ class node {
    * Jika node sudah memiliki parent, maka node akan
    * dilepas dari parentnya terlebih dahulu.
    */
-  add(node: node): node {
+  add(node: Node): Node {
     if (node.parent !== this) {
       node.removeFromParent();
       node.parent = this;
@@ -85,8 +87,22 @@ class node {
     return this;
   }
 
-  remove(node: node) {
-    // TODO: hapus node dari this.children (jangan lupa set node.parent = null)
+  remove(node: Node) {
+    // TODO: hapus node dari this.children (jangan lupa set node.parent = null) 
+
+    let index = 0;
+
+    while (index < this.children.length ){
+      if(this.children[index] == node){
+        break;
+      }
+    }
+
+    if(index != this.children.length){
+      node.removeFromParent();
+      this._children.splice(index, index);
+    }
+
     return this;
   }
 
@@ -94,6 +110,19 @@ class node {
     if (this.parent) this.parent.remove(this);
     return this;
   }
+
+  traverse(node: Node){
+    this.processElements(node);
+
+    this.children.forEach(node => {
+      this.traverse(node);
+    });
+  }
+
+  // TODO: Implement
+  processElements(node: Node){
+
+  }
 }
 
-export default node;
+export default Node;

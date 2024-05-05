@@ -1,4 +1,4 @@
-import { BufferAttribute } from "../class/geometry";
+import { BufferAttribute } from "../class/webgl/attribute";
 import { ProgramInfo } from "./webgl-program-info";
 
 type AttributeSingleDataType = BufferAttribute | Float32Array | number[];
