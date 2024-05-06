@@ -1,14 +1,15 @@
 import Vector3 from "../base-types/vector3";
 import M4 from "../base-types/m4";
+import { Quaternion } from "../base-types/quaternion";
 
-class node {
+class Object3D {
   private _position: Vector3 = new Vector3();
-  private _rotation: Vector3 = new Vector3();
+  private _rotation: Quaternion = new Quaternion();
   private _scale: Vector3 = new Vector3(1, 1, 1);
   private _localMatrix: M4 = M4.identity();
   private _worldMatrix: M4 = M4.identity();
-  private _parent?: node;
-  private _children: node[] = [];
+  private _parent?: Object3D;
+  private _children: Object3D[] = [];
   visible = true;
 
   // Public getter, prevent re-instance new object
@@ -44,11 +45,7 @@ class node {
   }
 
   computeLocalMatrix() {
-    this._localMatrix = M4.mul(
-      M4.translation3d(this._position),
-      M4.rotation3d(this._rotation),
-      M4.scale3d(this._scale)
-    );
+    this._localMatrix = M4.TRS(this._position, this._rotation, this._scale);
   }
 
   computeWorldMatrix(updateParent = true, updateChildren = true) {
@@ -76,7 +73,7 @@ class node {
    * Jika node sudah memiliki parent, maka node akan
    * dilepas dari parentnya terlebih dahulu.
    */
-  add(node: node): node {
+  add(node: Object3D): Object3D {
     if (node.parent !== this) {
       node.removeFromParent();
       node.parent = this;
@@ -85,8 +82,8 @@ class node {
     return this;
   }
 
-  remove(node: node) {
-    // TODO: hapus node dari this.children (jangan lupa set node.parent = null)
+  remove(node: Object3D) {
+    // hapus node dari this.children (jangan lupa set node.parent = null)
     const index = this.children.indexOf(node, 0);
     if (index > -1) {
       this.children.splice(index, 1);
@@ -101,4 +98,4 @@ class node {
   }
 }
 
-export default node;
+export default Object3D;
