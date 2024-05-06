@@ -37,11 +37,6 @@ class Object3D {
     return this._children;
   }
 
-  set position(position: Vector3) {
-    this._position = position;
-    this._isDirty = true;
-  }
-
   set rotation(rotation: Quaternion | Euler) {
     this._rotation = rotation;
     this._isDirty = true;
