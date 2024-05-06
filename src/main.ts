@@ -1,4 +1,4 @@
-import './style.css'
+import "./style.css";
 import vertexShaderSource from "./shaders/vertex-shader.vert?raw";
 import fragmentShaderSource from "./shaders/fragment-shader.frag?raw";
 import { ProgramInfo } from './types/webgl-program-info';
@@ -29,10 +29,10 @@ let programInfo: ProgramInfo = {
   attributeSetters: createAttributeSetters(gl, program)
 }
 
-function adjustCanvas(){
+function adjustCanvas() {
   const dw = window.innerWidth - 10;
   const dh = window.innerHeight - 10;
-  if(canvas.width !== dw || canvas.height !== dh){
+  if (canvas.width !== dw || canvas.height !== dh) {
     canvas.width = dw;
     canvas.height = dh;
     gl.viewport(0, 0, dw, dh);
@@ -40,18 +40,14 @@ function adjustCanvas(){
 }
 
 adjustCanvas();
-window.addEventListener('resize', adjustCanvas);
+window.addEventListener("resize", adjustCanvas);
 
 // TODO: Delete, this is for testing purposes
 const dummyUniformsData = {
   u_projectionMatrix: new BufferUniform(
-    new Float32Array([
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1
-    ]),
-    1, gl.FLOAT_MAT4
+    new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
+    1,
+    gl.FLOAT_MAT4
   ),
   u_world: new BufferUniform(
     new Float32Array([
@@ -63,40 +59,29 @@ const dummyUniformsData = {
     1, gl.FLOAT_MAT4
   ),
   u_lightWorldPos: new BufferUniform(
-    new Float32Array([
-      1, 0, 0
-    ]),
-    1, gl.FLOAT_VEC3
+    new Float32Array([1, 0, 0]),
+    1,
+    gl.FLOAT_VEC3
   ),
   u_viewInverse: new BufferUniform(
-    new Float32Array([
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1
-    ]),
-    1, gl.FLOAT_MAT4
+    new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
+    1,
+    gl.FLOAT_MAT4
   ),
   u_worldInverseTranspose: new BufferUniform(
-    new Float32Array([
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1
-    ]),
-    1, gl.FLOAT_MAT4
+    new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
+    1,
+    gl.FLOAT_MAT4
   ),
   u_lightColor: new BufferUniform(
-    new Float32Array([
-      1, 1, 1, 1
-    ]),
-    1, gl.FLOAT_VEC4
+    new Float32Array([1, 1, 1, 1]),
+    1,
+    gl.FLOAT_VEC4
   ),
   u_ambient: new BufferUniform(
-    new Float32Array([
-      1, 1, 1, 1
-    ]),
-    1, gl.FLOAT_VEC4
+    new Float32Array([1, 1, 1, 1]),
+    1,
+    gl.FLOAT_VEC4
   ),
   u_texture: new BufferUniform(
     new Float32Array([
@@ -105,10 +90,9 @@ const dummyUniformsData = {
     1, gl.FLOAT_VEC4
   ),
   u_specular: new BufferUniform(
-    new Float32Array([
-      1, 1, 1, 1
-    ]),
-    1, gl.FLOAT_VEC4
+    new Float32Array([1, 1, 1, 1]),
+    1,
+    gl.FLOAT_VEC4
   ),
   u_shininess: 32.0,
   u_specularFactor: 0.5,

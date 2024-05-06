@@ -1,17 +1,18 @@
-import Vector3 from "../types/vector3";
-import M4 from "../types/m4";
-import { Euler } from "../types/euler";
-import { Quaternion } from "../types/quaternion";
+import Vector3 from "../base-types/vector3";
+import M4 from "../base-types/m4";
+import { Quaternion } from "../base-types/quaternion";
+import { Euler } from "../base-types/euler";
 
-export class Node {
+class Object3D {
   private _position: Vector3 = new Vector3();
-  private _rotation: Euler = new Euler(0, 0, 0, "xyz");
+  private _rotation: Quaternion | Euler = new Quaternion();
   private _scale: Vector3 = new Vector3(1, 1, 1);
   private _localMatrix: M4 = M4.identity();
   private _worldMatrix: M4 = M4.identity();
-  private _parent?: Node;
-  private _children: Node[] = [];
+  private _parent?: Object3D;
+  private _children: Object3D[] = [];
   visible = true;
+  private _isDirty = false;
 
   // Public getter, prevent re-instance new object
   get position() {
@@ -36,6 +37,21 @@ export class Node {
     return this._children;
   }
 
+  set position(position: Vector3) {
+    this._position = position;
+    this._isDirty = true;
+  }
+
+  set rotation(rotation: Quaternion | Euler) {
+    this._rotation = rotation;
+    this._isDirty = true;
+  }
+
+  set scale(scale: Vector3) {
+    this._scale = scale;
+    this._isDirty = true;
+  }
+
   // Public setter
   // Should update world matrix if parent changed
   set parent(parent) {
@@ -46,11 +62,10 @@ export class Node {
   }
 
   computeLocalMatrix() {
-    this._localMatrix = M4.mul(
-      M4.translation3d(this._position),
-      M4.rotation3d(Quaternion.Euler(this._rotation)),
-      M4.scale3d(this._scale)
-    );
+    if (this._isDirty) {
+      this._localMatrix = M4.TRS(this.position, this._rotation, this._scale);
+      this._isDirty = false;
+    }
   }
 
   computeWorldMatrix(updateParent = true, updateChildren = true) {
@@ -78,7 +93,7 @@ export class Node {
    * Jika node sudah memiliki parent, maka node akan
    * dilepas dari parentnya terlebih dahulu.
    */
-  add(node: Node): Node {
+  add(node: Object3D): Object3D {
     if (node.parent !== this) {
       node.removeFromParent();
       node.parent = this;
@@ -87,22 +102,13 @@ export class Node {
     return this;
   }
 
-  remove(node: Node) {
-    // TODO: hapus node dari this.children (jangan lupa set node.parent = null) 
-
-    let index = 0;
-
-    while (index < this.children.length ){
-      if(this.children[index] == node){
-        break;
-      }
+  remove(node: Object3D) {
+    // hapus node dari this.children (jangan lupa set node.parent = null)
+    const index = this.children.indexOf(node, 0);
+    if (index > -1) {
+      this.children.splice(index, 1);
+      node.parent = undefined;
     }
-
-    if(index != this.children.length){
-      node.removeFromParent();
-      this._children.splice(index, index);
-    }
-
     return this;
   }
 
@@ -111,23 +117,27 @@ export class Node {
     return this;
   }
 
-  traverse(node: Node){
-    this.processElements(node);
+  lookAt(target: any, up: Vector3 = Vector3.up) {
+    let targetPosition: Vector3;
 
-    this.children.forEach(child => {
-      child.traverse(node);
-    });
-  }
+    // If the target is another Object3D, use its position; otherwise, assume it's a Vector3
+    if (target instanceof Object3D) {
+      targetPosition = target.position;
+    } else if (target instanceof Vector3) {
+      targetPosition = target;
+    } else {
+      throw new Error("Invalid target type: must be Object3D or Vector3");
+    }
 
-  // TODO: Implement
-  processElements(node: Node){
+    // Use M4.lookAt to calculate the rotation matrix
+    const lookAtMatrix = M4.lookAt(this.position, targetPosition, up);
 
-  }
+    // Extract rotation as a quaternion from the matrix
+    this._rotation = lookAtMatrix.toQuaternion();
 
-  // TODO: Implement
-  public toJson(): void {
-    throw new Error("Method not implemented.");
+    // update the world matrix to reflect this new local matrix
+    this.computeWorldMatrix(false, true);
   }
 }
 
-export default Node;
+export default Object3D;
