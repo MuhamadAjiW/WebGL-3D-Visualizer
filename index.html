@@ -3,10 +3,54 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Grafkom Placeholder</title>
+    <title>Grafkom</title>
+    <link rel="stylesheet" href="./output.css">
   </head>
-  <body>
+  <body class="bg-main-black text-white">
     <script type="module" src="/src/main.ts"></script>
-    <canvas id="webgl-canvas" style="border: solid 3px black;" width="500" height="500"/>
+    <div class="flex w-full h-screen">
+      <div class="w-1/2 py-5 px-7 flex flex-col">
+        <div class="pb-6">
+          <div class=" text-2xl font-bold bg-gray-900">
+            Camera View
+          </div>
+        </div>
+        <div class="bg-white text-black flex-grow">
+          <canvas id="webgl-canvas" class="w-full h-full">
+        </div>
+      </div>
+      <div class="w-1/4 flex flex-col border-x-2">
+        <div class="h-1/2 border-b-2 py-5 px-7 flex flex-col">
+          <div class="pb-6">
+            <div class="text-2xl font-bold bg-gray-900">
+              Scene Graph
+            </div>
+          </div> 
+          <div class="bg-gray-900 flex-grow">
+            This is the place for scene graph
+          </div>
+        </div>
+        <div class="py-5 px-7 flex flex-col h-1/2">
+          <div class="pb-6">
+            <div class="text-2xl font-bold bg-gray-900">
+              Animation
+            </div>
+          </div>
+          <div class="bg-gray-900 flex-grow">
+            This is the place for animation
+          </div>
+        </div>
+      </div>
+      <div class="w-1/4 py-5 px-7 flex flex-col">
+        <div class="pb-6">
+          <div class="text-2xl font-bold bg-gray-900">
+            Inspector
+          </div>
+        </div>
+        <div class="bg-gray-900 flex-grow">
+          This is the place for Inspector
+        </div>
+      </div>
+    </div>
   </body>
 </html>
