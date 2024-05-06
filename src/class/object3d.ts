@@ -1,11 +1,12 @@
 import Vector3 from "../base-types/vector3";
 import M4 from "../base-types/m4";
 import { Quaternion } from "../base-types/quaternion";
+import { Euler } from "../base-types/euler";
 
 class Object3D {
-  private _position: Vector3 = new Vector3();
-  private _rotation: Quaternion = new Quaternion();
-  private _scale: Vector3 = new Vector3(1, 1, 1);
+  public _position: Vector3 = new Vector3();
+  public _rotation: Quaternion | Euler = new Quaternion();
+  public _scale: Vector3 = new Vector3(1, 1, 1);
   private _localMatrix: M4 = M4.identity();
   private _worldMatrix: M4 = M4.identity();
   private _parent?: Object3D;
@@ -45,7 +46,7 @@ class Object3D {
   }
 
   computeLocalMatrix() {
-    this._localMatrix = M4.TRS(this._position, this._rotation, this._scale);
+    this._localMatrix = M4.TRS(this.position, this._rotation, this._scale);
   }
 
   computeWorldMatrix(updateParent = true, updateChildren = true) {
@@ -95,6 +96,28 @@ class Object3D {
   removeFromParent() {
     if (this.parent) this.parent.remove(this);
     return this;
+  }
+
+  lookAt(target: any, up: Vector3 = Vector3.up) {
+    let targetPosition: Vector3;
+
+    // If the target is another Object3D, use its position; otherwise, assume it's a Vector3
+    if (target instanceof Object3D) {
+      targetPosition = target.position;
+    } else if (target instanceof Vector3) {
+      targetPosition = target;
+    } else {
+      throw new Error("Invalid target type: must be Object3D or Vector3");
+    }
+
+    // Use M4.lookAt to calculate the rotation matrix
+    const lookAtMatrix = M4.lookAt(this.position, targetPosition, up);
+
+    // Extract rotation as a quaternion from the matrix
+    this._rotation = lookAtMatrix.toQuaternion();
+
+    // update the world matrix to reflect this new local matrix
+    this.computeWorldMatrix(false, true);
   }
 }
 

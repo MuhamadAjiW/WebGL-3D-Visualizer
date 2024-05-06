@@ -1,3 +1,4 @@
+import { Euler } from "./euler";
 import { Quaternion } from "./quaternion";
 import Vector3 from "./vector3";
 
@@ -491,7 +492,7 @@ class M4 {
   }
 
   // Static version of TRS combining translate, rotate (from Quaternion), and scale
-  public static TRS(pos: Vector3, q: Quaternion, s: Vector3): M4 {
+  public static TRS(pos: Vector3, q: Quaternion | Euler, s: Vector3): M4 {
     let translation = M4.translation3d(pos);
     let rotation = M4.rotation3d(q);
     let scaling = M4.scale3d(s);
@@ -501,8 +502,11 @@ class M4 {
   }
 
   // Converts a quaternion to a rotation matrix and embeds it in an M4
-  static rotation3d(q: Quaternion): M4 {
+  static rotation3d(q: Quaternion | Euler): M4 {
     let matrix = new M4();
+    if (q instanceof Euler) {
+      q = Quaternion.Euler(q);
+    }
     let rot = q.toRotationMatrix();
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {

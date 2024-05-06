@@ -149,7 +149,7 @@ declare class M4 {
    * @param s - The scaling vector.
    * @returns An M4 matrix representing the combined transformation.
    */
-  static TRS(pos: Vector3, q: Quaternion, s: Vector3): M4;
+  static TRS(pos: Vector3, q: Quaternion | Euler, s: Vector3): M4;
 
   /**
    * Converts a quaternion to a rotation matrix and returns it as an M4.
@@ -157,7 +157,7 @@ declare class M4 {
    * @param q - The quaternion representing the rotation.
    * @returns An M4 matrix representing the rotation.
    */
-  static rotation3d(q: Quaternion): M4;
+  static rotation3d(q: Quaternion | Euler): M4;
 
   /**
    * Flattens a matrix to a 1D array in column-major order.
