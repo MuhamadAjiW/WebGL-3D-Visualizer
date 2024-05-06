@@ -1,4 +1,4 @@
-import { TypedArray } from "../../types/webgl-types";
+import { TypedArray } from "../../base-types/webgl-types";
 
 class BufferAttribute {
   private _data: TypedArray;

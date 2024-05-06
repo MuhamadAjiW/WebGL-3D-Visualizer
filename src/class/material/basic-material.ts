@@ -1,5 +1,5 @@
-import { Color } from "../../types/color";
-import { UniformKeys } from "../../types/webgl-keys";
+import { Color } from "../../base-types/color";
+import { UniformKeys } from "../../base-types/webgl-keys";
 import { Texture } from "../texture/texture";
 import { TextureLoader } from "../texture/texture-loader";
 import { BufferUniform } from "../webgl/uniform";
@@ -20,9 +20,11 @@ export class BasicMaterial extends ShaderMaterial {
    
     let materialType = this.getUniform(UniformKeys.MATERIAL_TYPE);
 
-    if(!materialType) {
-      materialType = new BufferUniform(this.materialType, 1);
-    }
+    // if(!materialType) {
+    //   materialType = new BufferUniform(this.materialType, 0);
+    // }
+
+    materialType = new BufferUniform(this.materialType, 1);
     this.setUniform(UniformKeys.MATERIAL_TYPE, materialType);
   }
 

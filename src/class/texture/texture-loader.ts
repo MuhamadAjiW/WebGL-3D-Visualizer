@@ -19,6 +19,7 @@ export class TextureLoader{
 
 
     private static async loadImage(img: HTMLImageElement) {
+        console.log(`Loading image: ${img.src}`);
         return new Promise((resolve, reject) => {
             img.onload = async () => {
                 console.log("Image Loaded");

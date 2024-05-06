@@ -1,5 +1,5 @@
-import { Color } from "../../types/color";
-import { UniformKeys } from "../../types/webgl-keys";
+import { Color } from "../../base-types/color";
+import { UniformKeys } from "../../base-types/webgl-keys";
 import { Texture } from "../texture/texture";
 import { TextureLoader } from "../texture/texture-loader";
 import { BufferUniform } from "../webgl/uniform";

@@ -138,6 +138,25 @@ class Object3D {
     // update the world matrix to reflect this new local matrix
     this.computeWorldMatrix(false, true);
   }
+
+
+  traverse(node: Object3D){
+    this.processElements(node);
+
+    this.children.forEach(child => {
+      child.traverse(node);
+    });
+  }
+
+  // TODO: Implement
+  processElements(node: Object3D){
+
+  }
+
+  // TODO: Implement
+  public toJson(): void {
+    throw new Error("Method not implemented.");
+  }
 }
 
 export default Object3D;

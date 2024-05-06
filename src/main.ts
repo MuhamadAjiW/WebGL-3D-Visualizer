@@ -1,20 +1,20 @@
 import "./style.css";
 import vertexShaderSource from "./shaders/vertex-shader.vert?raw";
 import fragmentShaderSource from "./shaders/fragment-shader.frag?raw";
-import { ProgramInfo } from './types/webgl-program-info';
+import { ProgramInfo } from './base-types/webgl-program-info';
 import { WebGLUtil } from './util/webgl-util';
-import { createUniformSetters, setUniforms } from './types/webgl-setters-uniform';
-import { createAttributeSetters, setAttributes } from './types/webgl-setters-attribute';
+import { createUniformSetters, setUniforms } from './base-types/webgl-setters-uniform';
+import { createAttributeSetters, setAttributes } from './base-types/webgl-setters-attribute';
 import { BufferAttribute } from './class/webgl/attribute';
 import { BufferUniform } from './class/webgl/uniform';
 import { PlaneGeometry } from './class/geometry/plane-geometry';
-import { Color } from './types/color';
+import { Color } from './base-types/color';
 import { Scene } from './class/scene';
 import { Mesh } from './class/mesh';
 import { Texture } from './class/texture/texture';
 import { TextureLoader } from './class/texture/texture-loader';
 import { BasicMaterial } from './class/material/basic-material';
-import { AttributeKeys } from './types/webgl-keys';
+import { AttributeKeys, UniformKeys } from './base-types/webgl-keys';
 
 
 const canvas: HTMLCanvasElement = document.querySelector<HTMLCanvasElement>('#webgl-canvas') as HTMLCanvasElement;
@@ -94,8 +94,18 @@ const dummyUniformsData = {
     1,
     gl.FLOAT_VEC4
   ),
-  u_shininess: 32.0,
-  u_specularFactor: 0.5,
+  u_shininess: new BufferUniform(
+    32,
+    1,
+    gl.FLOAT
+  ),
+  u_specularFactor: new BufferUniform(
+    0.5,
+    1,
+    gl.FLOAT
+  )
+  // u_shininess: 32.0,
+  // u_specularFactor: 0.5,
 };
 
 
@@ -157,6 +167,9 @@ setUniforms(programInfo, dummyUniformsData);
 WebGLUtil.compile(gl, programInfo, scene);
 WebGLUtil.render(gl, programInfo, scene);
 
+// const loc = gl.getUniformLocation(programInfo.program, UniformKeys.MATERIAL_TYPE);
+// const uniform = gl.getUniform(programInfo.program, loc!);
+// console.log(uniform)
 
 // const plane = new PlaneGeometry(1, 1);
 // setAttributes(programInfo, plane.attributes);

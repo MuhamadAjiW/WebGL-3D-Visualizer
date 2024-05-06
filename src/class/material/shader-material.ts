@@ -1,4 +1,4 @@
-import { Color } from "../../types/color";
+import { Color } from "../../base-types/color";
 import { Texture } from "../texture/texture";
 import { BufferUniform } from "../webgl/uniform";
 
@@ -29,7 +29,6 @@ export abstract class ShaderMaterial {
   }
 
   setUniform(name: string, uniform: BufferUniform) {
-    console.log(name, uniform)
     this._uniforms[name] = uniform;
     return this;
   }

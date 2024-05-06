@@ -1,8 +1,8 @@
 import { BufferGeometry } from "./geometry/geometry";
 import { ShaderMaterial } from "./material/shader-material";
-import Node from "./node";
+import Object3D from "./object3d";
 
-export class Mesh extends Node {
+export class Mesh extends Object3D {
   geometry: BufferGeometry
   material: ShaderMaterial
 

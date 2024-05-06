@@ -34,13 +34,13 @@ void main() {
     vec4 outColor;
 
     // Basic
-    if(u_materialType == 1) {
+    if(u_materialType == 0) {
         // Only diffuse color here
         outColor = diffuseColor;
     }
 
     // Phong
-    else if (u_materialType == 0){        
+    else if (u_materialType == 1){        
         // Get light direction vector from vertex shader
         vec3 surfaceToLight = normalize(v_surfaceToLight);
         

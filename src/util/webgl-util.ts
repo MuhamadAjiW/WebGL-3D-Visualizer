@@ -1,13 +1,14 @@
 import { Mesh } from "../class/mesh";
-import Node from "../class/node";
+import Node from "../class/object3d";
 import { Texture } from "../class/texture/texture";
-import { AttributeKeys } from "../types/webgl-keys";
-import { ProgramInfo } from "../types/webgl-program-info";
-import { setAttributes } from "../types/webgl-setters-attribute";
+import { AttributeKeys, UniformKeys } from "../base-types/webgl-keys";
+import { ProgramInfo } from "../base-types/webgl-program-info";
+import { setAttributes } from "../base-types/webgl-setters-attribute";
 import { ShaderMaterial } from "../class/material/shader-material";
-import { setUniforms } from "../types/webgl-setters-uniform";
+import { setUniforms } from "../base-types/webgl-setters-uniform";
 import { BufferUniform } from "../class/webgl/uniform";
 import { BufferAttribute } from "../class/webgl/attribute";
+import Object3D from "../class/object3d";
 
 export class WebGLUtil{
   public static createShader(gl: WebGLRenderingContext, shaderType: GLenum, source: string): WebGLShader{
@@ -41,7 +42,7 @@ export class WebGLUtil{
   }
 
   // TODO: make this async;
-  public static compile(gl: WebGLRenderingContext, programInfo: ProgramInfo, scene: Node){
+  public static compile(gl: WebGLRenderingContext, programInfo: ProgramInfo, scene: Object3D){
     // TODO: process node, camera, light
     scene.traverse(scene);
 
@@ -84,7 +85,7 @@ export class WebGLUtil{
     });
   }
 
-  public static render(gl: WebGLRenderingContext, programInfo: ProgramInfo, scene: Node){
+  public static render(gl: WebGLRenderingContext, programInfo: ProgramInfo, scene: Object3D){
     // TODO: process node, camera, light
     scene.traverse(scene);
 
@@ -107,7 +108,7 @@ export class WebGLUtil{
   }
 
   //TODO: Review whether this is necessary or not
-  public static clean(gl: WebGLRenderingContext, scene: Node){
+  public static clean(gl: WebGLRenderingContext, scene: Object3D){
 
   }
 }

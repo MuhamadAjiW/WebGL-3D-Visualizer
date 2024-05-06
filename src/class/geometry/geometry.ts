@@ -1,4 +1,4 @@
-import { AttributeKeys } from "../../types/webgl-keys";
+import { AttributeKeys } from "../../base-types/webgl-keys";
 import { BufferAttribute } from "../webgl/attribute";
 
 class BufferGeometry {

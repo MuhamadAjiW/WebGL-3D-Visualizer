@@ -26,7 +26,7 @@ function createUniformSetters(gl: WebGLRenderingContext, program: WebGLProgram):
         if(v.isDirty){
           v.consume();
 
-          if (typeof v.data === 'number'){
+          if (typeof v === 'number'){
             (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
           } else{
             if (type >= WebGLRenderingContext.FLOAT_MAT2){
@@ -72,17 +72,19 @@ function createUniformSetters(gl: WebGLRenderingContext, program: WebGLProgram):
 
 function setUniform(programInfo: ProgramInfo, uniformName: string, ...data: UniformDataType) {
   const setters = programInfo.uniformSetters;
+  
   if (uniformName in setters) {
     const shaderName = `${uniformName}`;
     setters[shaderName](...data);
-  }
+  }  
 }
 function setUniforms(
   programInfo: ProgramInfo,
   uniforms: {[uniformName: string]: UniformSingleDataType},
 ) {
-  for (let uniformName in uniforms)
+  for (let uniformName in uniforms){
     setUniform(programInfo, uniformName, uniforms[uniformName]);
+  }
 }
 
 export type { UniformMapSetters };
