@@ -13,6 +13,7 @@ import { TextureLoader } from './class/texture/texture-loader';
 import { AttributeKeys, UniformKeys } from './base-types/webgl-keys';
 import { WebGLRenderer } from "./class/webgl-renderer";
 import { PhongMaterial } from "./class/material/phong-material";
+import { BasicMaterial } from "./class/material/basic-material";
 
 const canvas: HTMLCanvasElement = document.querySelector<HTMLCanvasElement>('#webgl-canvas') as HTMLCanvasElement;
 const gl: WebGLRenderingContext = canvas.getContext("webgl") as WebGLRenderingContext;

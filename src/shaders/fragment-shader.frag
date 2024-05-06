@@ -11,8 +11,7 @@ varying vec3 v_surfaceToView;
 uniform vec4 u_lightColor;
 uniform vec4 u_ambient;
 uniform sampler2D u_diffuse;
-// uniform sampler2D u_specular;
-uniform vec4 u_specular;
+uniform sampler2D u_specular;
 uniform float u_shininess;
 uniform float u_specularFactor;
 uniform int u_materialType;
@@ -28,7 +27,9 @@ vec4 lit(float light, float halfVector, float shinyness){
 void main() {
     // Get color from texture coordinates
     vec4 diffuseColor = texture2D(u_diffuse, v_texCoord);
-    // vec4 specularColor = texture2D(u_specular, v_texCoord);
+
+    // TODO: alternate texture coords for specular?
+    vec4 specularColor = texture2D(u_specular, v_texCoord);
     
     // Get normal vector from vertex shader
     vec3 a_normal = normalize(v_normal);
@@ -61,7 +62,7 @@ void main() {
             (u_lightColor * (
                 diffuseColor * u_ambient +
                 diffuseColor * litR.y + 
-                u_specular * litR.z * u_specularFactor)).rgb,
+                specularColor * litR.z * u_specularFactor)).rgb,
             diffuseColor.a
         );
     }

@@ -10,16 +10,14 @@ export class PhongMaterial extends ShaderMaterial {
   
   private _ambient: Color = new Color(0xffffff);
   private _diffuse: Color | Texture = new Color(0xffffff);
-  // public _specular: Color | Texture;
-  private _specular: Color = new Color(0xffffff);
+  public _specular: Color | Texture = new Color(0xffffff);
   private _shinyness: number = 1;
   private _specularFactor: number = 1;
   
   constructor(options?: {
     ambient?: Color,
     diffuse?: Color | Texture
-    // specular?: Color | Texture
-    specular?: Color
+    specular?: Color | Texture
     shinyness?: number, 
     specularFactor?: number,
   }){
@@ -27,7 +25,7 @@ export class PhongMaterial extends ShaderMaterial {
 
     this.ambient = options?.ambient || new Color(0xffffffff);
     this.diffuse = options?.diffuse || new Color(0xffffffff);
-    this.specular = options?.specular || new Color(0x01010100);
+    this.specular = options?.specular || new Color(0xffffffff);
     this.shinyness = options?.shinyness || 1;
     this.specularFactor = options?.specularFactor || 1;
 
@@ -61,18 +59,12 @@ export class PhongMaterial extends ShaderMaterial {
     this._diffuse = diffuse;
   }
 
-  get specular(): Color{
+  get specular(): Color | Texture {
     return this._specular;
   }
 
-  set specular(specular: Color) {
+  set specular(specular: Color | Texture) {
     this._specular = specular;
-
-    let u_specular = this.getUniform(UniformKeys.SPECULAR);
-    if(!u_specular) {
-      u_specular = new BufferUniform(new Float32Array(this._specular.get()), 4, WebGLRenderingContext.FLOAT_VEC4);
-    }
-    this.setUniform(UniformKeys.SPECULAR, u_specular);
   }
 
   get specularFactor(): number{
@@ -104,11 +96,11 @@ export class PhongMaterial extends ShaderMaterial {
   }
 
   public loadTo(gl: WebGLRenderingContext): void {
-    let ambientTexture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, ambientTexture);
+    let diffuse = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, diffuse);
 
     if(this.diffuse instanceof Texture){
-
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, this.diffuse.wrapS);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this.diffuse.wrapT);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.diffuse.minFilter);
@@ -118,6 +110,22 @@ export class PhongMaterial extends ShaderMaterial {
     } else{
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
         new Uint8Array(this.diffuse.get()));
+    }
+
+    let specular = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, specular);
+
+    if(this.specular instanceof Texture){
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, this.specular.wrapS);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this.specular.wrapT);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.specular.minFilter);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.specular.magFilter);
+      
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, this.specular.image);
+    } else{
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+        new Uint8Array(this.specular.get()));
     }
   }
 
