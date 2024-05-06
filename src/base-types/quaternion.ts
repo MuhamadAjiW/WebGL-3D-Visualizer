@@ -33,7 +33,7 @@ export class Quaternion{
   }
   
   // Set-getter
-  public get(index: number): [number, number, number, number] {
+  public get(): [number, number, number, number] {
     return [this.w, this.x, this.y, this.z]
   }
 

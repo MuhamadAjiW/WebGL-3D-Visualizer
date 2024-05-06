@@ -198,6 +198,19 @@ class Object3D {
   }
 
   // TODO
+  traverse(node: Object3D){
+    this.processElements(node);
+
+    this.children.forEach(child => {
+      child.traverse(node);
+    });
+  }
+
+  // TODO: Implement
+  processElements(node: Object3D){
+    // throw new Error("Method not implemented.");
+  }
+  
   fromJSON() {}
 
   toJSON() {}

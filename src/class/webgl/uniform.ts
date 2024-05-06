@@ -1,4 +1,4 @@
-import { TypedArray } from "./geometry";
+import { TypedArray } from "../../base-types/webgl-types";
 
 class BufferUniform {
   private _data: TypedArray | GLfloat | GLint;
@@ -7,12 +7,11 @@ class BufferUniform {
 
   private _isDirty = true;
 
-
   /**
-   * Creates an instance of BufferAttribute.
+   * Creates an instance of BufferUniform.
    * @param {TypedArray} data Typed array data.
    * @param {number} size Size of each element in the buffer.
-   * @param {object} options Options for attribute.
+   * @param {dtype} dtype Type of for uniform.
    * @memberof BufferUniform
    */
   constructor(

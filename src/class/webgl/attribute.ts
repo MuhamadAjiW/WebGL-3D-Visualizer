@@ -1,4 +1,4 @@
-type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
+import { TypedArray } from "../../base-types/webgl-types";
 
 class BufferAttribute {
   private _data: TypedArray;
@@ -8,9 +8,7 @@ class BufferAttribute {
   private _stride = 0;
   private _offset = 0;
 
-
   private _isDirty = true;
-
 
   /**
    * Creates an instance of BufferAttribute.
@@ -126,65 +124,4 @@ class BufferAttribute {
   }
 }
 
-class BufferGeometry {
-  private _attributes: {[name: string]: BufferAttribute};
-  private _indices?: BufferAttribute;
-
-
-  constructor() {
-    this._attributes = {};
-  }
-
-
-  get attributes() {
-    return this._attributes;
-  }
-
-
-  get indices() {
-    return this._indices;
-  }
-
-
-  setIndices(indices: BufferAttribute) {
-    this._indices = indices;
-    return this;
-  }
-
-
-  removeIndices() {
-    this._indices = undefined;
-    return this;
-  }
-
-
-  setAttribute(name: string, attribute: BufferAttribute) {
-    this._attributes[name] = attribute;
-    return this;
-  }
-
-
-  getAttribute(name: string) {
-    return this._attributes[name];
-  }
-
-
-  deleteAttribute(name: string) {
-    delete this._attributes[name];
-    return this;
-  }
-
-
-  calculateNormals(forceNewAttribute=false) {
-    const position = this.getAttribute('position');
-    if (!position) return;
-    let normal = this.getAttribute('normal');
-    if (forceNewAttribute || !normal)
-      normal = new BufferAttribute(new Float32Array(position.length), position.size);
-    // Lakukan kalkulasi normal disini.
-    this.setAttribute('normal', normal);
-  }
-}
-
-export type { TypedArray }
-export { BufferAttribute, BufferGeometry };
+export { BufferAttribute };
