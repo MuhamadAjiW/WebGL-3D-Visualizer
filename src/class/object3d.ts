@@ -44,6 +44,11 @@ class Object3D {
     }
   }
 
+  set position(value) {
+    this._position = value;
+    this.computeWorldMatrix(false, true);
+  }
+
   computeLocalMatrix() {
     this._localMatrix = M4.TRS(this._position, this._rotation, this._scale);
   }
