@@ -138,6 +138,69 @@ class Object3D {
     // update the world matrix to reflect this new local matrix
     this.computeWorldMatrix(false, true);
   }
+
+  /**
+   * Converts a local vector to world coordinates.
+   *
+   * @param vector - A Vector3 in the local coordinate space.
+   * @returns A Vector3 in the world coordinate space.
+   */
+  localToWorld(vector: Vector3): Vector3 {
+    // Apply the world matrix transformation
+    const worldMatrix = this.worldMatrix;
+    return worldMatrix.transformPosition(vector);
+  }
+
+  /**
+   * Converts a world vector to local coordinates.
+   *
+   * @param vector - A Vector3 in the world coordinate space.
+   * @returns A Vector3 in the local coordinate space.
+   */
+  worldToLocal(vector: Vector3): Vector3 {
+    // Apply the inverse of the world matrix transformation
+    const inverseWorldMatrix = this.worldMatrix.inverse();
+    return inverseWorldMatrix.transformPosition(vector);
+  }
+
+  /**
+   * Rotates the node around a given axis in the world coordinate space.
+   *
+   * @param axis - The world-space axis to rotate around (should be normalized).
+   * @param angle - The angle in radians to rotate around the axis.
+   * @returns This Object3D instance for chaining.
+   */
+  rotateOnWorldAxis(axis: Vector3, angle: number): this {
+    // Create a quaternion that represents a rotation around the world axis
+    const halfAngle = angle / 2;
+    const sinHalfAngle = Math.sin(halfAngle);
+
+    // Create the rotation quaternion
+    const rotationQuat = new Quaternion(
+      Math.cos(halfAngle),
+      axis.x * sinHalfAngle,
+      axis.y * sinHalfAngle,
+      axis.z * sinHalfAngle
+    );
+
+    // Apply the rotation quaternion to the node's current rotation
+    let rotation = this._rotation;
+    if (rotation instanceof Euler) {
+      rotation = Quaternion.Euler(rotation);
+    }
+    this._rotation = rotationQuat.multiply(rotation).normalized();
+
+    // Mark the node as dirty to recalculate the transformation matrix
+    this._isDirty = true;
+    this.computeWorldMatrix();
+
+    return this;
+  }
+
+  // TODO
+  fromJSON() {}
+
+  toJSON() {}
 }
 
 export default Object3D;
