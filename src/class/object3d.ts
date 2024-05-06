@@ -150,7 +150,7 @@ class Object3D {
 
   // TODO: Implement
   processElements(node: Object3D){
-
+    // throw new Error("Method not implemented.");
   }
 
   // TODO: Implement

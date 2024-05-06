@@ -11,4 +11,11 @@ export class Mesh extends Object3D {
     this.geometry = geometry;
     this.material = material;
   }
+
+  public toJson(): void {
+    throw new Error("Method not implemented.");
+  }
+  public fromJson(): void {
+    throw new Error("Method not implemented.");
+  }
 }

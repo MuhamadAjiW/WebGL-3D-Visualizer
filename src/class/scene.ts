@@ -5,4 +5,7 @@ export class Scene extends Object3D {
   public toJson(): void {
     throw new Error("Method not implemented.");
   }
+  public fromJson(): void {
+    throw new Error("Method not implemented.");
+  }
 }

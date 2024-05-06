@@ -1,5 +1,4 @@
-import { AttributeMapSetters } from "./webgl-setters-attribute";
-import { UniformMapSetters } from "./webgl-setters-uniform";
+import { AttributeMapSetters, UniformMapSetters } from "../util/webgl-util";
 
 type ProgramInfo = {
   program: WebGLProgram,

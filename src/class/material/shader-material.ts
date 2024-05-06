@@ -1,5 +1,3 @@
-import { Color } from "../../base-types/color";
-import { Texture } from "../texture/texture";
 import { BufferUniform } from "../webgl/uniform";
 
 export abstract class ShaderMaterial {
@@ -7,21 +5,14 @@ export abstract class ShaderMaterial {
   // Note: After the initial use of a texture, its dimensions, format, and type cannot be changed.
 
   // This is internal and really should not be changed outside of texture or texture loader
-  private static idAutoIncrement: number = 0;
-  public readonly id: number;
-  
+  public id: string;  
   public materialType: number = 0;
-  public color: Color = new Color(0xffffff);
-  public texture: Texture;
-  public isActive: boolean = false;
   private _uniforms: {[name: string]: BufferUniform};
   
-  constructor(materialType: number, color: Color, texture: Texture){
+  constructor(materialType: number){
     this._uniforms = {};
-    this.id = ShaderMaterial.idAutoIncrement++;
+    this.id = this.generateId();
     this.materialType = materialType;
-    this.color = color;
-    this.texture = texture;
   }
 
   get uniforms() {
@@ -33,17 +24,17 @@ export abstract class ShaderMaterial {
     return this;
   }
 
-
   getUniform(name: string) {
     return this._uniforms[name];
   }
-
 
   deleteUniform(name: string) {
     delete this._uniforms[name];
     return this;
   }
 
-  public abstract activate(): void;
+  protected abstract generateId(): string;
+  public abstract loadTo(gl: WebGLRenderingContext): void;
   public abstract toJson() : void;
+  public abstract fromJson() : void;
 }

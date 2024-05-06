@@ -16,12 +16,12 @@ export class Texture{
   public magFilter: GLenum = WebGLRenderingContext.LINEAR;
   public minFilter: GLenum = WebGLRenderingContext.LINEAR_MIPMAP_LINEAR;
   public format: GLenum = WebGLRenderingContext.RGBA;
-  public image: HTMLImageElement | null = null;
+  public image: HTMLImageElement;
   public repeatS: number = 1;
   public repeatT: number = 1;
 
-  constructor(options?: {
-    image?: HTMLImageElement, 
+  constructor(options: {
+    image: HTMLImageElement, 
     wrapS?: GLenum, 
     wrapT?: GLenum
     magFilter?: GLenum
@@ -34,7 +34,7 @@ export class Texture{
     this.wrapT = options?.wrapT || WebGLRenderingContext.CLAMP_TO_EDGE;
     this.magFilter = options?.magFilter || WebGLRenderingContext.NEAREST;
     this.minFilter = options?.minFilter || WebGLRenderingContext.NEAREST;
-    this.image = options?.image || null
+    this.image = options.image
   }
 
   public activate() {
@@ -86,5 +86,8 @@ export class Texture{
   //TODO: Implement
   public toJson(){
       throw new Error("not Implemented");
+  }
+  public fromJson(): void {
+    throw new Error("Method not implemented.");
   }
 }
