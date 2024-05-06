@@ -1,5 +1,5 @@
-import Vector3 from "../types/vector3";
-import M4 from "../types/m4";
+import Vector3 from "../base-types/vector3";
+import M4 from "../base-types/m4";
 
 class node {
   private _position: Vector3 = new Vector3();
@@ -87,6 +87,11 @@ class node {
 
   remove(node: node) {
     // TODO: hapus node dari this.children (jangan lupa set node.parent = null)
+    const index = this.children.indexOf(node, 0);
+    if (index > -1) {
+      this.children.splice(index, 1);
+      node.parent = undefined;
+    }
     return this;
   }
 
