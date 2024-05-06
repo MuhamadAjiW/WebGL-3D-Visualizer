@@ -4,14 +4,15 @@ import { Quaternion } from "../base-types/quaternion";
 import { Euler } from "../base-types/euler";
 
 class Object3D {
-  public _position: Vector3 = new Vector3();
-  public _rotation: Quaternion | Euler = new Quaternion();
-  public _scale: Vector3 = new Vector3(1, 1, 1);
+  private _position: Vector3 = new Vector3();
+  private _rotation: Quaternion | Euler = new Quaternion();
+  private _scale: Vector3 = new Vector3(1, 1, 1);
   private _localMatrix: M4 = M4.identity();
   private _worldMatrix: M4 = M4.identity();
   private _parent?: Object3D;
   private _children: Object3D[] = [];
   visible = true;
+  private _isDirty = false;
 
   // Public getter, prevent re-instance new object
   get position() {
@@ -36,6 +37,21 @@ class Object3D {
     return this._children;
   }
 
+  set position(position: Vector3) {
+    this._position = position;
+    this._isDirty = true;
+  }
+
+  set rotation(rotation: Quaternion | Euler) {
+    this._rotation = rotation;
+    this._isDirty = true;
+  }
+
+  set scale(scale: Vector3) {
+    this._scale = scale;
+    this._isDirty = true;
+  }
+
   // Public setter
   // Should update world matrix if parent changed
   set parent(parent) {
@@ -46,7 +62,10 @@ class Object3D {
   }
 
   computeLocalMatrix() {
-    this._localMatrix = M4.TRS(this.position, this._rotation, this._scale);
+    if (this._isDirty) {
+      this._localMatrix = M4.TRS(this.position, this._rotation, this._scale);
+      this._isDirty = false;
+    }
   }
 
   computeWorldMatrix(updateParent = true, updateChildren = true) {
