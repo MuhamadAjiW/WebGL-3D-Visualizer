@@ -1,14 +1,16 @@
-import Vector3 from "../types/vector3";
-import M4 from "../types/m4";
+import Vector3 from "../base-types/vector3";
+import M4 from "../base-types/m4";
+import { Quaternion } from "../base-types/quaternion";
+import { Euler } from "../base-types/euler";
 
-class node {
-  private _position: Vector3 = new Vector3();
-  private _rotation: Vector3 = new Vector3();
-  private _scale: Vector3 = new Vector3(1, 1, 1);
+class Object3D {
+  public _position: Vector3 = new Vector3();
+  public _rotation: Quaternion | Euler = new Quaternion();
+  public _scale: Vector3 = new Vector3(1, 1, 1);
   private _localMatrix: M4 = M4.identity();
   private _worldMatrix: M4 = M4.identity();
-  private _parent?: node;
-  private _children: node[] = [];
+  private _parent?: Object3D;
+  private _children: Object3D[] = [];
   visible = true;
 
   // Public getter, prevent re-instance new object
@@ -44,11 +46,7 @@ class node {
   }
 
   computeLocalMatrix() {
-    this._localMatrix = M4.mul(
-      M4.translation3d(this._position),
-      M4.rotation3d(this._rotation),
-      M4.scale3d(this._scale)
-    );
+    this._localMatrix = M4.TRS(this.position, this._rotation, this._scale);
   }
 
   computeWorldMatrix(updateParent = true, updateChildren = true) {
@@ -76,7 +74,7 @@ class node {
    * Jika node sudah memiliki parent, maka node akan
    * dilepas dari parentnya terlebih dahulu.
    */
-  add(node: node): node {
+  add(node: Object3D): Object3D {
     if (node.parent !== this) {
       node.removeFromParent();
       node.parent = this;
@@ -85,8 +83,13 @@ class node {
     return this;
   }
 
-  remove(node: node) {
-    // TODO: hapus node dari this.children (jangan lupa set node.parent = null)
+  remove(node: Object3D) {
+    // hapus node dari this.children (jangan lupa set node.parent = null)
+    const index = this.children.indexOf(node, 0);
+    if (index > -1) {
+      this.children.splice(index, 1);
+      node.parent = undefined;
+    }
     return this;
   }
 
@@ -94,6 +97,28 @@ class node {
     if (this.parent) this.parent.remove(this);
     return this;
   }
+
+  lookAt(target: any, up: Vector3 = Vector3.up) {
+    let targetPosition: Vector3;
+
+    // If the target is another Object3D, use its position; otherwise, assume it's a Vector3
+    if (target instanceof Object3D) {
+      targetPosition = target.position;
+    } else if (target instanceof Vector3) {
+      targetPosition = target;
+    } else {
+      throw new Error("Invalid target type: must be Object3D or Vector3");
+    }
+
+    // Use M4.lookAt to calculate the rotation matrix
+    const lookAtMatrix = M4.lookAt(this.position, targetPosition, up);
+
+    // Extract rotation as a quaternion from the matrix
+    this._rotation = lookAtMatrix.toQuaternion();
+
+    // update the world matrix to reflect this new local matrix
+    this.computeWorldMatrix(false, true);
+  }
 }
 
-export default node;
+export default Object3D;
