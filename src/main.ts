@@ -13,7 +13,7 @@ import { TextureLoader } from './class/texture/texture-loader';
 import { AttributeKeys, UniformKeys } from './base-types/webgl-keys';
 import { WebGLRenderer } from "./class/webgl-renderer";
 import { PhongMaterial } from "./class/material/phong-material";
-import { BasicMaterial } from "./class/material/basic-material";
+// import { BasicMaterial } from "./class/material/basic-material";
 
 const canvas: HTMLCanvasElement = document.querySelector<HTMLCanvasElement>('#webgl-canvas') as HTMLCanvasElement;
 const gl: WebGLRenderingContext = canvas.getContext("webgl") as WebGLRenderingContext;
@@ -29,11 +29,24 @@ const programInfo: ProgramInfo = {
 
 const renderer: WebGLRenderer = new WebGLRenderer(canvas, gl, { programInfo: ""}, programInfo);
 
+// Import kelas Camera
+import Camera from "./class/camera";
+import Vector3 from "./base-types/vector3";
+import M4 from "./base-types/m4";
+import PersepectiveCamera from "./class/persepective-camera";
+import { MathUtil } from "./util/math-util";
+
+const camera = new PersepectiveCamera(gl.canvas.width / gl.canvas.height, MathUtil.DegreesToRad(30), 1, 2000);
+camera.position = new Vector3(0, 0, 0);
+camera.angle = 70;
+console.log(M4.flatten(camera.viewProjectionMatrix));
+console.log(camera);
+
 // TODO: Delete, this is for testing purposes
 const dummyUniformsData = {
   // Camera
   u_projectionMatrix: new BufferUniform(
-    new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
+    new Float32Array(M4.flatten(camera.viewProjectionMatrix)),
     1,
     gl.FLOAT_MAT4
   ),
@@ -95,7 +108,7 @@ const dummyAttributesData = {
       0.5, 0.5, 0,
       0.5, -0.5, 0,
     ]), 3,
-    {dtype: gl.FLOAT, normalize: false, stride: 0, offset: 0} 
+    {dtype: gl.FLOAT, normalize: false, stride: 0, offset: 0}
   ),
   // Geometry
   // Note: 0,0 is top left
@@ -108,7 +121,7 @@ const dummyAttributesData = {
       1, 0,
       1, 1,
     ]), 2,
-    {dtype: gl.FLOAT, normalize: false, stride: 0, offset: 0} 
+    {dtype: gl.FLOAT, normalize: false, stride: 0, offset: 0}
   ),
 };
 
