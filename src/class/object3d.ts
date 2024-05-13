@@ -198,22 +198,18 @@ class Object3D {
   }
 
   // TODO
-  traverse(node: Object3D){
+  traverse(node: Object3D) {
     this.processElements(node);
 
-    this.children.forEach(child => {
+    this.children.forEach((child) => {
       child.traverse(node);
     });
   }
 
   // TODO: Implement
-  processElements(node: Object3D){
-    // throw new Error("Method not implemented.");
+  processElements(node: Object3D) {
+    this.computeWorldMatrix(false, true);
   }
-  
-  fromJSON() {}
-
-  toJSON() {}
 }
 
 export default Object3D;
