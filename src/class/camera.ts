@@ -5,17 +5,15 @@ import { MathUtil } from "../util/math-util";
 
 class Camera extends Object3d {
     protected _projectionMatrix = M4.identity();
-    private _invWorldMatrix = M4.identity();
-    private _distance: number = 10;
-    private _orbitNode: Object3d;
-    public angle: number = 0;
-    private _cameraMatrix = M4.identity();
+
+    public distance: number = 3;
+    public angleX: number = 0;
+    public angleY: number = 0;
+    public cameraMatrix = M4.identity();
 
     constructor() {
         super();
-        this._orbitNode = new Object3d();
-        this.add(this._orbitNode);
-        this.position = new Vector3(0, 0, -this._distance);
+        this.position = new Vector3(0, 0, -this.distance);
     }
 
     radToDeg(r: number) {
@@ -27,20 +25,21 @@ class Camera extends Object3d {
     }
 
     computeCameraMatrix() {
-        var matrix = M4.yRotation(MathUtil.DegreesToRad(this.angle));
-        var translationMatrix = M4.translation3d(new Vector3(0,0,3));
-        this._cameraMatrix = M4.multiply(matrix, translationMatrix);
+        var rotationY = M4.yRotation(MathUtil.DegreesToRad(this.angleY));
+        var rotationX = M4.xRotation(MathUtil.DegreesToRad(this.angleX));
+        var translationMatrix = M4.translation3d(new Vector3(0,0,this.distance));
+        this.cameraMatrix = M4.multiply(M4.multiply(rotationX, rotationY), translationMatrix);
     }
 
     computeViewMatrix() {
         this.computeCameraMatrix();
-        return this._cameraMatrix.inverse();
+        return this.cameraMatrix.inverse();
     }
 
-    computeWorldMatrix() {
-        super.computeWorldMatrix();
-        this._invWorldMatrix = this.worldMatrix.inverse();
-    }
+    // computeWorldMatrix() {
+    //     super.computeWorldMatrix();
+    //     this._invWorldMatrix = this.worldMatrix.inverse();
+    // }
 
     computeProjectionMatrix() {
         throw new Error("Camera.computeProjectionMatrix() must be implemented in derived classes.");
@@ -54,13 +53,19 @@ class Camera extends Object3d {
         return this._projectionMatrix;
     }
 
-    get distance() {
-        return this._distance;
+    get getDistance() {
+        return this.distance;
     }
 
-    set distance(value: number) {
-        this._distance = value;
-        this.position = new Vector3(0, 0, -this._distance);
+    setDistance(value: number) {
+        this.distance = value;
+        this.computeCameraMatrix();
+    }
+
+    setOrbitControl(angleX: number, angleY: number): void {
+        this.angleX = angleX;
+        this.angleY = angleY;
+        this.computeCameraMatrix();
     }
 }
 
