@@ -2,8 +2,44 @@
 
 import Button from "@/components/ui/Button";
 import RenderComponent from "@/components/render/RenderComponent";
+import TreeView from "@/components/ui/TreeView";
+import { TreeViewBaseItem } from "@mui/x-tree-view";
 
 export default function Home() {
+  const treeItems: TreeViewBaseItem[] = [
+    {
+      id: "1",
+      label: "Main",
+      children: [
+        { id: "2", label: "Hello" },
+        {
+          id: "3",
+          label: "Subtree with children",
+          children: [
+            { id: "6", label: "Hello" },
+            {
+              id: "7",
+              label: "Sub-subtree with children",
+              children: [
+                { id: "9", label: "Child 1" },
+                { id: "10", label: "Child 2" },
+                { id: "11", label: "Child 3" },
+              ],
+            },
+            { id: "8", label: "Hello" },
+          ],
+        },
+        { id: "4", label: "World" },
+        { id: "5", label: "Something something" },
+        { id: "12", label: "Something something" },
+        { id: "13", label: "Something something" },
+        { id: "14", label: "Something something" },
+        { id: "15", label: "Something something" },
+        { id: "16", label: "Something something" },
+      ],
+    },
+  ];
+
   return (
     <div className="flex w-full h-screen bg-main-black text-white">
       <div className="w-1/2 py-5 px-7 flex flex-col">
@@ -20,10 +56,9 @@ export default function Home() {
             <div className="text-2xl font-bold bg-gray-900">Scene Graph</div>
           </div>
           {/* Todo: Tree Component */}
-          <div
-            className="bg-gray-900 flex-grow overflow-y-auto p-5"
-            id="tree"
-          ></div>
+          <div className="bg-gray-900 flex-grow overflow-y-auto p-5">
+            <TreeView treeItems={treeItems} />
+          </div>
         </div>
         <div className="py-5 px-7 flex flex-col h-1/2">
           <div className="">
