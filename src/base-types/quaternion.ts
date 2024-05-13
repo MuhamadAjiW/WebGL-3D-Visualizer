@@ -210,4 +210,12 @@ export class Quaternion{
       ],
     ];
   }
+
+  public toJson(): string {
+    return JSON.stringify({w: this.w, x: this.x, y: this.y, z: this.z,})
+  }
+  public static fromJson(json: string): Quaternion {
+    const { w, x, y, z } = JSON.parse(json);
+    return new Quaternion(w, x, y, z);
+  }
 }

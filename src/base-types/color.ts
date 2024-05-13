@@ -64,7 +64,16 @@ export class Color{
     }
   }
 
-  public toString(): String{
+  public toString(): string{
     return `(${this.r},${this.g},${this.b},${this.a})`
+  }
+
+  public toJson(): string{
+    return JSON.stringify({r: this.r, g: this.g, b: this.b, a: this.a})
+  }
+
+  public static fromJson(json: string): Color {
+    const { r,g,b,a } = JSON.parse(json);
+    return new Color(r,g,b,a);
   }
 }

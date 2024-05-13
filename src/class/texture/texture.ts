@@ -26,6 +26,9 @@ export class Texture{
     wrapT?: GLenum
     magFilter?: GLenum
     minFilter?: GLenum
+    format?: GLenum
+    repeatS?: number
+    repeatT?: number
   }){
     this.isActive = false;
 
@@ -34,6 +37,9 @@ export class Texture{
     this.wrapT = options?.wrapT || WebGLRenderingContext.CLAMP_TO_EDGE;
     this.magFilter = options?.magFilter || WebGLRenderingContext.NEAREST;
     this.minFilter = options?.minFilter || WebGLRenderingContext.NEAREST;
+    this.format = options?.format || WebGLRenderingContext.RGBA;
+    this.repeatS = options?.repeatS || 1;
+    this.repeatT = options?.repeatT || 1;
     this.image = options.image
   }
 
@@ -84,10 +90,31 @@ export class Texture{
   }
 
   //TODO: Implement
-  public toJson(){
-      throw new Error("not Implemented");
+  public toJson(): string{
+    return JSON.stringify({
+      name: this.name,
+      wrapS: this.wrapS,
+      wrapT: this.wrapT,
+      magFilter: this.magFilter,
+      minFilter: this.minFilter,
+      format: this.format,
+      image: this.image,
+      repeatS: this.repeatS,
+      repeatT: this.repeatT,
+    })
   }
-  public fromJson(): void {
-    throw new Error("Method not implemented.");
+
+  public static fromJson(json: string): Texture {
+    const texture = JSON.parse(json);
+    return new Texture({
+      image: texture?.image,
+      wrapS: texture?.wrapS,
+      wrapT: texture?.wrapT,
+      magFilter: texture?.magFilter,
+      minFilter: texture?.minFilter,
+      format: texture?.format,
+      repeatS: texture?.repeatS,
+      repeatT: texture?.repeatT,
+    })
   }
 }
