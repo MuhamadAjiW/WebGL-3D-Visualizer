@@ -12,10 +12,11 @@ export class Mesh extends Object3D {
     this.material = material;
   }
 
-  public toJson(): void {
+  // TODO: Implement
+  public fromJson(json: string): Mesh {
     throw new Error("Method not implemented.");
   }
-  public fromJson(): void {
+  public toJson(mesh: Mesh): string {
     throw new Error("Method not implemented.");
   }
 }

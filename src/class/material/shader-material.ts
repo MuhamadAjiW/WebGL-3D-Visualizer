@@ -1,4 +1,6 @@
 import { BufferUniform } from "../webgl/uniform";
+import { BasicMaterial } from "./basic-material";
+import { PhongMaterial } from "./phong-material";
 
 export abstract class ShaderMaterial {
   // TODO: Review this note, might be a better way to improve it
@@ -7,6 +9,7 @@ export abstract class ShaderMaterial {
   // This is internal and really should not be changed outside of texture or texture loader
   public id: string;  
   public materialType: number = 0;
+  
   private _uniforms: {[name: string]: BufferUniform};
   
   constructor(materialType: number){
@@ -35,6 +38,19 @@ export abstract class ShaderMaterial {
 
   protected abstract generateId(): string;
   public abstract loadTo(gl: WebGLRenderingContext): void;
-  public abstract toJson() : void;
-  public abstract fromJson() : void;
+  public abstract toJson() : string;
+
+  // public static fromJson(json: string) : ShaderMaterial{
+  //   const material = JSON.parse(json);
+  //   switch (material.materialType) {
+  //     case 0:
+  //       return BasicMaterial.fromJson(json);
+
+  //     case 1:
+  //       return PhongMaterial.fromJson(json); 
+    
+  //     default:
+  //       throw new Error("Invalid material type index method not implemented");
+  //   }
+  // };
 }

@@ -35,10 +35,13 @@ export class BasicMaterial extends ShaderMaterial {
   }
 
   // TODO: Implement
-  public toJson(): void {
+  public toJson(): string {
     throw new Error("Method not implemented.");
   }
-  public fromJson(): void {
-    throw new Error("Method not implemented.");
+  public static fromJson(json: string): BasicMaterial {
+    const material = JSON.parse(json);
+    return new BasicMaterial({
+      color: material.color
+    })
   }
 }
