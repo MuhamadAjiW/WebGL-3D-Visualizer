@@ -4,8 +4,11 @@ import Button from "@/components/ui/Button";
 import RenderComponent from "@/components/render/RenderComponent";
 import TreeView from "@/components/ui/TreeView";
 import { TreeViewBaseItem } from "@mui/x-tree-view";
+import Controller from "@/components/ui/Controller";
+import { useState } from "react";
 
 export default function Home() {
+  // dummy
   const treeItems: TreeViewBaseItem[] = [
     {
       id: "1",
@@ -40,6 +43,17 @@ export default function Home() {
     },
   ];
 
+  const [isComponentExpanded, setIsComponentExpanded] = useState(false);
+  const [isCameraExpanded, setIsCameraExpanded] = useState(false);
+
+  const handleComponentExpanded = () => {
+    setIsComponentExpanded(!isComponentExpanded);
+  };
+
+  const handleCameraExpanded = () => {
+    setIsCameraExpanded(!isCameraExpanded);
+  };
+
   return (
     <div className="flex w-full h-screen bg-main-black text-white">
       <div className="w-1/2 py-5 px-7 flex flex-col">
@@ -55,7 +69,6 @@ export default function Home() {
           <div className="pb-6">
             <div className="text-2xl font-bold bg-gray-900">Scene Graph</div>
           </div>
-          {/* Todo: Tree Component */}
           <div className="bg-gray-900 flex-grow overflow-y-auto p-5">
             <TreeView treeItems={treeItems} />
           </div>
@@ -64,7 +77,7 @@ export default function Home() {
           <div className="">
             <div className="text-2xl font-bold bg-gray-900">Animation</div>
           </div>
-          <div className="flex gap-5 items-center w-full py-3">
+          <div className="flex gap-5 items-strech w-full py-3">
             <Button
               id="play-button"
               handleClick={() => {}}
@@ -99,8 +112,20 @@ export default function Home() {
         <div className="pb-6">
           <div className="text-2xl font-bold bg-gray-900">Inspector</div>
         </div>
-        <div className="bg-gray-900 flex-grow">
-          This is the place for Inspector
+        <div className="bg-gray-900 flex-grow p-5">
+          <Controller
+            id="component-controller"
+            isExpanded={isComponentExpanded}
+            handleClick={handleComponentExpanded}
+            title="Component Controller"
+          />
+          <Controller
+            id="camera-controller"
+            isExpanded={isCameraExpanded}
+            handleClick={handleCameraExpanded}
+            title="Camera Controller"
+            isCamera={true}
+          />
         </div>
       </div>
     </div>
