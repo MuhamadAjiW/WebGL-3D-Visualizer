@@ -9,6 +9,7 @@
   <body class="bg-main-black text-white">
     <script type="module" src="/src/main.ts"></script>
     <script src="/src/ui/button.ts"></script>
+    <script type="module" src="/src/ui/treeview.ts"></script>
     <div class="flex w-full h-screen">
       <div class="w-1/2 py-5 px-7 flex flex-col">
         <div class="pb-6">
@@ -27,8 +28,7 @@
               Scene Graph
             </div>
           </div> 
-          <div class="bg-gray-900 flex-grow">
-            This is the place for scene graph
+          <div class="bg-gray-900 flex-grow overflow-y-auto p-5" id="tree">
           </div>
         </div>
         <div class="py-5 px-7 flex flex-col h-1/2">
