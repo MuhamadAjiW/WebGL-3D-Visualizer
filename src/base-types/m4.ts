@@ -349,6 +349,55 @@ class M4 {
     return lastRow.every((val, index) => this.matrix[3][index] === val);
   }
 
+  // ROTATION METHODS
+  static xRotation(angleInRadians: number): M4 {
+    const c = Math.cos(angleInRadians);
+    const s = Math.sin(angleInRadians);
+
+    return new M4([
+      [1, 0, 0, 0],
+      [0, c, s, 0],
+      [0, -s, c, 0],
+      [0, 0, 0, 1]
+    ]);
+  }
+
+  static yRotation(angleInRadians: number): M4 {
+    const c = Math.cos(angleInRadians);
+    const s = Math.sin(angleInRadians);
+
+    return new M4([
+      [c, 0, -s, 0],
+      [0, 1, 0, 0],
+      [s, 0, c, 0],
+      [0, 0, 0, 1],
+    ]);
+  }
+
+  static zRotation(angleInRadians: number): M4 {
+    const c = Math.cos(angleInRadians);
+    const s = Math.sin(angleInRadians);
+
+    return new M4([
+      [c, s, 0, 0],
+      [-s, c, 0, 0],
+      [0, 0, 1, 0],
+      [0, 0, 0, 1]
+    ]);
+  }
+
+  xRotate(angleInRadians: number) {
+    return M4.multiply(this, M4.xRotation(angleInRadians));
+  }
+
+  yRotate(angleInRadians: number) {
+    return M4.multiply(this, M4.yRotation(angleInRadians));
+  }
+
+  zRotate(angleInRadians: number) {
+    return M4.multiply(this, M4.zRotation(angleInRadians));
+  }
+
   // STATIC METHODS
   // creates a projection matrix that defines a viewable region known as a frustum, which resembles a truncated pyramid. In a perspective projection, objects closer to the viewer appear larger, and objects further away appear smaller.
   static frustum(
