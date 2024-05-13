@@ -16,14 +16,6 @@ class Camera extends Object3d {
         this.position = new Vector3(0, 0, -this.distance);
     }
 
-    radToDeg(r: number) {
-        return r * 180 / Math.PI;
-    }
-
-    degToRad(d: number) {
-        return d * Math.PI / 180;
-    }
-
     computeCameraMatrix() {
         var rotationY = M4.yRotation(MathUtil.DegreesToRad(this.angleY));
         var rotationX = M4.xRotation(MathUtil.DegreesToRad(this.angleX));

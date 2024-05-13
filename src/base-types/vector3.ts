@@ -9,7 +9,9 @@ export class Vector3 {
   constructor(arg1?: number | number[], arg2?: number, arg3?: number) {
     if (Array.isArray(arg1)) {
       if (arg1.length !== 3) {
-        throw new Error('Point array must contain exactly three elements (x, y, z).');
+        throw new Error(
+          "Point array must contain exactly three elements (x, y, z)."
+        );
       }
       this.x = arg1[0];
       this.y = arg1[1];
@@ -20,7 +22,6 @@ export class Vector3 {
       this.z = arg3 || 0;
     }
   }
-
 
   public getVector(): [number, number, number] {
     return [this.x, this.y, this.z];
@@ -91,17 +92,25 @@ export class Vector3 {
   }
 
   // STATIC
-  public static readonly one: Vector3 = new Vector3(1,1,1);
-  public static readonly zero: Vector3 = new Vector3(0,0,0);
+  public static readonly one: Vector3 = new Vector3(1, 1, 1);
+  public static readonly zero: Vector3 = new Vector3(0, 0, 0);
 
-  public static readonly up: Vector3 = new Vector3(0,1,0);
-  public static readonly down: Vector3 = new Vector3(0,-1,0);
+  public static readonly up: Vector3 = new Vector3(0, 1, 0);
+  public static readonly down: Vector3 = new Vector3(0, -1, 0);
 
-  public static readonly forward: Vector3 = new Vector3(0,0,1);
-  public static readonly back: Vector3 = new Vector3(0,0,-1);
-  
-  public static readonly right: Vector3 = new Vector3(1,0,0);
-  public static readonly left: Vector3 = new Vector3(-1,0,0);
+  public static readonly forward: Vector3 = new Vector3(0, 0, 1);
+  public static readonly back: Vector3 = new Vector3(0, 0, -1);
+
+  public static readonly right: Vector3 = new Vector3(1, 0, 0);
+  public static readonly left: Vector3 = new Vector3(-1, 0, 0);
+
+  static fromJSON(json: string): Vector3 {
+    return new Vector3();
+  }
+
+  toJSON(): string {
+    return "";
+  }
 }
 
 export default Vector3;
