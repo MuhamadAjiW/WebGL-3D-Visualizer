@@ -8,6 +8,7 @@ import Controller from "@/components/ui/Controller";
 import { useState } from "react";
 import CameraController from "@/components/ui/CameraController";
 import { SelectChangeEvent } from "@mui/material";
+import { useFormik } from "formik";
 
 export default function Home() {
   // dummy
@@ -45,9 +46,11 @@ export default function Home() {
     },
   ];
 
-  const [isComponentExpanded, setIsComponentExpanded] = useState(false);
-  const [isCameraExpanded, setIsCameraExpanded] = useState(false);
-  const [camera, setCamera] = useState("perspectiveCamera");
+  const [isComponentExpanded, setIsComponentExpanded] =
+    useState<boolean>(false);
+  const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(false);
+  const [camera, setCamera] = useState<string>("perspectiveCamera");
+  const [distance, setDistance] = useState<number>(3);
 
   const handleComponentExpanded = () => {
     setIsComponentExpanded(!isComponentExpanded);
@@ -61,6 +64,16 @@ export default function Home() {
     setCamera(event.target.value);
   };
 
+  const handleDistanceChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    setDistance(+event.target.value);
+  };
+
+  const handleResetChange = () => {
+    setDistance(3)
+  };
+
   return (
     <div className="flex w-full h-screen bg-main-black text-white">
       <div className="w-1/2 py-5 px-7 flex flex-col">
@@ -68,7 +81,7 @@ export default function Home() {
           <div className=" text-2xl font-bold bg-gray-900">Camera View</div>
         </div>
         <div className="bg-white text-black flex-grow">
-          <RenderComponent cameraType={camera} />
+          <RenderComponent cameraType={camera} distance={distance} />
         </div>
       </div>
       <div className="w-1/4 flex flex-col border-x-2">
@@ -133,6 +146,9 @@ export default function Home() {
             title="Camera Controller"
             camera={camera}
             handleCameraChange={handleCameraChange}
+            distance={distance}
+            handleDistanceChange={handleDistanceChange}
+            handleResetChange={handleResetChange}
           />
         </div>
       </div>

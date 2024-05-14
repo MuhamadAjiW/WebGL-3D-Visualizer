@@ -26,9 +26,13 @@ import OrthographicCamera from "@/libs/class/orthographic-camera";
 
 interface RenderedComponentProps {
   cameraType: string;
+  distance: number;
 }
 
-const RenderedComponent: React.FC<RenderedComponentProps> = ({ cameraType }) => {
+const RenderedComponent: React.FC<RenderedComponentProps> = ({
+  cameraType,
+  distance,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -72,32 +76,39 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({ cameraType }) => 
         programInfo
       );
 
-      let cameraInstance: ObliqueCamera | OrthographicCamera | PersepectiveCamera | null = null;
+      let cameraInstance:
+        | ObliqueCamera
+        | OrthographicCamera
+        | PersepectiveCamera
+        | null = null;
       switch (cameraType) {
         case "obliqueCamera":
-          cameraInstance = ObliqueCamera.getInstance(
-            -1, 1, -1, 1, 0.1, 100
-          )
-          break
+          cameraInstance = ObliqueCamera.getInstance(-1, 1, -1, 1, 0.1, 100);
+          break;
         case "orthographicCamera":
           cameraInstance = OrthographicCamera.getInstance(
-            -1, 1, -1, 1, 0.1, 100
-          )
-          break
+            -1,
+            1,
+            -1,
+            1,
+            0.1,
+            100
+          );
+          break;
         case "perspectiveCamera":
           cameraInstance = PersepectiveCamera.getInstance(
             gl.canvas.width / gl.canvas.height,
             MathUtil.DegreesToRad(30),
             1,
             2000
-          )
-          break
-        default: 
-          console.log(`Unknown camera type: ${cameraType}`)
-          break
+          );
+          break;
+        default:
+          console.log(`Unknown camera type: ${cameraType}`);
+          break;
       }
 
-      if(cameraInstance == null) return
+      if (cameraInstance == null) return;
 
       cameraInstance.position = new Vector3(0, 0, 0);
       console.log(M4.flatten(cameraInstance.viewProjectionMatrix));
@@ -165,9 +176,11 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({ cameraType }) => 
       const inc = 1;
       function render() {
         degrees += inc;
-        if (cameraInstance == null) return
+
+        if (cameraInstance == null) return;
 
         cameraInstance.setOrbitControl(degrees, degrees);
+        cameraInstance.setDistance(distance);
         dummyUniformsData.u_projectionMatrix.set(
           0,
           M4.flatten(cameraInstance.viewProjectionMatrix)
@@ -183,7 +196,7 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({ cameraType }) => 
     };
 
     runWebGL();
-  }, []);
+  }, [cameraType, distance]);
 
   return <canvas id="webgl-canvas" className="w-full h-full" ref={canvasRef} />;
 };

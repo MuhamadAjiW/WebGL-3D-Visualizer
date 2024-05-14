@@ -12,6 +12,11 @@ interface ControllerProps {
   title: string;
   camera: string;
   handleCameraChange: (event: SelectChangeEvent) => void;
+  distance: number;
+  handleDistanceChange: (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => void;
+  handleResetChange: () => void;
 }
 
 const CameraController: React.FC<ControllerProps> = ({
@@ -21,6 +26,9 @@ const CameraController: React.FC<ControllerProps> = ({
   title,
   camera,
   handleCameraChange,
+  distance,
+  handleDistanceChange,
+  handleResetChange,
 }) => {
   const cameraType: InputOptions[] = [
     {
@@ -56,6 +64,8 @@ const CameraController: React.FC<ControllerProps> = ({
                 type="number"
                 className="bg-white"
                 size="small"
+                onChange={handleDistanceChange}
+                value={distance || ""}
               />
             </div>
             <div className="flex items-center justify-between">
@@ -78,7 +88,7 @@ const CameraController: React.FC<ControllerProps> = ({
                 id="reset-default"
                 text="Reset"
                 className="bg-white text-black py-1 px-4 rounded-sm"
-                handleClick={() => {}}
+                handleClick={handleResetChange}
               />
             </div>
           </div>
