@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import vertexShaderSource from "@/shaders/vertex-shader.vert?raw";
 import fragmentShaderSource from "@/shaders/fragment-shader.frag?raw";
 import { ProgramInfo } from "@/libs/base-types/webgl-program-info";
@@ -34,6 +34,7 @@ const useRender = ({ cameraType, distance }: HooksRenderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    let isMouseClick = false;
     const runWebGL = async () => {
       if (!canvasRef.current) return;
 
@@ -170,14 +171,32 @@ const useRender = ({ cameraType, distance }: HooksRenderProps) => {
       const mesh = new Mesh(geometry, material);
       scene.add(mesh);
 
-      let degrees = 0;
+      let dx = 0;
+      let dy = 0;
       const inc = 1;
-      function render() {
-        degrees += inc;
 
+      canvas.addEventListener("mousedown", () => {
+        isMouseClick = true
+        console.log("Mouse Click")
+      })
+
+      canvas.addEventListener("mouseup", () => {
+        isMouseClick = false
+      })
+
+      canvas.addEventListener("mousemove", (event) => {
+        if (!isMouseClick) return 
+
+        const rect = canvas.getBoundingClientRect();
+
+        dx = event.clientX - rect.left;
+        dy = event.clientY - rect.top;
+      });
+
+      function render() {
         if (cameraInstance == null) return;
 
-        cameraInstance.setOrbitControl(degrees, degrees);
+        cameraInstance.setOrbitControl(dy, dx);
         cameraInstance.setDistance(distance);
         dummyUniformsData.u_projectionMatrix.set(
           0,
