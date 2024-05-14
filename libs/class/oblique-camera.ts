@@ -57,6 +57,15 @@ class ObliqueCamera extends Camera {
 
     this._projectionMatrix = M4.multiply(morth, M4.multiply(st, h));
   }
+
+  setDistance(distance: number) {
+    this.left *= distance;
+    this.right *= distance;
+    this.bottom *= distance;
+    this.top *= distance;
+    this.computeProjectionMatrix();
+  }
+
 }
 
 export default ObliqueCamera;
