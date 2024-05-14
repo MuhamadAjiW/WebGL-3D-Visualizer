@@ -6,6 +6,7 @@ import TreeView from "@/components/ui/TreeView";
 import { TreeViewBaseItem } from "@mui/x-tree-view";
 import Controller from "@/components/ui/Controller";
 import { useState } from "react";
+import CameraController from "@/components/ui/CameraController";
 
 export default function Home() {
   // dummy
@@ -119,12 +120,11 @@ export default function Home() {
             handleClick={handleComponentExpanded}
             title="Component Controller"
           />
-          <Controller
+          <CameraController
             id="camera-controller"
             isExpanded={isCameraExpanded}
             handleClick={handleCameraExpanded}
             title="Camera Controller"
-            isCamera={true}
           />
         </div>
       </div>
