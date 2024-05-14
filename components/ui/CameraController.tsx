@@ -10,6 +10,8 @@ interface ControllerProps {
   isExpanded: boolean;
   handleClick: () => void;
   title: string;
+  camera: string;
+  handleCameraChange: (event: SelectChangeEvent) => void;
 }
 
 const CameraController: React.FC<ControllerProps> = ({
@@ -17,6 +19,8 @@ const CameraController: React.FC<ControllerProps> = ({
   isExpanded,
   handleClick,
   title,
+  camera,
+  handleCameraChange,
 }) => {
   const cameraType: InputOptions[] = [
     {
@@ -33,11 +37,6 @@ const CameraController: React.FC<ControllerProps> = ({
     },
   ];
 
-  const [camera, setCamera] = useState("perspectiveCamera");
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setCamera(event.target.value);
-  };
   return (
     <div className="w-full py-2" id={id}>
       <div
@@ -63,7 +62,7 @@ const CameraController: React.FC<ControllerProps> = ({
               <div>Camera Type</div>
               <Select
                 value={camera}
-                onChange={handleChange}
+                onChange={handleCameraChange}
                 className="bg-white"
                 size="small"
               >

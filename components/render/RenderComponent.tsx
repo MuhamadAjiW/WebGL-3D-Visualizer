@@ -21,10 +21,14 @@ import PersepectiveCamera from "@/libs/class/persepective-camera";
 import { MathUtil } from "@/libs/util/math-util";
 import { useEffect, useRef } from "react";
 import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
+import ObliqueCamera from "@/libs/class/oblique-camera";
+import OrthographicCamera from "@/libs/class/orthographic-camera";
 
-interface RenderedComponentProps {}
+interface RenderedComponentProps {
+  cameraType: string;
+}
 
-const RenderedComponent: React.FC<RenderedComponentProps> = ({}) => {
+const RenderedComponent: React.FC<RenderedComponentProps> = ({ cameraType }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -68,33 +72,50 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({}) => {
         programInfo
       );
 
-      const camera = new PersepectiveCamera(
-        gl.canvas.width / gl.canvas.height,
-        MathUtil.DegreesToRad(30),
-        1,
-        2000
-      );
-      camera.position = new Vector3(0, 0, 0);
-      console.log(M4.flatten(camera.viewProjectionMatrix));
-      console.log(camera);
-      
+      let cameraInstance: ObliqueCamera | OrthographicCamera | PersepectiveCamera | null = null;
+      switch (cameraType) {
+        case "obliqueCamera":
+          cameraInstance = ObliqueCamera.getInstance(
+            0, 0, 0, 0, 0, 0
+          )
+          break
+        case "orthographicCamera":
+          cameraInstance = OrthographicCamera.getInstance(
+            0, 0, 0, 0, 0, 0
+          )
+          break
+        case "perspectiveCamera":
+          cameraInstance = PersepectiveCamera.getInstance(
+            gl.canvas.width / gl.canvas.height,
+            MathUtil.DegreesToRad(30),
+            1,
+            2000
+          )
+          break
+        default: 
+          console.log(`Unknown camera type: ${cameraType}`)
+          break
+      }
+
+      if(cameraInstance == null) return
+
+      cameraInstance.position = new Vector3(0, 0, 0);
+      console.log(M4.flatten(cameraInstance.viewProjectionMatrix));
+      console.log(cameraInstance);
+
       // TODO: Delete, this is for testing purposes
       const dummyUniformsData = {
         // Camera
         u_projectionMatrix: new BufferUniform(
-          new Float32Array(M4.flatten(camera.viewProjectionMatrix)),
+          new Float32Array(M4.flatten(cameraInstance.viewProjectionMatrix)),
           16,
           gl.FLOAT_MAT4
         ),
         // Node
         u_world: new BufferUniform(
-          new Float32Array([
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1
-          ]),
-          16, gl.FLOAT_MAT4
+          new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
+          16,
+          gl.FLOAT_MAT4
         ),
         // Light
         u_lightWorldPos: new BufferUniform(
@@ -104,23 +125,15 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({}) => {
         ),
         // Camera
         u_viewInverse: new BufferUniform(
-          new Float32Array([
-            1, 0, 0, 0, 
-            0, 1, 0, 0, 
-            0, 0, 1, 0, 
-            0, 0, 0, 1
-          ]),
-          16, gl.FLOAT_MAT4
+          new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
+          16,
+          gl.FLOAT_MAT4
         ),
         // Node
         u_worldInverseTranspose: new BufferUniform(
-          new Float32Array([
-            1, 0, 0, 0, 
-            0, 1, 0, 0, 
-            0, 0, 1, 0, 
-            0, 0, 0, 1
-          ]),
-          16, gl.FLOAT_MAT4
+          new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
+          16,
+          gl.FLOAT_MAT4
         ),
         // Light
         u_lightColor: new BufferUniform(
@@ -129,9 +142,9 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({}) => {
           gl.FLOAT_VEC4
         ),
       };
-      
+
       gl.useProgram(program);
-      
+
       const scene = new Scene();
       const geometry = new CubeGeometry(2);
 
@@ -150,17 +163,21 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({}) => {
 
       let degrees = 0;
       const inc = 1;
-      function render (){
+      function render() {
         degrees += inc;
-        camera.setOrbitControl(degrees, degrees);
-        dummyUniformsData.u_projectionMatrix.set(0, M4.flatten(camera.viewProjectionMatrix))
+        if (cameraInstance == null) return
+        
+        cameraInstance.setOrbitControl(degrees, degrees);
+        dummyUniformsData.u_projectionMatrix.set(
+          0,
+          M4.flatten(cameraInstance.viewProjectionMatrix)
+        );
         WebGLUtils.setUniforms(programInfo, dummyUniformsData);
-      
+
         renderer.render(scene, null);
         requestAnimationFrame(render);
       }
       render();
-      
 
       console.log("Done");
     };

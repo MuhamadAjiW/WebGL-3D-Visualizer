@@ -7,6 +7,7 @@ import { TreeViewBaseItem } from "@mui/x-tree-view";
 import Controller from "@/components/ui/Controller";
 import { useState } from "react";
 import CameraController from "@/components/ui/CameraController";
+import { SelectChangeEvent } from "@mui/material";
 
 export default function Home() {
   // dummy
@@ -46,6 +47,7 @@ export default function Home() {
 
   const [isComponentExpanded, setIsComponentExpanded] = useState(false);
   const [isCameraExpanded, setIsCameraExpanded] = useState(false);
+  const [camera, setCamera] = useState("perspectiveCamera");
 
   const handleComponentExpanded = () => {
     setIsComponentExpanded(!isComponentExpanded);
@@ -55,6 +57,10 @@ export default function Home() {
     setIsCameraExpanded(!isCameraExpanded);
   };
 
+  const handleCameraChange = (event: SelectChangeEvent) => {
+    setCamera(event.target.value);
+  };
+
   return (
     <div className="flex w-full h-screen bg-main-black text-white">
       <div className="w-1/2 py-5 px-7 flex flex-col">
@@ -62,7 +68,7 @@ export default function Home() {
           <div className=" text-2xl font-bold bg-gray-900">Camera View</div>
         </div>
         <div className="bg-white text-black flex-grow">
-          <RenderComponent />
+          <RenderComponent cameraType={camera} />
         </div>
       </div>
       <div className="w-1/4 flex flex-col border-x-2">
@@ -125,6 +131,8 @@ export default function Home() {
             isExpanded={isCameraExpanded}
             handleClick={handleCameraExpanded}
             title="Camera Controller"
+            camera={camera}
+            handleCameraChange={handleCameraChange}
           />
         </div>
       </div>
