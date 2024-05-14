@@ -133,7 +133,7 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({}) => {
       gl.useProgram(program);
       
       const scene = new Scene();
-      const geometry = new CubeGeometry(2);
+      const geometry = new CubeGeometry(1);
 
       // const material = new BasicMaterial({color:new Color(0xff00ffff)});
       const texture = await TextureLoader.load("res/f-texture.png");
@@ -149,7 +149,7 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({}) => {
       scene.add(mesh);
 
       let degrees = 0;
-      const inc = 1;
+      const inc = 0.02;
       function render (){
         degrees += inc;
         camera.setOrbitControl(degrees, degrees);

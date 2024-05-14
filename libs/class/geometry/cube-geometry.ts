@@ -13,11 +13,11 @@ export class CubeGeometry extends BufferGeometry {
     const vertices = new Float32Array([
       // Front face
       -halfsize, -halfsize, 0,
-      -halfsize, halfsize, 0,
       halfsize,  -halfsize, 0,
+      -halfsize, halfsize, 0,
       
-      -halfsize,  halfsize, 0,
       halfsize, halfsize, 0,
+      -halfsize,  halfsize, 0,
       halfsize, -halfsize, 0
       
       // Right face
@@ -33,11 +33,11 @@ export class CubeGeometry extends BufferGeometry {
     const textureCoordinates = new Float32Array([
       // Front face
       0, 1,
-      0, 0,
       1, 1,
-
       0, 0,
+
       1, 0,
+      0, 0,
       1, 1,
       
       // Right face
