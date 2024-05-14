@@ -77,6 +77,9 @@ export class WebGLRenderer {
     scene.traverse(scene);
 
     if (scene instanceof Mesh) {
+      //TODO: Optimize this call
+      scene.computeWorldMatrix(false, false);
+
       this.createOrGetMaterial(scene.material);
 
       WebGLUtils.setAttributes(this.currentProgram, scene.geometry.attributes);
@@ -91,6 +94,24 @@ export class WebGLRenderer {
       WebGLUtils.setUniform(this.currentProgram, UniformKeys.VIEW_INVERSE,
         new BufferUniform(
           new Float32Array(M4.flatten(camera.cameraMatrix)),
+          16, WebGLRenderingContext.FLOAT_MAT4
+        )
+      )
+      WebGLUtils.setUniform(this.currentProgram, UniformKeys.VIEW_INVERSE,
+        new BufferUniform(
+          new Float32Array(M4.flatten(camera.cameraMatrix)),
+          16, WebGLRenderingContext.FLOAT_MAT4
+        )
+      )
+      WebGLUtils.setUniform(this.currentProgram, UniformKeys.WORLD,
+        new BufferUniform(
+          new Float32Array(M4.flatten(scene.worldMatrix)),
+          16, WebGLRenderingContext.FLOAT_MAT4
+        )
+      )
+      WebGLUtils.setUniform(this.currentProgram, UniformKeys.WORLD_INVERSE_TRANSPOSE,
+        new BufferUniform(
+          new Float32Array(M4.flatten(scene.worldMatrix.inverse().transpose())),
           16, WebGLRenderingContext.FLOAT_MAT4
         )
       )
