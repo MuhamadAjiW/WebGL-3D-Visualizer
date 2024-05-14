@@ -21,6 +21,7 @@ import PersepectiveCamera from "@/libs/class/persepective-camera";
 import { MathUtil } from "@/libs/util/math-util";
 import { useEffect, useRef } from "react";
 import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
+import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
 
 interface RenderedComponentProps {}
 
@@ -80,12 +81,6 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({}) => {
       
       // TODO: Delete, this is for testing purposes
       const dummyUniformsData = {
-        // Camera
-        u_projectionMatrix: new BufferUniform(
-          new Float32Array(M4.flatten(camera.viewProjectionMatrix)),
-          16,
-          gl.FLOAT_MAT4
-        ),
         // Node
         u_world: new BufferUniform(
           new Float32Array([
@@ -98,19 +93,9 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({}) => {
         ),
         // Light
         u_lightWorldPos: new BufferUniform(
-          new Float32Array([1, 0, 0]),
+          new Float32Array([0, 0, 1]),
           3,
           gl.FLOAT_VEC3
-        ),
-        // Camera
-        u_viewInverse: new BufferUniform(
-          new Float32Array([
-            1, 0, 0, 0, 
-            0, 1, 0, 0, 
-            0, 0, 1, 0, 
-            0, 0, 0, 1
-          ]),
-          16, gl.FLOAT_MAT4
         ),
         // Node
         u_worldInverseTranspose: new BufferUniform(
@@ -129,13 +114,17 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({}) => {
           gl.FLOAT_VEC4
         ),
       };
-      
+
       gl.useProgram(program);
       
       const scene = new Scene();
-      const geometry = new CubeGeometry(1);
+      const geometry = new BlockGeometry(0.5, 0.5, 1.5);
 
       // const material = new BasicMaterial({color:new Color(0xff00ffff)});
+      
+      // WebGLUtils.setAttribute(programInfo, AttributeKeys.NORMAL, dummyAttributesData.a_normal);
+      // WebGLUtils.setAttributes(programInfo, dummyAttributesData);
+      
       const texture = await TextureLoader.load("res/f-texture.png");
       const material = new PhongMaterial({
         ambient: new Color(0xa0a0a000),
@@ -149,14 +138,14 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({}) => {
       scene.add(mesh);
 
       let degrees = 0;
-      const inc = 0.02;
+      const inc = 0.1;
+      WebGLUtils.setUniforms(programInfo, dummyUniformsData);
       function render (){
         degrees += inc;
         camera.setOrbitControl(degrees, degrees);
-        dummyUniformsData.u_projectionMatrix.set(0, M4.flatten(camera.viewProjectionMatrix))
-        WebGLUtils.setUniforms(programInfo, dummyUniformsData);
+        // dummyUniformsData.u_projectionMatrix.set(0, M4.flatten(camera.viewProjectionMatrix))
       
-        renderer.render(scene, null);
+        renderer.render(scene, camera);
         requestAnimationFrame(render);
       }
       render();

@@ -61,11 +61,13 @@ class BufferGeometry {
       throw new Error("Geometry vertices is less than 3, needs at least 3 vertices to calculate the normal of a surface");
     }
 
-    const increment = position.size * 3;
-    for (let index = 0; index < position.length; index += increment) {
-      const vertex1 = new Vector3(position.data[index], position.data[index + 1], position.data[index + 2]);
-      const vertex2 = new Vector3(position.data[index + 3], position.data[index + 3 + 1], position.data[index + 3 + 2]);
-      const vertex3 = new Vector3(position.data[index + 6], position.data[index + 6 + 1], position.data[index + 6 + 2]);
+    const length = position.length / position.size;
+    for (let index = 0; index < position.length; index += 3) {
+      const offset = index * position.size;
+
+      const vertex1 = new Vector3(position.data[offset], position.data[offset + 1], position.data[offset + 2]);
+      const vertex2 = new Vector3(position.data[offset + 3], position.data[offset + 4], position.data[offset + 5]);
+      const vertex3 = new Vector3(position.data[index + 6], position.data[offset + 7], position.data[offset + 8]);
       
       const vector1 = vertex2.substract(vertex1);
       const vector2 = vertex3.substract(vertex1);
@@ -78,6 +80,23 @@ class BufferGeometry {
     }
     // Lakukan kalkulasi normal disini.
 
+    // const a_normal = new BufferAttribute(
+    //   new Float32Array([
+    //     -0.5, -0.5, 0, 
+    //     -0.5, 0.5, 0, 
+    //     0.5, -0.5, 0, 
+    //     -0.5, 0.5, 0, 
+    //     0.5, 0.5, 0, 
+    //     0.5, -0.5, 0,
+    //   ]),
+    //   3,
+    //   { dtype: WebGLRenderingContext.FLOAT, normalize: false, stride: 0, offset: 0 }
+    // );
+    // console.log("Position Info:");
+    // console.log(length);
+    // console.log("Normal Data:");
+    // console.log(normal.data);
+    
     this.setAttribute(AttributeKeys.NORMAL, normal);
   }
 

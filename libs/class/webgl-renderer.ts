@@ -1,9 +1,12 @@
+import M4 from "../base-types/m4";
 import { AttributeKeys, UniformKeys } from "../base-types/webgl-keys";
 import { ProgramInfo } from "../base-types/webgl-program-info";
 import { WebGLUtil as WebGLUtils } from "../util/webgl-util";
+import Camera from "./camera";
 import { ShaderMaterial } from "./material/shader-material";
 import { Mesh } from "./mesh";
 import Object3D from "./object3d";
+import { BufferUniform } from "./webgl/uniform";
 
 export class WebGLRenderer {
   public canvas: HTMLCanvasElement;
@@ -28,6 +31,10 @@ export class WebGLRenderer {
 
     this.adjustCanvas();
     window.addEventListener("resize", this.adjustCanvas);
+
+    
+    // TODO: Review for hollow objects
+    this.gl.enable(WebGLRenderingContext.CULL_FACE);
   }
 
   setViewport(x: number, y: number, width: number, height: number) {
@@ -64,9 +71,8 @@ export class WebGLRenderer {
     return materialStored;
   }
 
-  public render(scene: Object3D, camera: any) {
-    console.log("Rendering");
-
+  public render(scene: Object3D, camera: Camera) {
+    // TODO: Only render when dirty
     // TODO: process node, camera, light
     scene.traverse(scene);
 
@@ -75,6 +81,19 @@ export class WebGLRenderer {
 
       WebGLUtils.setAttributes(this.currentProgram, scene.geometry.attributes);
       WebGLUtils.setUniforms(this.currentProgram, scene.material.uniforms);
+
+      WebGLUtils.setUniform(this.currentProgram, UniformKeys.PROJECTION_MATRIX,
+        new BufferUniform(
+          new Float32Array(M4.flatten(camera.viewProjectionMatrix)),
+          16, WebGLRenderingContext.FLOAT_MAT4
+        )
+      )
+      WebGLUtils.setUniform(this.currentProgram, UniformKeys.VIEW_INVERSE,
+        new BufferUniform(
+          new Float32Array(M4.flatten(camera.cameraMatrix)),
+          16, WebGLRenderingContext.FLOAT_MAT4
+        )
+      )
 
       // TODO: Use indices when drawing
       this.gl.drawArrays(
