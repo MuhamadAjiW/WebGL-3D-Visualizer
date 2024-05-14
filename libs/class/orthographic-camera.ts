@@ -37,6 +37,16 @@ class OrthographicCamera extends Camera {
       this.far
     );
   }
+
+  setDistance(value: number) {
+    const zoomFactor = value / this.distance;
+    this.left *= zoomFactor;
+    this.right *= zoomFactor;
+    this.bottom *= zoomFactor;
+    this.top *= zoomFactor;
+    this.distance = value;
+    this.computeProjectionMatrix();
+  }
 }
 
 export default OrthographicCamera;
