@@ -1,7 +1,7 @@
 import { InputOptions } from "@/types/ui";
 import { MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import React, { useState } from "react";
-import Button from "./Button";
+import Button from "../ui/Button";
 import { GoChevronDown, GoChevronRight } from "react-icons/go";
 import { Collapse } from "react-collapse";
 

@@ -6,9 +6,8 @@ import TreeView from "@/components/ui/TreeView";
 import { TreeViewBaseItem } from "@mui/x-tree-view";
 import Controller from "@/components/ui/Controller";
 import { useState } from "react";
-import CameraController from "@/components/ui/CameraController";
+import CameraController from "@/components/camera/CameraController";
 import { SelectChangeEvent } from "@mui/material";
-import { useFormik } from "formik";
 
 export default function Home() {
   // dummy
@@ -51,6 +50,7 @@ export default function Home() {
   const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(false);
   const [camera, setCamera] = useState<string>("perspectiveCamera");
   const [distance, setDistance] = useState<number>(3);
+  const [isReset, setIsReset] = useState<boolean>(false);
 
   const handleComponentExpanded = () => {
     setIsComponentExpanded(!isComponentExpanded);
@@ -71,7 +71,8 @@ export default function Home() {
   };
 
   const handleResetChange = () => {
-    setDistance(3)
+    setIsReset(true);
+    setDistance(3);
   };
 
   return (
@@ -81,7 +82,12 @@ export default function Home() {
           <div className=" text-2xl font-bold bg-gray-900">Camera View</div>
         </div>
         <div className="bg-white text-black flex-grow">
-          <RenderComponent cameraType={camera} distance={distance} />
+          <RenderComponent
+            cameraType={camera}
+            distance={distance}
+            isReset={isReset}
+            handleReset={setIsReset}
+          />
         </div>
       </div>
       <div className="w-1/4 flex flex-col border-x-2">

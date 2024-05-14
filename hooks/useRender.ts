@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import vertexShaderSource from "@/shaders/vertex-shader.vert?raw";
 import fragmentShaderSource from "@/shaders/fragment-shader.frag?raw";
 import { ProgramInfo } from "@/libs/base-types/webgl-program-info";
@@ -28,9 +28,16 @@ import OrthographicCamera from "@/libs/class/orthographic-camera";
 interface HooksRenderProps {
   cameraType: string;
   distance: number;
+  isReset: boolean;
+  handleReset: Dispatch<SetStateAction<boolean>>;
 }
 
-const useRender = ({ cameraType, distance }: HooksRenderProps) => {
+const useRender = ({
+  cameraType,
+  distance,
+  isReset,
+  handleReset,
+}: HooksRenderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -173,25 +180,29 @@ const useRender = ({ cameraType, distance }: HooksRenderProps) => {
 
       let dx = 0;
       let dy = 0;
-      const inc = 1;
 
       canvas.addEventListener("mousedown", () => {
-        isMouseClick = true
-        console.log("Mouse Click")
-      })
+        isMouseClick = true;
+      });
 
       canvas.addEventListener("mouseup", () => {
-        isMouseClick = false
-      })
+        isMouseClick = false;
+      });
 
       canvas.addEventListener("mousemove", (event) => {
-        if (!isMouseClick) return 
+        if (!isMouseClick) return;
 
         const rect = canvas.getBoundingClientRect();
 
         dx = event.clientX - rect.left;
         dy = event.clientY - rect.top;
       });
+
+      if (isReset) {
+        dx = 0;
+        dy = 0;
+        handleReset(false);
+      }
 
       function render() {
         if (cameraInstance == null) return;
@@ -213,7 +224,7 @@ const useRender = ({ cameraType, distance }: HooksRenderProps) => {
     };
 
     runWebGL();
-  }, [cameraType, distance]);
+  }, [cameraType, distance, isReset]);
 
   return canvasRef;
 };
