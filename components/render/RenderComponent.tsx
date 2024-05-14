@@ -76,12 +76,12 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({ cameraType }) => 
       switch (cameraType) {
         case "obliqueCamera":
           cameraInstance = ObliqueCamera.getInstance(
-            0, 0, 0, 0, 0, 0
+            -1, 1, -1, 1, 0.1, 100
           )
           break
         case "orthographicCamera":
           cameraInstance = OrthographicCamera.getInstance(
-            0, 0, 0, 0, 0, 0
+            -1, 1, -1, 1, 0.1, 100
           )
           break
         case "perspectiveCamera":
@@ -166,7 +166,7 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({ cameraType }) => 
       function render() {
         degrees += inc;
         if (cameraInstance == null) return
-        
+
         cameraInstance.setOrbitControl(degrees, degrees);
         dummyUniformsData.u_projectionMatrix.set(
           0,
