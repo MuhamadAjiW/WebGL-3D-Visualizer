@@ -65,8 +65,6 @@ export class WebGLRenderer {
   }
 
   public render(scene: Object3D, camera: any) {
-    console.log("Rendering");
-
     // TODO: process node, camera, light
     scene.traverse(scene);
 
