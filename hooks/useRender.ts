@@ -24,6 +24,7 @@ import { useEffect, useRef } from "react";
 import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
 import ObliqueCamera from "@/libs/class/oblique-camera";
 import OrthographicCamera from "@/libs/class/orthographic-camera";
+import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
 
 interface HooksRenderProps {
   cameraType: string;
@@ -122,35 +123,11 @@ const useRender = ({
 
       // TODO: Delete, this is for testing purposes
       const dummyUniformsData = {
-        // Camera
-        u_projectionMatrix: new BufferUniform(
-          new Float32Array(M4.flatten(cameraInstance.viewProjectionMatrix)),
-          16,
-          gl.FLOAT_MAT4
-        ),
-        // Node
-        u_world: new BufferUniform(
-          new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
-          16,
-          gl.FLOAT_MAT4
-        ),
         // Light
         u_lightWorldPos: new BufferUniform(
           new Float32Array([1, 0, 0]),
           3,
           gl.FLOAT_VEC3
-        ),
-        // Camera
-        u_viewInverse: new BufferUniform(
-          new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
-          16,
-          gl.FLOAT_MAT4
-        ),
-        // Node
-        u_worldInverseTranspose: new BufferUniform(
-          new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
-          16,
-          gl.FLOAT_MAT4
         ),
         // Light
         u_lightColor: new BufferUniform(
@@ -163,7 +140,7 @@ const useRender = ({
       gl.useProgram(program);
 
       const scene = new Scene();
-      const geometry = new CubeGeometry(2);
+      const geometry = new BlockGeometry(0.5, 0.5, 1);
 
       // const material = new BasicMaterial({color:new Color(0xff00ffff)});
       const texture = await TextureLoader.load("res/f-texture.png");
@@ -204,18 +181,14 @@ const useRender = ({
         handleReset(false);
       }
 
+      WebGLUtils.setUniforms(programInfo, dummyUniformsData);
       function render() {
         if (cameraInstance == null) return;
 
         cameraInstance.setOrbitControl(dy, dx);
         cameraInstance.setDistance(distance);
-        dummyUniformsData.u_projectionMatrix.set(
-          0,
-          M4.flatten(cameraInstance.viewProjectionMatrix)
-        );
-        WebGLUtils.setUniforms(programInfo, dummyUniformsData);
 
-        renderer.render(scene, null);
+        renderer.render(scene, cameraInstance);
         requestAnimationFrame(render);
       }
       render();
