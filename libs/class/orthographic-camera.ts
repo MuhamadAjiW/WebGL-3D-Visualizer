@@ -1,5 +1,6 @@
 import Camera from "./camera";
 import M4 from "../base-types/m4";
+import { to } from "@react-spring/web";
 
 class OrthographicCamera extends Camera {
   top: number;
@@ -8,6 +9,8 @@ class OrthographicCamera extends Camera {
   right: number;
   near: number;
   far: number;
+
+  private static instance: OrthographicCamera;
 
   constructor(
     left: number,
@@ -25,6 +28,28 @@ class OrthographicCamera extends Camera {
     this.near = near;
     this.far = far;
     this.computeProjectionMatrix();
+  }
+
+  public static getInstance(
+    left: number,
+    right: number,
+    bottom: number,
+    top: number,
+    near: number,
+    far: number
+  ): OrthographicCamera {
+    if (!OrthographicCamera.instance) {
+      OrthographicCamera.instance = new OrthographicCamera(
+        left,
+        right,
+        bottom,
+        top,
+        near,
+        far
+      );
+    }
+
+    return OrthographicCamera.instance;
   }
 
   computeProjectionMatrix() {
