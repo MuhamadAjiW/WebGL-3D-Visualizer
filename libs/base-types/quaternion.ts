@@ -220,25 +220,10 @@ export class Quaternion {
 
   static fromJSON(json: string): Quaternion {
     const data = JSON.parse(json);
-    if (
-      typeof data.w !== "number" ||
-      typeof data.x !== "number" ||
-      typeof data.y !== "number" ||
-      typeof data.z !== "number"
-    ) {
-      throw new Error(
-        "JSON must contain numeric values for 'w', 'x', 'y', and 'z'."
-      );
-    }
-    return new Quaternion(data.w, data.x, data.y, data.z);
+    return new Quaternion(data[0], data[1], data[2], data[3]);
   }
 
   toJSON(): string {
-    return JSON.stringify({
-      w: this.w,
-      x: this.x,
-      y: this.y,
-      z: this.z,
-    });
+    return JSON.stringify([this.w, this.x, this.y, this.z]);
   }
 }
