@@ -1,3 +1,5 @@
+import { Texture } from "../texture/texture";
+import { WebGLRenderer } from "../webgl-renderer";
 import { BufferUniform } from "../webgl/uniform";
 import { BasicMaterial } from "./basic-material";
 import { PhongMaterial } from "./phong-material";
@@ -9,13 +11,15 @@ export abstract class ShaderMaterial {
   // This is internal and really should not be changed outside of texture or texture loader
   public id: string;  
   public materialType: number = 0;
+  public texture: Texture | undefined = undefined;
   
   private _uniforms: {[name: string]: BufferUniform};
   
-  constructor(materialType: number){
+  constructor(materialType: number, texture?: Texture){
     this._uniforms = {};
     this.id = this.generateId();
     this.materialType = materialType;
+    this.texture = texture;
   }
 
   get uniforms() {
@@ -37,7 +41,7 @@ export abstract class ShaderMaterial {
   }
 
   protected abstract generateId(): string;
-  public abstract loadTo(gl: WebGLRenderingContext): void;
+  public abstract loadTo(renderer: WebGLRenderer): void;
   public abstract toJson() : string;
 
   // public static fromJson(json: string) : ShaderMaterial{

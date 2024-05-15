@@ -1,7 +1,7 @@
 import M4 from "../base-types/m4";
 import { AttributeKeys, UniformKeys } from "../base-types/webgl-keys";
 import { ProgramInfo } from "../base-types/webgl-program-info";
-import { WebGLUtil as WebGLUtils } from "../util/webgl-util";
+import { WebGLUtil } from "../util/webgl-util";
 import Camera from "./camera";
 import { ShaderMaterial } from "./material/shader-material";
 import { Mesh } from "./mesh";
@@ -32,7 +32,6 @@ export class WebGLRenderer {
     this.adjustCanvas();
     window.addEventListener("resize", this.adjustCanvas);
 
-    
     // TODO: Review for hollow objects
     this.gl.enable(WebGLRenderingContext.CULL_FACE);
   }
@@ -63,7 +62,7 @@ export class WebGLRenderer {
 
     if (!materialStored) {
       this.materials.set(material.id, material);
-      material.loadTo(this.gl);
+      material.loadTo(this);
 
       return materialStored;
     }
@@ -82,39 +81,46 @@ export class WebGLRenderer {
 
       this.createOrGetMaterial(scene.material);
 
-      WebGLUtils.setAttributes(this.currentProgram, scene.geometry.attributes);
-      WebGLUtils.setUniforms(this.currentProgram, scene.material.uniforms);
+      WebGLUtil.setAttributes(this.currentProgram, scene.geometry.attributes);
+      WebGLUtil.setUniforms(this.currentProgram, scene.material.uniforms);
 
-      WebGLUtils.setUniform(this.currentProgram, UniformKeys.PROJECTION_MATRIX,
+      WebGLUtil.setUniform(
+        this.currentProgram,
+        UniformKeys.PROJECTION_MATRIX,
         new BufferUniform(
-          new Float32Array(M4.flatten(camera.viewProjectionMatrix)),
-          16, WebGLRenderingContext.FLOAT_MAT4
+          new Float32Array(M4.flatten(camera.projectionMatrix)),
+          16,
+          WebGLRenderingContext.FLOAT_MAT4
         )
-      )
-      WebGLUtils.setUniform(this.currentProgram, UniformKeys.VIEW_INVERSE,
+      );
+      WebGLUtil.setUniform(
+        this.currentProgram,
+        UniformKeys.VIEW_MATRIX,
         new BufferUniform(
-          new Float32Array(M4.flatten(camera.cameraMatrix)),
-          16, WebGLRenderingContext.FLOAT_MAT4
+          new Float32Array(M4.flatten(camera.computeViewMatrix())),
+          16,
+          WebGLRenderingContext.FLOAT_MAT4
         )
-      )
-      WebGLUtils.setUniform(this.currentProgram, UniformKeys.VIEW_INVERSE,
-        new BufferUniform(
-          new Float32Array(M4.flatten(camera.cameraMatrix)),
-          16, WebGLRenderingContext.FLOAT_MAT4
-        )
-      )
-      WebGLUtils.setUniform(this.currentProgram, UniformKeys.WORLD,
+      );
+
+      WebGLUtil.setUniform(
+        this.currentProgram,
+        UniformKeys.WORLD_MATRIX,
         new BufferUniform(
           new Float32Array(M4.flatten(scene.worldMatrix)),
-          16, WebGLRenderingContext.FLOAT_MAT4
+          16,
+          WebGLRenderingContext.FLOAT_MAT4
         )
-      )
-      WebGLUtils.setUniform(this.currentProgram, UniformKeys.WORLD_INVERSE_TRANSPOSE,
+      );
+      WebGLUtil.setUniform(
+        this.currentProgram,
+        UniformKeys.NORMAL_MATRIX,
         new BufferUniform(
           new Float32Array(M4.flatten(scene.worldMatrix.inverse().transpose())),
-          16, WebGLRenderingContext.FLOAT_MAT4
+          16,
+          WebGLRenderingContext.FLOAT_MAT4
         )
-      )
+      );
 
       // TODO: Use indices when drawing
       this.gl.drawArrays(

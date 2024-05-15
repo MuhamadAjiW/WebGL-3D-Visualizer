@@ -25,6 +25,7 @@ import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
 import ObliqueCamera from "@/libs/class/oblique-camera";
 import OrthographicCamera from "@/libs/class/orthographic-camera";
 import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
+import { BasicMaterial } from "@/libs/class/material/basic-material";
 
 interface HooksRenderProps {
   cameraType: string;
@@ -118,41 +119,39 @@ const useRender = ({
       if (cameraInstance == null) return;
 
       cameraInstance.position = new Vector3(0, 0, 0);
-      console.log(M4.flatten(cameraInstance.viewProjectionMatrix));
-      console.log(cameraInstance);
+      // console.log(M4.flatten(cameraInstance.viewProjectionMatrix));
+      // console.log(cameraInstance);
 
       // TODO: Delete, this is for testing purposes
       const dummyUniformsData = {
         // Light
-        u_lightWorldPos: new BufferUniform(
-          new Float32Array([1, 0, 0]),
+        u_lightPos: new BufferUniform(
+          new Float32Array([0, 0, 1]),
           3,
           gl.FLOAT_VEC3
-        ),
-        // Light
-        u_lightColor: new BufferUniform(
-          new Float32Array([1, 1, 1, 1]),
-          4,
-          gl.FLOAT_VEC4
         ),
       };
 
       gl.useProgram(program);
 
       const scene = new Scene();
-      const geometry = new BlockGeometry(0.5, 0.5, 1);
 
-      // const material = new BasicMaterial({color:new Color(0xff00ffff)});
+      const geometry = new BlockGeometry(0.5, 0.5, 1);
       const texture = await TextureLoader.load("res/f-texture.png");
+      // const material = new BasicMaterial({
+      //   color: new Color(0x010101ff),
+      //   texture,
+      // });
       const material = new PhongMaterial({
-        ambient: new Color(0xa0a0a000),
-        diffuse: texture,
-        specular: new Color(0xffffffff),
+        texture: texture,
+        ambient: new Color(0x0),
+        diffuse: new Color(0x010101ff),
+        specular: new Color(0x010101ff),
         shinyness: 32,
-        specularFactor: 0.5,
       });
 
       const mesh = new Mesh(geometry, material);
+      mesh.position = new Vector3(1, 0, 0);
       scene.add(mesh);
 
       let dx = 0;
@@ -181,17 +180,25 @@ const useRender = ({
         handleReset(false);
       }
 
+      // scene.computeWorldMatrix(true, true);
+      // console.log(mesh.geometry.attributes.a_normal);
+
       WebGLUtils.setUniforms(programInfo, dummyUniformsData);
       function render() {
         if (cameraInstance == null) return;
 
         cameraInstance.setOrbitControl(dy, dx);
         cameraInstance.setDistance(distance);
+        // mesh.rotation.y += 1;
 
         renderer.render(scene, cameraInstance);
         requestAnimationFrame(render);
       }
       render();
+
+      // const location = renderer.gl.getAttribLocation(renderer.currentProgram.program, AttributeKeys.TEXTURE_COORDS);
+      // console.log("Texture coords:");
+      // console.log(renderer.gl.getActiveAttrib(renderer.currentProgram.program, location));
 
       console.log("Done");
     };

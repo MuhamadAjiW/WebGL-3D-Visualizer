@@ -1,9 +1,12 @@
 export class Color{
+  public static WHITE = new Color(255, 255, 255, 255);
+  public static BLACK = new Color(0, 0, 0, 255);
+
   // Attributes
   public r: number = 0;
   public g: number = 0;
   public b: number = 0;
-  public a: number = 0;
+  public a: number = 255;
   
   // Constructor
   constructor(rgba: number);
@@ -28,7 +31,7 @@ export class Color{
         this.r = arg1 || 0;
         this.g = arg2 || 0;
         this.b = arg3 || 0;
-        this.a = arg4 || 1;
+        this.a = arg4 || 255;
       }
     }
   }

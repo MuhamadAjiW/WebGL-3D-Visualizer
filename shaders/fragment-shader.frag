@@ -1,95 +1,48 @@
-// Source: https://webglfundamentals.org/webgl/lessons/webgl-less-code-more-fun.html
+// Source https://www.cs.toronto.edu/~jacobson/phong-demo/
 
 precision mediump float;
 
-varying vec4 v_position;
-varying vec2 v_texCoord;
-varying vec3 v_normal;
-varying vec3 v_surfaceToLight;
-varying vec3 v_surfaceToView;
+varying vec3 v_normal;          // Surface normal
+varying vec3 v_position;        // Vertex position
+varying vec2 v_texCoord;        // Vertex position
 
-uniform vec4 u_lightColor;
+// Material color
+uniform sampler2D u_texture;
 uniform vec4 u_ambient;
-uniform sampler2D u_diffuse;
-uniform sampler2D u_specular;
-uniform float u_shininess;
-uniform float u_specularFactor;
+uniform vec4 u_diffuse;
+uniform vec4 u_specular;
+uniform float u_shininess;      // Shininess
 uniform int u_materialType;
 
-// Light calculation (_, diffuse, specular, _)
-vec4 lit(float light, float halfVector, float shinyness){
-    return vec4(1.0, 
-                max(light, 0.0), 
-                (light > 0.0) ? pow(max(0.0, halfVector), shinyness) : 0.0, 
-                1.0);
-}
+uniform vec3 u_lightPos;        // Light position
 
 void main() {
-    // Get color from texture coordinates
-    vec4 diffuseColor = texture2D(u_diffuse, v_texCoord);
-
-    // TODO: alternate texture coords for specular?
-    vec4 specularColor = texture2D(u_specular, v_texCoord);
-    
-    // Get normal vector from vertex shader
-    vec3 a_normal = normalize(v_normal);
+    vec4 texture = texture2D(u_texture, v_texCoord);
 
     vec4 outColor;
+    if(u_materialType == 0){
+        outColor = u_diffuse * texture;
 
-    // Basic
-    if(u_materialType == 0) {
-        // Only diffuse color here
-        outColor = diffuseColor;
-    }
+    } else if (u_materialType == 1){
 
-    // Phong
-    else if (u_materialType == 1){        
-        // Get light direction vector from vertex shader
-        vec3 surfaceToLight = normalize(v_surfaceToLight);
-        
-        // Get viewer direction vector from vertex shader
-        vec3 surfaceToView = normalize(v_surfaceToView);
+        vec3 N = normalize(v_normal);
+        vec3 L = normalize(u_lightPos - v_position);
 
-        // Get half vector
-        vec3 halfVector = normalize(surfaceToLight + surfaceToView);
+        // Lambert's cosine law
+        float lambertian = max(dot(N, L), 0.0);
+        float specular = 0.0;
+        if(lambertian > 0.0) {
+            vec3 R = reflect(-L, N);      // Reflected light vector
+            vec3 V = normalize(-v_position); // Vector to viewer
+            // Compute the specular term
+            float specAngle = max(dot(R, V), 0.0);
+            specular = pow(specAngle, u_shininess);
+        }
 
-        // Calculate light values
-        vec4 litR = lit(dot(a_normal, surfaceToLight)
-                        , dot(a_normal, halfVector), u_shininess);
-
-        // Get final color
-        outColor = vec4(
-            (u_lightColor * (
-                diffuseColor * u_ambient +
-                diffuseColor * litR.y + 
-                specularColor * litR.z * u_specularFactor)).rgb,
-            diffuseColor.a
-        );
+        outColor = (u_ambient +
+                    lambertian * u_diffuse) * texture +
+                    (specular * u_specular);
     }
 
     gl_FragColor = outColor;
 }
-
-// Get light direction vector from vertex shader
-// vec3 surfaceToLight = normalize(v_surfaceToLight);
-
-// // Get viewer direction vector from vertex shader
-// vec3 surfaceToView = normalize(v_surfaceToView);
-
-// // Get half vector
-// vec3 halfVector = normalize(surfaceToLight + surfaceToView);
-
-// // Calculate light values
-// vec4 litR = lit(dot(a_normal, surfaceToLight)
-//                 , dot(a_normal, halfVector), u_shininess);
-
-// // Get final color
-// outColor = vec4(
-//     (u_lightColor * (
-//         diffuseColor * u_ambient +
-//         diffuseColor * litR.y + 
-//         u_specular * litR.z * u_specularFactor)).rgb,
-//     diffuseColor.a
-// );
-
-// outColor = diffuseColor;

@@ -57,18 +57,20 @@ class BufferGeometry {
     }
 
     // Triangles, might need to refactor if we implement it the other way
-    if(position.length < position.size * 3){
-      throw new Error("Geometry vertices is less than 3, needs at least 3 vertices to calculate the normal of a surface");
+    if (position.length < position.size * 3) {
+      throw new Error(
+        "Geometry vertices is less than 3, needs at least 3 vertices to calculate the normal of a surface"
+      );
     }
 
     const length = position.length / position.size;
     for (let index = 0; index < position.length; index += 3) {
       const offset = index * position.size;
 
-      const vertex1 = new Vector3(position.data[offset], position.data[offset + 1], position.data[offset + 2]);
-      const vertex2 = new Vector3(position.data[offset + 3], position.data[offset + 4], position.data[offset + 5]);
-      const vertex3 = new Vector3(position.data[index + 6], position.data[offset + 7], position.data[offset + 8]);
-      
+      const vertex1 = new Vector3(position.get(index));
+      const vertex2 = new Vector3(position.get(index + 1));
+      const vertex3 = new Vector3(position.get(index + 2));
+
       const vector1 = vertex2.substract(vertex1);
       const vector2 = vertex3.substract(vertex1);
 
@@ -82,11 +84,11 @@ class BufferGeometry {
 
     // const a_normal = new BufferAttribute(
     //   new Float32Array([
-    //     -0.5, -0.5, 0, 
-    //     -0.5, 0.5, 0, 
-    //     0.5, -0.5, 0, 
-    //     -0.5, 0.5, 0, 
-    //     0.5, 0.5, 0, 
+    //     -0.5, -0.5, 0,
+    //     -0.5, 0.5, 0,
+    //     0.5, -0.5, 0,
+    //     -0.5, 0.5, 0,
+    //     0.5, 0.5, 0,
     //     0.5, -0.5, 0,
     //   ]),
     //   3,
@@ -96,10 +98,9 @@ class BufferGeometry {
     // console.log(length);
     // console.log("Normal Data:");
     // console.log(normal.data);
-    
+
     this.setAttribute(AttributeKeys.NORMAL, normal);
   }
-
 
   // TODO: Implement
   public toJson(): void {
