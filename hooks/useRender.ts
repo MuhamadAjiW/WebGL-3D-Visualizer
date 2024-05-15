@@ -86,7 +86,7 @@ const useRender = ({
       let cameraInstance:
         | ObliqueCamera
         | OrthographicCamera
-        | PersepectiveCamera
+        | PerspectiveCamera
         | null = null;
       switch (cameraType) {
         case "obliqueCamera":
@@ -103,7 +103,7 @@ const useRender = ({
           );
           break;
         case "perspectiveCamera":
-          cameraInstance = PersepectiveCamera.getInstance(
+          cameraInstance = PerspectiveCamera.getInstance(
             gl.canvas.width / gl.canvas.height,
             MathUtil.DegreesToRad(30),
             1,

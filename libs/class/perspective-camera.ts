@@ -18,6 +18,24 @@ class PerspectiveCamera extends Camera {
     this.computeProjectionMatrix();
   }
 
+  public static getInstance(
+    fovY: number,
+    aspect: number,
+    near: number,
+    far: number
+  ): PerspectiveCamera {
+    if (!PerspectiveCamera.instance) {
+      PerspectiveCamera.instance = new PerspectiveCamera(
+        fovY,
+        aspect,
+        near,
+        far
+      );
+    }
+
+    return PerspectiveCamera.instance;
+  }
+
   computeProjectionMatrix() {
     this._projectionMatrix = M4.perspective(
       this.fovY,
