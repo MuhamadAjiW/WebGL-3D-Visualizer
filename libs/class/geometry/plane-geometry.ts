@@ -1,4 +1,3 @@
-import { AttributeKeys } from "../../base-types/webgl-keys";
 import { BufferAttribute } from "../webgl/attribute";
 import { BufferGeometry } from "./geometry";
 
@@ -33,7 +32,7 @@ export class PlaneGeometry extends BufferGeometry {
       hh,
       0,
     ]);
-    this.setAttribute(AttributeKeys.POSITION, new BufferAttribute(vertices, 3));
+    this.position = new BufferAttribute(vertices, 3);
     this.calculateNormals();
   }
 }

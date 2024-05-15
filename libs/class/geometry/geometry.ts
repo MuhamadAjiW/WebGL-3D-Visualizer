@@ -1,54 +1,18 @@
 import Vector3 from "@/libs/base-types/vector3";
-import { AttributeKeys } from "../../base-types/webgl-keys";
 import { BufferAttribute } from "../webgl/attribute";
 
 class BufferGeometry {
-  private _attributes: { [name: string]: BufferAttribute };
-  // private _indices?: BufferAttribute;
-
-  constructor() {
-    this._attributes = {};
-  }
-
-  get attributes() {
-    return this._attributes;
-  }
-
-  // get indices() {
-  //   return this._indices;
-  // }
-
-  // setIndices(indices: BufferAttribute) {
-  //   this._indices = indices;
-  //   return this;
-  // }
-
-  // removeIndices() {
-  //   this._indices = undefined;
-  //   return this;
-  // }
-
-  setAttribute(name: string, attribute: BufferAttribute) {
-    this._attributes[name] = attribute;
-    return this;
-  }
-
-  getAttribute(name: string) {
-    return this._attributes[name];
-  }
-
-  deleteAttribute(name: string) {
-    delete this._attributes[name];
-    return this;
-  }
+  public position: BufferAttribute | undefined;
+  public normal: BufferAttribute | undefined;
+  public texCoords: BufferAttribute | undefined;
 
   calculateNormals(forceNewAttribute = false) {
-    const position = this.getAttribute(AttributeKeys.POSITION);
+    const position = this.position;
     if (!position) {
       return;
     }
 
-    let normal = this.getAttribute(AttributeKeys.NORMAL);
+    let normal = this.normal;
     if (forceNewAttribute || !normal) {
       normal = new BufferAttribute(
         new Float32Array(position.length),
@@ -82,24 +46,7 @@ class BufferGeometry {
     }
     // Lakukan kalkulasi normal disini.
 
-    // const a_normal = new BufferAttribute(
-    //   new Float32Array([
-    //     -0.5, -0.5, 0,
-    //     -0.5, 0.5, 0,
-    //     0.5, -0.5, 0,
-    //     -0.5, 0.5, 0,
-    //     0.5, 0.5, 0,
-    //     0.5, -0.5, 0,
-    //   ]),
-    //   3,
-    //   { dtype: WebGLRenderingContext.FLOAT, normalize: false, stride: 0, offset: 0 }
-    // );
-    // console.log("Position Info:");
-    // console.log(length);
-    // console.log("Normal Data:");
-    // console.log(normal.data);
-
-    this.setAttribute(AttributeKeys.NORMAL, normal);
+    this.normal = normal;
   }
 
   // TODO: Implement

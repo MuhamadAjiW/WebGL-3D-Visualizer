@@ -1,6 +1,5 @@
 import { WebGLUtil } from "@/libs/util/webgl-util";
 import { Color } from "../../base-types/color";
-import { UniformKeys } from "../../base-types/webgl-keys";
 import { Texture } from "../texture/texture";
 import { WebGLRenderer } from "../webgl-renderer";
 import { BufferUniform } from "../webgl/uniform";
@@ -15,15 +14,9 @@ export class BasicMaterial extends ShaderMaterial {
   constructor(options?: { texture?: Texture; color?: Color }) {
     super(BasicMaterial.materialType, options?.texture);
     this.color = options?.color || new Color(0xffffffff);
-
-    let materialType = this.getUniform(UniformKeys.MATERIAL_TYPE);
-    if (!materialType) {
-      materialType = new BufferUniform(this.materialType, 0);
-    }
-    this.setUniform(UniformKeys.MATERIAL_TYPE, materialType);
   }
 
-  public loadTo(renderer: WebGLRenderer): void {
+  public loadTexture(renderer: WebGLRenderer): void {
     let loadedTexture = renderer.gl.createTexture();
     renderer.gl.bindTexture(renderer.gl.TEXTURE_2D, loadedTexture);
 
@@ -70,16 +63,6 @@ export class BasicMaterial extends ShaderMaterial {
         new Uint8Array(Color.WHITE.get())
       );
     }
-
-    WebGLUtil.setUniform(
-      renderer.currentProgram,
-      UniformKeys.DIFFUSE,
-      new BufferUniform(
-        new Float32Array(this.color.getNormalized()),
-        4,
-        WebGLRenderingContext.FLOAT_VEC4
-      )
-    );
   }
 
   protected override generateId(): string {
