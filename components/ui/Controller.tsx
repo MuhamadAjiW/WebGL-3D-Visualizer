@@ -1,9 +1,7 @@
 import { GoChevronRight } from "react-icons/go";
 import { GoChevronDown } from "react-icons/go";
 import { Collapse } from "react-collapse";
-import { MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
-import { InputOptions } from "@/types/ui";
-import { useState } from "react";
+import { TextField } from "@mui/material";
 import Button from "./Button";
 
 interface ControllerProps {
@@ -148,6 +146,14 @@ const Controller: React.FC<ControllerProps> = ({
                 />
               </div>
             </div>
+          </div>
+          <div className="flex justify-end items-center">
+            <Button 
+              id='apply-button'
+              text="Apply"
+              handleClick={() => {}}
+              className="bg-white text-black px-4 py-1"
+            />
           </div>
         </div>
       </Collapse>
