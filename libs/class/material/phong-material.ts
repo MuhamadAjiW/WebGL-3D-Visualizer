@@ -2,7 +2,7 @@ import { Color } from "../../base-types/color";
 import { UniformKeys } from "../../base-types/webgl-keys";
 import { Texture } from "../texture/texture";
 import { BufferUniform } from "../webgl/uniform";
-import { ShaderMaterial } from './shader-material';
+import { ShaderMaterial } from "./shader-material";
 
 export class PhongMaterial extends ShaderMaterial {
   public static materialType: number = 1;
@@ -210,10 +210,13 @@ export class PhongMaterial extends ShaderMaterial {
     const material = JSON.parse(json);
     return new PhongMaterial({
       ambient: Color.fromJson(material.ambient),
-      diffuse: Color.fromJson(material.diffuse) || Texture.fromJson(material.diffuse),
-      specular: Color.fromJson(material.specular) || Texture.fromJson(material.specular),
+      diffuse:
+        Color.fromJson(material.diffuse) || Texture.fromJson(material.diffuse),
+      specular:
+        Color.fromJson(material.specular) ||
+        Texture.fromJson(material.specular),
       shinyness: material.shinyness,
-      specularFactor: material.specularFactor
+      specularFactor: material.specularFactor,
     });
   }
 }

@@ -35,6 +35,26 @@ const CameraTypeSchema = z.enum([
   CameraType[CameraType.PERSPECTIVE],
 ]);
 
+const Color = z.object({
+  r: z.number(),
+  g: z.number(),
+  b: z.number(),
+  a: z.number(),
+});
+
+const AnimationTRS = z.object({
+  translation: z.array(z.number()).optional(),
+  rotation: z.array(z.number()).optional(),
+  scale: z.array(z.number()).optional(),
+});
+
+const AnimationPath: z.ZodSchema<any> = z.lazy(() =>
+  z.object({
+    keyframe: AnimationTRS.optional(),
+    children: z.record(AnimationPath).optional(),
+  })
+);
+
 const GLTFSchema = z.object({
   scene: ArrayIndex,
   nodes: z.array(
@@ -48,8 +68,14 @@ const GLTFSchema = z.object({
       children: ArrayIndex,
       visible: z.boolean(),
       name: z.string(),
-      meshGeometry: ArrayIndex.optional(),
-      meshMaterial: ArrayIndex.optional(),
+      cameraIndex: ArrayIndex.optional(), // cameras
+      meshIndex: ArrayIndex.optional(), // meshes
+    })
+  ),
+  cameras: z.array(
+    z.object({
+      type: z.string(),
+      // For camera
       cameraProjectionMatrix: Matrix.optional(),
       cameraDistance: z.number().optional(),
       cameraAngleX: z.number().optional(),
@@ -67,10 +93,21 @@ const GLTFSchema = z.object({
       aspect: z.number().optional(),
     })
   ),
+  meshes: z.array(
+    z.object({
+      // For mesh
+      meshGeometry: ArrayIndex.optional(), // geometries
+      meshMaterial: ArrayIndex.optional(), //materials
+    })
+  ),
   geometries: z.array(
     z.object({
       attributes: z.record(BufferUniform),
-      indices: BufferAttribute.optional(),
+      // indices: BufferAttribute.optional(),
+      geometryType: z.number(),
+      width: z.number().optional(),
+      height: z.number().optional(),
+      length: z.number().optional(),
     })
   ),
   materials: z.array(
@@ -78,8 +115,45 @@ const GLTFSchema = z.object({
       id: z.string(),
       materialType: z.number(),
       uniforms: z.record(BufferUniform),
+      // Shader material has textures? tapi disini kah?
+      textures: z.array(ArrayIndex), // textures
+      color: Color.optional(),
+      ambient: Color.optional(),
+      // Colors || Textures
+      diffuse: ArrayIndex.optional(),
+      specular: ArrayIndex.optional(),
+      shinyness: z.number().optional(),
+      specularFactor: z.number().optional(),
     })
   ),
+  textures: z.array(
+    z.object({
+      id: z.number().int(),
+      // How?
+      glTexture: z.null().optional(),
+      isActive: z.boolean(),
+      name: z.string(),
+      wrapS: z.number(),
+      wrapT: z.number(),
+      magFilter: z.number(),
+      minFilter: z.number(),
+      format: z.number(),
+      // image uri
+      image: z.string(),
+      repeatS: z.number(),
+      repeatT: z.number(),
+      generateMipmaps: z.boolean(),
+    })
+  ),
+  colors: z.array(Color),
+  animations: z.array(
+    z.object({
+      name: z.string(),
+      // animation path
+      frames: z.array(ArrayIndex), // animationpaths
+    })
+  ),
+  animationpaths: z.array(AnimationPath),
 });
 
 export class Loader {}
