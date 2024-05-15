@@ -75,7 +75,7 @@ export class BasicMaterial extends ShaderMaterial {
       renderer.currentProgram,
       UniformKeys.DIFFUSE,
       new BufferUniform(
-        new Float32Array(this.color.get()),
+        new Float32Array(this.color.getNormalized()),
         4,
         WebGLRenderingContext.FLOAT_VEC4
       )

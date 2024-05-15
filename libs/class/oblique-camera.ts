@@ -17,7 +17,7 @@ class ObliqueCamera extends Camera {
     bottom: number,
     top: number,
     near: number,
-    far: number
+    far: number,
   ) {
     super();
     this.left = left;
@@ -83,10 +83,10 @@ class ObliqueCamera extends Camera {
   }
 
   setDistance(distance: number) {
-    this.left *= distance;
-    this.right *= distance;
-    this.bottom *= distance;
-    this.top *= distance;
+    this.left = -distance;
+    this.right = distance;
+    this.bottom = -distance;
+    this.top = distance;
     this.computeProjectionMatrix();
   }
 }

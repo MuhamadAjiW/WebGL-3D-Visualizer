@@ -45,23 +45,7 @@ export class PhongMaterial extends ShaderMaterial {
   }
 
   set ambient(ambient: Color) {
-    const colors = ambient.get();
-    this._ambient = new Color(
-      colors[0] / 255,
-      colors[1] / 255,
-      colors[2] / 255,
-      colors[3] / 255
-    );
-
-    let u_ambient = this.getUniform(UniformKeys.AMBIENT);
-    if (!u_ambient) {
-      u_ambient = new BufferUniform(
-        new Float32Array(this._ambient.get()),
-        4,
-        WebGLRenderingContext.FLOAT_VEC4
-      );
-    }
-    this.setUniform(UniformKeys.AMBIENT, u_ambient);
+    this._ambient = ambient;
   }
 
   get diffuse(): Color {
@@ -142,7 +126,7 @@ export class PhongMaterial extends ShaderMaterial {
         0,
         renderer.gl.RGBA,
         renderer.gl.UNSIGNED_BYTE,
-        new Uint8Array(Color.WHITE.get())
+        new Uint8Array(Color.WHITE.getNormalized())
       );
     }
 
@@ -150,7 +134,7 @@ export class PhongMaterial extends ShaderMaterial {
       renderer.currentProgram,
       UniformKeys.AMBIENT,
       new BufferUniform(
-        new Float32Array(this.ambient.get()),
+        new Float32Array(this.ambient.getNormalized()),
         4,
         WebGLRenderingContext.FLOAT_VEC4
       )
@@ -159,7 +143,7 @@ export class PhongMaterial extends ShaderMaterial {
       renderer.currentProgram,
       UniformKeys.DIFFUSE,
       new BufferUniform(
-        new Float32Array(this.diffuse.get()),
+        new Float32Array(this.diffuse.getNormalized()),
         4,
         WebGLRenderingContext.FLOAT_VEC4
       )
@@ -168,7 +152,7 @@ export class PhongMaterial extends ShaderMaterial {
       renderer.currentProgram,
       UniformKeys.SPECULAR,
       new BufferUniform(
-        new Float32Array(this.specular.get()),
+        new Float32Array(this.specular.getNormalized()),
         4,
         WebGLRenderingContext.FLOAT_VEC4
       )

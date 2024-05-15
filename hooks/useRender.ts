@@ -18,7 +18,7 @@ import { PhongMaterial } from "@/libs/class/material/phong-material";
 import Camera from "@/libs/class/camera";
 import Vector3 from "@/libs/base-types/vector3";
 import M4 from "@/libs/base-types/m4";
-import PersepectiveCamera from "@/libs/class/persepective-camera";
+import PersepectiveCamera from "@/libs/class/perspective-camera";
 import { MathUtil } from "@/libs/util/math-util";
 import { useEffect, useRef } from "react";
 import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
@@ -144,9 +144,9 @@ const useRender = ({
       // });
       const material = new PhongMaterial({
         texture: texture,
-        ambient: new Color(0x0),
-        diffuse: new Color(0x010101ff),
-        specular: new Color(0x010101ff),
+        ambient: new Color(0x818181ff),
+        diffuse: new Color(0xffffffff),
+        specular: new Color(0xffffffff),
         shinyness: 32,
       });
 
@@ -189,7 +189,11 @@ const useRender = ({
 
         cameraInstance.setOrbitControl(dy, dx);
         cameraInstance.setDistance(distance);
-        // mesh.rotation.y += 1;
+
+        mesh.rotateOnWorldAxis(Vector3.right, 0.01);
+        mesh.rotateOnWorldAxis(Vector3.up, 0.01);
+        console.log(mesh.rotation);
+        // mesh.rotateOnWorldAxis(Vector3.right, 90);
 
         renderer.render(scene, cameraInstance);
         requestAnimationFrame(render);

@@ -1,13 +1,13 @@
 import Camera from "./camera";
 import M4 from "../base-types/m4";
 
-class PersepectiveCamera extends Camera {
+class PerspectiveCamera extends Camera {
   fovY: number;
   aspect: number;
   near: number;
   far: number;
 
-  private static instance: PersepectiveCamera;
+  private static instance: PerspectiveCamera;
 
   constructor(aspect: number, fovY: number, near: number, far: number) {
     super();
@@ -18,24 +18,6 @@ class PersepectiveCamera extends Camera {
     this.computeProjectionMatrix();
   }
 
-  public static getInstance(
-    aspect: number,
-    fovY: number,
-    near: number,
-    far: number
-  ): PersepectiveCamera {
-    if (!PersepectiveCamera.instance) {
-      PersepectiveCamera.instance = new PersepectiveCamera(
-        aspect,
-        fovY,
-        near,
-        far
-      );
-    }
-
-    return PersepectiveCamera.instance;
-  }
-
   computeProjectionMatrix() {
     this._projectionMatrix = M4.perspective(
       this.fovY,
@@ -44,6 +26,24 @@ class PersepectiveCamera extends Camera {
       this.far
     );
   }
+
+  public static getInstance(
+    fovY: number,
+    aspect: number,
+    near: number,
+    far: number
+  ): PerspectiveCamera {
+    if (!PerspectiveCamera.instance) {
+      PerspectiveCamera.instance = new PerspectiveCamera(
+        fovY,
+        aspect,
+        near,
+        far
+      );
+    }
+
+    return PerspectiveCamera.instance;
+  }
 }
 
-export default PersepectiveCamera;
+export default PerspectiveCamera;

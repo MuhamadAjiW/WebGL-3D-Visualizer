@@ -112,6 +112,17 @@ export class WebGLRenderer {
           WebGLRenderingContext.FLOAT_MAT4
         )
       );
+      // WebGLUtil.setUniform(
+      //   this.currentProgram,
+      //   UniformKeys.WORLD_MATRIX,
+      //   new BufferUniform(
+      //     // new Float32Array(M4.flatten(scene.worldMatrix)),
+      //     new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
+      //     16,
+      //     WebGLRenderingContext.FLOAT_MAT4
+      //   )
+      // );
+
       WebGLUtil.setUniform(
         this.currentProgram,
         UniformKeys.NORMAL_MATRIX,

@@ -358,7 +358,7 @@ class M4 {
       [1, 0, 0, 0],
       [0, c, s, 0],
       [0, -s, c, 0],
-      [0, 0, 0, 1]
+      [0, 0, 0, 1],
     ]);
   }
 
@@ -382,7 +382,7 @@ class M4 {
       [c, s, 0, 0],
       [-s, c, 0, 0],
       [0, 0, 1, 0],
-      [0, 0, 0, 1]
+      [0, 0, 0, 1],
     ]);
   }
 
@@ -474,6 +474,37 @@ class M4 {
     m.matrix[1][3] = -(top + bottom) / (top - bottom);
     m.matrix[2][3] = -(far + near) / (far - near);
     m.matrix[3][3] = 1;
+    return m;
+  }
+
+  static oblique(
+    left: number,
+    right: number,
+    bottom: number,
+    top: number,
+    near: number,
+    far: number,
+    theta: number,
+    phi: number
+  ): M4 {
+    const rad = Math.PI / 180; // Conversion factor from degrees to radians
+    const alpha = theta * rad; // Convert skew angle to radians
+    const cot = Math.cos(alpha) / Math.sin(alpha); // Cotangent of the skew angle
+
+    let m = new M4();
+    m.matrix[0][0] = 2 / (right - left);
+    m.matrix[1][1] = 2 / (top - bottom);
+    m.matrix[2][2] = -2 / (far - near);
+    m.matrix[3][3] = 1;
+
+    // Applying oblique projection parameters
+    m.matrix[0][2] = phi * cot; // Skew the x component
+    m.matrix[1][2] = phi * cot; // Skew the y component (if needed, can be set to 0 for different effects)
+
+    m.matrix[0][3] = -(right + left) / (right - left);
+    m.matrix[1][3] = -(top + bottom) / (top - bottom);
+    m.matrix[2][3] = -(far + near) / (far - near);
+
     return m;
   }
 
