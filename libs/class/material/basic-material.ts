@@ -60,7 +60,7 @@ export class BasicMaterial extends ShaderMaterial {
         0,
         renderer.gl.RGBA,
         renderer.gl.UNSIGNED_BYTE,
-        new Uint8Array(Color.WHITE.get())
+        new Uint8Array(Color.BLACK.get())
       );
     }
   }

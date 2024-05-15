@@ -44,6 +44,7 @@ const useRender = ({
 
   useEffect(() => {
     let isMouseClick = false;
+    let stop = false;
     const runWebGL = async () => {
       if (!canvasRef.current) return;
 
@@ -139,30 +140,35 @@ const useRender = ({
       const geometry = new BlockGeometry(0.5, 1, 0.5);
       const geometryh = new BlockGeometry(0.25, 0.5, 0.25);
       const texture = await TextureLoader.load("res/f-texture.png");
-      // const material = new BasicMaterial({
-      //   color: new Color(0x010101ff),
-      //   texture,
-      // });
-      const material = new PhongMaterial({
-        texture: texture,
-        ambient: new Color(0x818181ff),
-        diffuse: new Color(0xffffffff),
-        specular: new Color(0xffffffff),
-        shinyness: 32,
+      const material = new BasicMaterial({
+        color: new Color(0x010101ff),
+        texture,
       });
+      // const material = new PhongMaterial({
+      //   texture: texture,
+      //   ambient: new Color(0x818181ff),
+      //   diffuse: new Color(0xffffffff),
+      //   specular: new Color(0xffffffff),
+      //   shinyness: 32,
+      // });
 
       const mesh = new Mesh(geometry, material);
       const meshl = new Mesh(geometryh, material);
       const meshr = new Mesh(geometryh, material);
       const meshh = new Mesh(geometryh, material);
+      mesh.name = "Parent";
+      meshl.name = "Left";
+      meshr.name = "Right";
+      meshh.name = "Back";
       meshl.position = new Vector3(-0.25, 0, 0);
-      meshr.position = new Vector3(0.25, 0, 0);
+      meshr.position = new Vector3(0.75, 0, 0);
       meshh.position = new Vector3(0, 0, -1);
 
       scene.add(mesh);
       mesh.add(meshl);
       mesh.add(meshr);
-      mesh.add(meshh);
+      // mesh.add(meshh);
+      console.log(meshl.geometry.position?.data);
 
       let dx = 0;
       let dy = 0;
@@ -201,7 +207,9 @@ const useRender = ({
         // mesh.rotateOnWorldAxis(Vector3.up, 0.01);
 
         renderer.render(scene, cameraInstance);
-        requestAnimationFrame(render);
+        if (!stop) {
+          requestAnimationFrame(render);
+        }
       }
       render();
 
@@ -209,6 +217,9 @@ const useRender = ({
     };
 
     runWebGL();
+    return () => {
+      stop = true;
+    };
   }, [cameraType, distance, isReset]);
 
   return canvasRef;

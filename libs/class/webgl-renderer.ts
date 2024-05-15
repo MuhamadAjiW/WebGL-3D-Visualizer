@@ -5,6 +5,7 @@ import Camera from "./camera";
 import { ShaderMaterial } from "./material/shader-material";
 import { Mesh } from "./mesh";
 import Object3D from "./object3d";
+import { Scene } from "./scene";
 import { BufferUniform } from "./webgl/uniform";
 
 export class WebGLRenderer {
@@ -95,26 +96,25 @@ export class WebGLRenderer {
         u_materialType: node.material.materialType,
       });
 
+      console.log(node.name);
+      console.log(node);
+
       // TODO: Use indices when drawing
       this.gl.drawArrays(this.gl.TRIANGLES, 0, node.geometry.position!.length);
     }
 
     node.children.forEach((child) => {
-      // TODO: Only if isdirty
       this.renderNodes(child);
     });
   }
 
-  public render(scene: Object3D, camera: Camera) {
-    scene.traverse(scene);
-
+  public render(scene: Scene, camera: Camera) {
     WebGLUtil.setUniforms(this.currentProgram, {
       u_projection: M4.flatten(camera.projectionMatrix),
       u_view: M4.flatten(camera.computeViewMatrix()),
     });
 
     scene.children.forEach((node) => {
-      // TODO: Only if isdirty
       this.renderNodes(node);
     });
   }

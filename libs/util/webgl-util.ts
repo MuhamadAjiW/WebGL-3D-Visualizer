@@ -94,24 +94,20 @@ export class WebGLUtil {
         // console.log(`uniform${UniformSetterWebGLType[type]}`);
 
         if (v instanceof BufferUniform) {
-          if (v.isDirty) {
-            v.consume();
-
-            if (typeof v === "number") {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
+          if (typeof v === "number") {
+            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
+          } else {
+            if (type >= WebGLRenderingContext.FLOAT_MAT2) {
+              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
+                loc,
+                false,
+                v.data
+              );
             } else {
-              if (type >= WebGLRenderingContext.FLOAT_MAT2) {
-                (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
-                  loc,
-                  false,
-                  v.data
-                );
-              } else {
-                (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
-                  loc,
-                  v.data
-                );
-              }
+              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
+                loc,
+                v.data
+              );
             }
           }
         } else {
