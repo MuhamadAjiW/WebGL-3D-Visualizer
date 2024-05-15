@@ -13,8 +13,13 @@ class Object3D {
   private _children: Object3D[] = [];
   visible = true;
   private _isDirty = false;
+  public name: string = "";
 
   // Public getter, prevent re-instance new object
+  set setname(name: string) {
+    this.name = name;
+  }
+
   get position() {
     return this._position;
   }
