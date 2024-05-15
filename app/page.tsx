@@ -51,6 +51,7 @@ export default function Home() {
   const [camera, setCamera] = useState<string>("perspectiveCamera");
   const [distance, setDistance] = useState<number>(3);
   const [isReset, setIsReset] = useState<boolean>(false);
+  const [component, setComponent] = useState<any>(treeItems[0]); // change this too
 
   const handleComponentExpanded = () => {
     setIsComponentExpanded(!isComponentExpanded);
@@ -75,6 +76,21 @@ export default function Home() {
     setDistance(3);
   };
 
+  // Todo: change this if the component already has type
+  const handleItemSelection = (
+    event: React.SyntheticEvent,
+    itemId: string,
+    isSelected: boolean
+  ) => {
+    if (isSelected) {
+      const selectedComponent = treeItems.find((item) => {item.id === itemId})
+      setComponent(selectedComponent)
+      console.log(itemId, selectedComponent)
+    } else {
+      setComponent(null)
+    }
+  };
+
   return (
     <div className="flex w-full h-screen bg-main-black text-white">
       <div className="w-1/2 py-5 px-7 flex flex-col">
@@ -96,7 +112,10 @@ export default function Home() {
             <div className="text-2xl font-bold bg-gray-900">Scene Graph</div>
           </div>
           <div className="bg-gray-900 flex-grow overflow-y-auto p-5">
-            <TreeView treeItems={treeItems} />
+            <TreeView
+              treeItems={treeItems}
+              handleItemSelection={handleItemSelection}
+            />
           </div>
         </div>
         <div className="py-5 px-7 flex flex-col h-1/2">
@@ -144,6 +163,7 @@ export default function Home() {
             isExpanded={isComponentExpanded}
             handleClick={handleComponentExpanded}
             title="Component Controller"
+            component={component}
           />
           <CameraController
             id="camera-controller"

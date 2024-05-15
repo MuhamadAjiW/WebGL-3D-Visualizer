@@ -11,6 +11,7 @@ interface ControllerProps {
   isExpanded: boolean;
   handleClick: () => void;
   title: string;
+  component: any // this will be change later
 }
 
 const Controller: React.FC<ControllerProps> = ({
@@ -18,6 +19,7 @@ const Controller: React.FC<ControllerProps> = ({
   isExpanded,
   handleClick,
   title,
+  component
 }) => {
   return (
     <div className="w-full py-2" id={id}>
@@ -38,6 +40,7 @@ const Controller: React.FC<ControllerProps> = ({
                 fullWidth
                 className="bg-white"
                 size="small"
+                value={component.label ? component.label : ''} // this also will be changed
               />
             </div>
           </div>
