@@ -158,5 +158,7 @@ const GLTFSchema = z.object({
 });
 
 export class Loader {
-  public save(scene: Scene) {}
+  public save(scene: Scene) {
+    // traverse scene tree
+  }
 }
