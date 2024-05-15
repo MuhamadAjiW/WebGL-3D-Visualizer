@@ -18,7 +18,7 @@ import { PhongMaterial } from "@/libs/class/material/phong-material";
 import Camera from "@/libs/class/camera";
 import Vector3 from "@/libs/base-types/vector3";
 import M4 from "@/libs/base-types/m4";
-import PersepectiveCamera from "@/libs/class/persepective-camera";
+import PersepectiveCamera from "@/libs/class/perspective-camera";
 import { MathUtil } from "@/libs/util/math-util";
 import { useEffect, useRef } from "react";
 import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
