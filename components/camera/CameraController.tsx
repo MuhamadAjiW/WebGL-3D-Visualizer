@@ -57,7 +57,7 @@ const CameraController: React.FC<ControllerProps> = ({
       <Collapse isOpened={isExpanded}>
         <div className="px-6 py-4 flex flex-col gap-5">
           <div className="flex flex-col gap-3 w-full">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3">
               <div>Distance</div>
               <TextField
                 id="distance-field"
@@ -68,7 +68,7 @@ const CameraController: React.FC<ControllerProps> = ({
                 value={distance || ""}
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3">
               <div>Camera Type</div>
               <Select
                 value={camera}

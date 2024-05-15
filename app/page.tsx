@@ -82,7 +82,7 @@ export default function Home() {
   const treeItems: TreeViewBaseItem[] = [convertGLTFToTreeView(GLTFTree)];
 
   const [isComponentExpanded, setIsComponentExpanded] = useState<boolean>(true);
-  const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(false);
+  const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(true);
   const [camera, setCamera] = useState<string>("perspectiveCamera");
   const [distance, setDistance] = useState<number>(3);
   const [isReset, setIsReset] = useState<boolean>(false);
@@ -110,8 +110,7 @@ export default function Home() {
     setIsReset(true);
     setDistance(3);
   };
-
-  // Todo: change this if the component already has type
+  
   const handleItemSelection = (
     event: React.SyntheticEvent,
     itemId: string,
@@ -158,7 +157,7 @@ export default function Home() {
           <div className="">
             <div className="text-2xl font-bold bg-gray-900">Animation</div>
           </div>
-          <div className="flex gap-5 items-strech w-full py-3">
+          <div className="flex gap-5 items-strech w-full py-3 overflow-x-auto">
             <Button
               id="play-button"
               handleClick={() => {}}
