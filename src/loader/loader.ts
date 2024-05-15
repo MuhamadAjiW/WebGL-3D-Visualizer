@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { CameraType } from "../../libs/class/camera-types";
+import { Scene } from "@/libs/class/scene";
 
 const ArrayIndex = z.array(z.number().int());
 
@@ -156,4 +157,6 @@ const GLTFSchema = z.object({
   animationpaths: z.array(AnimationPath),
 });
 
-export class Loader {}
+export class Loader {
+  public save(scene: Scene) {}
+}

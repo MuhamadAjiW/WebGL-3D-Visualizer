@@ -92,6 +92,32 @@ declare class M4 {
   ): M4;
 
   /**
+   * Creates an oblique projection matrix.
+   * Oblique projection is a type of parallel projection where objects are projected onto the viewing plane along projection lines that are not perpendicular to the viewing plane. This method allows for customizing the projection skew through the `theta` and `phi` parameters.
+   *
+   * @param left - Left boundary of the clipping plane.
+   * @param right - Right boundary of the clipping plane.
+   * @param bottom - Bottom boundary of the clipping plane.
+   * @param top - Top boundary of the clipping plane.
+   * @param near - Distance to the near clipping plane along the Z axis.
+   * @param far - Distance to the far clipping plane along the Z axis.
+   * @param theta - The angle in degrees at which the depth (z-direction) is skewed. A theta of 0 results in no skew.
+   * @param phi - The scaling factor for the depth (z-direction) after it is skewed by theta. A phi of 1 means no scaling is applied.
+   *
+   * @returns An M4 matrix representing the oblique projection. The matrix will skew and scale the z-coordinates of points in the 3D space according to the specified theta and phi, effectively altering their x or y positions relative to the z-axis.
+   */
+  static oblique(
+    left: number,
+    right: number,
+    bottom: number,
+    top: number,
+    near: number,
+    far: number,
+    theta: number,
+    phi: number
+  ): M4;
+
+  /**
    * Creates a perspective projection matrix.
    *
    * @param fovY - The field of view angle in the Y direction.
