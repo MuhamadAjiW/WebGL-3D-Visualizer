@@ -151,7 +151,6 @@ const useRender = ({
       });
 
       const mesh = new Mesh(geometry, material);
-      mesh.position = new Vector3(1, 0, 0);
       scene.add(mesh);
 
       let dx = 0;
@@ -180,9 +179,6 @@ const useRender = ({
         handleReset(false);
       }
 
-      // scene.computeWorldMatrix(true, true);
-      // console.log(mesh.geometry.attributes.a_normal);
-
       WebGLUtils.setUniforms(programInfo, dummyUniformsData);
       function render() {
         if (cameraInstance == null) return;
@@ -192,17 +188,11 @@ const useRender = ({
 
         mesh.rotateOnWorldAxis(Vector3.right, 0.01);
         mesh.rotateOnWorldAxis(Vector3.up, 0.01);
-        console.log(mesh.rotation);
-        // mesh.rotateOnWorldAxis(Vector3.right, 90);
 
         renderer.render(scene, cameraInstance);
         requestAnimationFrame(render);
       }
       render();
-
-      // const location = renderer.gl.getAttribLocation(renderer.currentProgram.program, AttributeKeys.TEXTURE_COORDS);
-      // console.log("Texture coords:");
-      // console.log(renderer.gl.getActiveAttrib(renderer.currentProgram.program, location));
 
       console.log("Done");
     };
