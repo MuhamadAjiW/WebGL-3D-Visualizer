@@ -8,7 +8,6 @@ class ObliqueCamera extends Camera {
   right: number;
   near: number;
   far: number;
-  aspect: number;
 
   private static instance: ObliqueCamera;
 
@@ -19,7 +18,6 @@ class ObliqueCamera extends Camera {
     top: number,
     near: number,
     far: number,
-    aspect: number
   ) {
     super();
     this.left = left;
@@ -28,7 +26,6 @@ class ObliqueCamera extends Camera {
     this.bottom = bottom;
     this.near = near;
     this.far = far;
-    this.aspect = aspect;
     this.computeProjectionMatrix();
   }
 
@@ -38,8 +35,7 @@ class ObliqueCamera extends Camera {
     bottom: number,
     top: number,
     near: number,
-    far: number,
-    aspect: number
+    far: number
   ): ObliqueCamera {
     if (!ObliqueCamera.instance) {
       ObliqueCamera.instance = new ObliqueCamera(
@@ -48,8 +44,7 @@ class ObliqueCamera extends Camera {
         bottom,
         top,
         near,
-        far,
-        aspect
+        far
       );
     }
 
