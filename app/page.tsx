@@ -8,50 +8,85 @@ import Controller from "@/components/ui/Controller";
 import { useState } from "react";
 import CameraController from "@/components/camera/CameraController";
 import { SelectChangeEvent } from "@mui/material";
+import { NodeSchema, SceneSchema } from "@/types/ui";
+import { convertGLTFToTreeView, findMeshById } from "@/libs/helper";
 
 export default function Home() {
-  // dummy
-  const treeItems: TreeViewBaseItem[] = [
-    {
-      id: "1",
-      label: "Main",
-      children: [
-        { id: "2", label: "Hello" },
-        {
-          id: "3",
-          label: "Subtree with children",
-          children: [
-            { id: "6", label: "Hello" },
-            {
-              id: "7",
-              label: "Sub-subtree with children",
-              children: [
-                { id: "9", label: "Child 1" },
-                { id: "10", label: "Child 2" },
-                { id: "11", label: "Child 3" },
-              ],
-            },
-            { id: "8", label: "Hello" },
-          ],
+  // gltf dummy
+  const GLTFTree: SceneSchema = {
+    id: "scene-root",
+    name: "Scene Name",
+    children: [
+      {
+        id: "mesh-1",
+        name: "Mesh 1",
+        position: {
+          x: 1,
+          y: 2,
+          z: 3,
         },
-        { id: "4", label: "World" },
-        { id: "5", label: "Something something" },
-        { id: "12", label: "Something something" },
-        { id: "13", label: "Something something" },
-        { id: "14", label: "Something something" },
-        { id: "15", label: "Something something" },
-        { id: "16", label: "Something something" },
-      ],
-    },
-  ];
+        rotation: {
+          x: 0,
+          y: 0,
+          z: 0,
+        },
+        scale: {
+          x: 0,
+          y: 0,
+          z: 0,
+        },
+      },
+      {
+        id: "mesh-2",
+        name: "Mesh 2",
+        position: {
+          x: 0,
+          y: 0,
+          z: 0,
+        },
+        rotation: {
+          x: 0,
+          y: 0,
+          z: 0,
+        },
+        scale: {
+          x: 0,
+          y: 0,
+          z: 0,
+        },
+        children: [
+          {
+            id: "mesh-3",
+            name: "Mesh 3",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0,
+            },
+            rotation: {
+              x: 0,
+              y: 0,
+              z: 0,
+            },
+            scale: {
+              x: 0,
+              y: 0,
+              z: 0,
+            },
+          },
+        ],
+      },
+    ],
+  };
 
-  const [isComponentExpanded, setIsComponentExpanded] =
-    useState<boolean>(false);
+  const treeItems: TreeViewBaseItem[] = [convertGLTFToTreeView(GLTFTree)];
+
+  const [isComponentExpanded, setIsComponentExpanded] = useState<boolean>(true);
   const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(false);
   const [camera, setCamera] = useState<string>("perspectiveCamera");
   const [distance, setDistance] = useState<number>(3);
   const [isReset, setIsReset] = useState<boolean>(false);
-  const [component, setComponent] = useState<any>(treeItems[0]); // change this too
+  const [component, setComponent] = useState<NodeSchema | null>(null); // change this too
 
   const handleComponentExpanded = () => {
     setIsComponentExpanded(!isComponentExpanded);
@@ -83,11 +118,12 @@ export default function Home() {
     isSelected: boolean
   ) => {
     if (isSelected) {
-      const selectedComponent = treeItems.find((item) => {item.id === itemId})
-      setComponent(selectedComponent)
-      console.log(itemId, selectedComponent)
+      if (!GLTFTree.children) return;
+      const selectedComponent = findMeshById(GLTFTree.children, itemId);
+      setComponent(selectedComponent);
+      console.log(itemId, selectedComponent);
     } else {
-      setComponent(null)
+      setComponent(null);
     }
   };
 
@@ -163,7 +199,7 @@ export default function Home() {
             isExpanded={isComponentExpanded}
             handleClick={handleComponentExpanded}
             title="Component Controller"
-            component={component}
+            component={component!!}
           />
           <CameraController
             id="camera-controller"
