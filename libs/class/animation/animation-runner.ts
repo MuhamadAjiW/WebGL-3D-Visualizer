@@ -1,12 +1,15 @@
-import { AnimationClip } from "../../base-types/animation";
+import { AnimationClip, AnimationPath } from "../../base-types/animation";
 import Object3D from "../object3d";
 import Vector3 from "../../base-types/vector3";
 import { Euler } from "../../base-types/euler";
 import { Quaternion } from "../../base-types/quaternion";
 import { AnimationEasingFunc, AnimationEasingType } from "./animation-easing";
+import { initialize } from "next/dist/server/lib/render-server";
 
 export class AnimationRunner {
   isPlaying: boolean = false;
+  loop: boolean = false;
+  reverse: boolean = false;
   fpkey: number = 30;
   easing: AnimationEasingType = AnimationEasingType.LINEAR;
   private root: Object3D;
@@ -20,16 +23,33 @@ export class AnimationRunner {
     options: {
       fpkey?: number;
       easing?: AnimationEasingType;
+      loop?: boolean;
+      reverse?: boolean;
     } = {}
   ) {
     this.currentAnimation = clip;
     this.root = root;
     this.fpkey = options.fpkey || 144;
     this.easing = options.easing || AnimationEasingType.LINEAR;
+    this.loop = options.loop || false;
+    this.reverse = options.reverse || false;
   }
 
   get CurrentFrame() {
     return this.currentFrame;
+  }
+
+  set CurrentFrame(val: number) {
+    if (val < 0) {
+      this.currentFrame = this.length - 1;
+      return;
+    }
+    if (val >= this.length) {
+      this.currentFrame = 0;
+      return;
+    }
+
+    this.currentFrame = val;
   }
 
   get length() {
@@ -40,132 +60,147 @@ export class AnimationRunner {
     return this.currentAnimation!.frames[this.currentFrame];
   }
 
+  private get nextFrame() {
+    let index = this.reverse ? this.currentFrame - 1 : this.currentFrame + 1;
+    if (index < 0) {
+      index = this.length - 1;
+    } else if (index >= this.length) {
+      index = 0;
+    }
+    return this.currentAnimation!.frames[index];
+  }
+
   update() {
     if (this.isPlaying) {
       const progress = this.deltaFrame / this.fpkey;
       const modifier = AnimationEasingFunc[this.easing](progress);
 
-      this.updateSceneGraph(modifier);
+      this.updateSceneGraph(this.root, this.nextFrame, modifier);
 
       if (progress >= 1) {
         this.deltaFrame = 0;
 
-        if (this.currentFrame == this.currentAnimation!.frames.length - 1) {
+        this.CurrentFrame += this.reverse ? -1 : 1;
+
+        if (
+          !this.loop &&
+          ((this.currentFrame == this.currentAnimation!.frames.length - 1 &&
+            !this.reverse) ||
+            (this.currentFrame == 0 && this.reverse))
+        ) {
+          this.isPlaying = false;
           this.currentFrame = 0;
-        } else {
-          this.currentFrame++;
+          return;
         }
       }
+
       this.deltaFrame++;
     }
   }
 
-  private updateSceneGraph(modifier: number) {
-    // Update scene graph with current frame
-    const frame = this.frame;
-    const nextFrame =
-      this.currentAnimation!.frames[(this.currentFrame + 1) % this.length];
-
-    // Use root as the parent and traverse according to the frame
-    // TODO: Optimize
-
-    // Translation
-    if (nextFrame.keyframe?.translation) {
-      const start = frame.keyframe?.translation
-        ? new Vector3(frame.keyframe?.translation)
-        : this.root.position;
-      const end = new Vector3(nextFrame.keyframe?.translation);
-
-      this.root.position = start.add(
-        end.substract(start).multiplyScalar(modifier)
-      );
-    }
-
-    // Rotation
-    if (nextFrame.keyframe?.rotation) {
-      let start: Vector3;
-      if (frame.keyframe?.rotation) {
-        start = new Vector3(frame.keyframe?.rotation);
-      } else {
-        const euler: Euler = new Euler();
-        euler.setFromQuaternion(this.root.rotation as Quaternion);
-
-        start = new Vector3(euler.x, euler.y, euler.z);
-      }
-      const end = new Vector3(nextFrame.keyframe?.rotation);
-      const euler = start.add(end.substract(start).multiplyScalar(modifier));
-
-      this.root.rotation = Quaternion.Euler(
-        new Euler(...euler.getVector(), "xyz")
-      );
-    }
-
-    // Scale
-    if (nextFrame.keyframe?.scale) {
-      const start = frame.keyframe?.scale
-        ? new Vector3(frame.keyframe?.scale)
-        : this.root.position;
-      const end = new Vector3(nextFrame.keyframe?.scale);
-
-      this.root.position = start.add(
-        end.substract(start).multiplyScalar(modifier)
-      );
-    }
-
-    // this.root.children.forEach((child) => {
-    //   this.updateSceneGraphTraverse(child, modifier);
-    // });
+  public playAnimation() {
+    this.isPlaying = true;
+    this.currentFrame = 0;
+    this.initialize();
   }
 
-  private updateSceneGraphTraverse(node: Object3D, modifier: number) {
-    // Update scene graph with current frame
-    const frame = this.frame;
-    const nextFrame =
-      this.currentAnimation!.frames[(this.currentFrame + 1) % this.length];
+  public togglePause() {
+    this.isPlaying != this.isPlaying;
+  }
 
+  public toggleReverse() {
+    this.reverse != this.reverse;
+  }
+
+  private updateSceneGraph(
+    node: Object3D,
+    path: AnimationPath,
+    modifier: number
+  ) {
     // Use root as the parent and traverse according to the frame
     // TODO: Optimize
 
     // Translation
-    if (nextFrame.keyframe?.translation) {
-      const start = frame.keyframe?.translation
-        ? new Vector3(frame.keyframe?.translation)
-        : node.position;
-      const end = new Vector3(nextFrame.keyframe?.translation);
+    if (path.keyframe?.translation) {
+      const start = node.position;
+      const end = new Vector3(path.keyframe?.translation);
 
       node.position = start.add(end.substract(start).multiplyScalar(modifier));
     }
 
     // Rotation
-    if (nextFrame.keyframe?.rotation) {
-      let start: Vector3;
-      if (frame.keyframe?.rotation) {
-        start = new Vector3(frame.keyframe?.rotation);
-      } else {
-        const euler: Euler = new Euler();
-        euler.setFromQuaternion(node.rotation as Quaternion);
+    if (path.keyframe?.rotation) {
+      const initialRotation: Euler = new Euler();
+      initialRotation.setFromQuaternion(node.rotation as Quaternion);
 
-        start = new Vector3(euler.x, euler.y, euler.z);
-      }
-      const end = new Vector3(nextFrame.keyframe?.rotation);
+      const start = new Vector3(
+        initialRotation.x,
+        initialRotation.y,
+        initialRotation.z
+      );
+      const end = new Vector3(path.keyframe?.rotation);
       const euler = start.add(end.substract(start).multiplyScalar(modifier));
 
       node.rotation = Quaternion.Euler(new Euler(...euler.getVector(), "xyz"));
     }
 
     // Scale
-    if (nextFrame.keyframe?.scale) {
-      const start = frame.keyframe?.scale
-        ? new Vector3(frame.keyframe?.scale)
-        : node.position;
-      const end = new Vector3(nextFrame.keyframe?.scale);
+    if (path.keyframe?.scale) {
+      const start = node.position;
+      const end = new Vector3(path.keyframe?.scale);
 
       node.position = start.add(end.substract(start).multiplyScalar(modifier));
     }
 
-    node.children.forEach((child) => {
-      this.updateSceneGraphTraverse(child, modifier);
-    });
+    for (let animChild in path.children) {
+      for (let index = 0; index < node.children.length; index++) {
+        const element = node.children[index];
+        if (animChild == element.name) {
+          this.updateSceneGraph(
+            element,
+            path.children![animChild] as AnimationPath,
+            modifier
+          );
+          break;
+        }
+      }
+    }
+  }
+
+  private initialize(
+    node: Object3D = this.root,
+    path: AnimationPath = this.reverse
+      ? this.currentAnimation!.frames[this.length - 1]
+      : this.currentAnimation!.frames[0]
+  ) {
+    // Update scene graph with current frame
+    // Use root as the parent and traverse according to the frame
+    // TODO: Optimize
+
+    // Translation
+    if (path.keyframe?.translation) {
+      node.position = new Vector3(path.keyframe?.translation);
+    }
+
+    // Rotation
+    if (path.keyframe?.rotation) {
+      node.rotation = Quaternion.Euler(new Euler(...path.keyframe?.rotation));
+    }
+
+    // Scale
+    if (path.keyframe?.scale) {
+      node.position = new Vector3(path.keyframe?.scale);
+    }
+
+    for (let animChild in this.frame.children) {
+      for (let index = 0; index < node.children.length; index++) {
+        const element = node.children[index];
+        if (animChild == element.name) {
+          this.initialize(element, path.children![animChild] as AnimationPath);
+          break;
+        }
+      }
+    }
   }
 
   private load(animFile: string): AnimationClip | undefined {

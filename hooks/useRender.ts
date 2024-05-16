@@ -200,28 +200,13 @@ const useRender = ({
               translation: [0, 0, 0],
               rotation: [0, 0, 0],
             },
-            // children: {
-            //   RHead: {
-            //     keyframe: {
-            //       translation: [0.75, 1.5, 0],
-            //       rotation: [0, 0, 0],
-            //     },
-            //   },
-            //   RTail: {
-            //     keyframe: {
-            //       translation: [-0.75, 1.5, 0],
-            //       rotation: [0, 30, 0],
-            //     },
-            //     children: {
-            //       RTailTip: {
-            //         keyframe: {
-            //           translation: [-0.5, 0, 0],
-            //           rotation: [0, 0, 0],
-            //         },
-            //       },
-            //     },
-            //   },
-            // },
+            children: {
+              Left: {
+                keyframe: {
+                  rotation: [0, 0, 0],
+                },
+              },
+            },
           },
           // 1
           {
@@ -229,23 +214,27 @@ const useRender = ({
               translation: [-0.5, 0, 0],
               rotation: [0, 0.5, 0],
             },
-            // children: {
-            //   RHead: {
-            //     keyframe: {
-            //       translation: [0.75, 1.5, 0],
-            //       rotation: [0, 0, 0],
-            //     },
-            //   },
-            // },
+            children: {
+              Left: {
+                keyframe: {
+                  rotation: [2, 0, 0],
+                },
+              },
+            },
           },
         ],
       };
       const animationRunner: AnimationRunner = new AnimationRunner(
         testAnim,
-        scene,
-        { fpkey: 144, easing: AnimationEasingType.EASE_IN_SINE }
+        mesh,
+        {
+          fpkey: 144,
+          easing: AnimationEasingType.EASE_IN_SINE,
+          loop: false,
+          reverse: false,
+        }
       );
-      animationRunner.isPlaying = true;
+      animationRunner.playAnimation();
 
       WebGLUtils.setUniforms(programInfo, dummyUniformsData);
       function render() {

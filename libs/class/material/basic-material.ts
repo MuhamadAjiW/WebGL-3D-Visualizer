@@ -9,11 +9,9 @@ export class BasicMaterial extends ShaderMaterial {
   public static materialType: number = 0;
   private static idAutoIncrement: number = 0;
 
-  public color: Color;
-
   constructor(options?: { texture?: Texture; color?: Color }) {
     super(BasicMaterial.materialType, options?.texture);
-    this.color = options?.color || new Color(0xffffffff);
+    this.diffuse = options?.color || new Color(0xffffffff);
   }
 
   public loadTexture(renderer: WebGLRenderer): void {
