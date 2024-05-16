@@ -222,9 +222,6 @@ export class Loader {
       meshIndex: node instanceof Mesh ? this.saveMesh(node) : undefined,
     };
 
-    // Add this node's data to savedData
-    this.savedData.nodes.push(nodeData);
-
     // Save the node data
     const nodeIndex = this.savedData.nodes.length;
     this.savedData.nodes.push(nodeData);
@@ -405,7 +402,12 @@ export class Loader {
     };
   }
 
-  public load(json: string): Scene {
+  public loadFromJson(jsonString: string): Scene {
+    this.savedData = JSON.parse(jsonString);
+    return this.load();
+  }
+
+  public load(): Scene {
     const scene = new Scene();
     this.loadNodeMap = new Map();
     this.loadCameraMap = new Map();
