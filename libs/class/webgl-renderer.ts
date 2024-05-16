@@ -6,7 +6,6 @@ import { ShaderMaterial } from "./material/shader-material";
 import { Mesh } from "./mesh";
 import Object3D from "./object3d";
 import { Scene } from "./scene";
-import { BufferUniform } from "./webgl/uniform";
 
 export class WebGLRenderer {
   public canvas: HTMLCanvasElement;

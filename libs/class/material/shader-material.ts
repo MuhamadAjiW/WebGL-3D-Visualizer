@@ -1,9 +1,5 @@
-import { Color } from "@/libs/base-types/color";
 import { Texture } from "../texture/texture";
 import { WebGLRenderer } from "../webgl-renderer";
-import { BufferUniform } from "../webgl/uniform";
-import { BasicMaterial } from "./basic-material";
-import { PhongMaterial } from "./phong-material";
 
 export abstract class ShaderMaterial {
   // TODO: Review this note, might be a better way to improve it

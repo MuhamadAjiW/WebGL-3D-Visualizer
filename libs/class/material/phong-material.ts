@@ -2,7 +2,6 @@ import { WebGLUtil } from "@/libs/util/webgl-util";
 import { Color } from "../../base-types/color";
 import { Texture } from "../texture/texture";
 import { WebGLRenderer } from "../webgl-renderer";
-import { BufferUniform } from "../webgl/uniform";
 import { ShaderMaterial } from "./shader-material";
 
 export class PhongMaterial extends ShaderMaterial {

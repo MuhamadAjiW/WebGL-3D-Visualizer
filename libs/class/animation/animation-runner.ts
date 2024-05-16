@@ -4,7 +4,6 @@ import Vector3 from "../../base-types/vector3";
 import { Euler } from "../../base-types/euler";
 import { Quaternion } from "../../base-types/quaternion";
 import { AnimationEasingFunc, AnimationEasingType } from "./animation-easing";
-import { initialize } from "next/dist/server/lib/render-server";
 
 export class AnimationRunner {
   isPlaying: boolean = false;
