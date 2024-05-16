@@ -29,6 +29,7 @@ import PerspectiveCamera from "@/libs/class/perspective-camera";
 import { AnimationClip } from "@/libs/base-types/animation";
 import { AnimationRunner } from "../libs/class/animation/animation-runner";
 import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
+import { Loader } from "@/libs/class/loader/loader";
 
 interface HooksRenderProps {
   cameraType: string;
@@ -253,6 +254,16 @@ const useRender = ({
         }
       }
       render();
+
+      const fetchData = async () => {
+        const response = await fetch("/scene.json");
+        const data = await response.json();
+        console.log(data);
+
+        const loader: Loader = new Loader();
+        loader.loadFromJson(JSON.stringify(data));
+      };
+      fetchData();
 
       console.log("Done");
     };

@@ -2,6 +2,7 @@ import Vector3 from "../base-types/vector3";
 import M4 from "../base-types/m4";
 import { Quaternion } from "../base-types/quaternion";
 import { Euler } from "../base-types/euler";
+import { assert } from "console";
 
 class Object3D {
   private _position: Vector3 = new Vector3();

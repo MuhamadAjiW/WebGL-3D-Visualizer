@@ -1,0 +1,243 @@
+[33mcommit 301c98e6be9e5e30afe7a98c726a91795d008454[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Kenneth Ezekiel <88850771+KenEzekiel@users.noreply.github.com>
+Date:   Thu May 16 14:55:52 2024 +0700
+
+    fix: options name
+
+[33mcommit e7310a4e6cc06dcd228dd36abf6075c79933841a[m
+Author: Kenneth Ezekiel <88850771+KenEzekiel@users.noreply.github.com>
+Date:   Thu May 16 14:53:38 2024 +0700
+
+    feat: loader
+
+[33mcommit a0f7407c094250e4a80a7027c0f07d3088200a34[m
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Thu May 16 14:46:05 2024 +0700
+
+    chore: removed unused imports
+
+[33mcommit 78c0094cd9b04743757b5f737d13027933adbff7[m
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Thu May 16 14:44:34 2024 +0700
+
+    refactor: materials
+
+[33mcommit 1fadbe3fb1f5eb52391bf82453e838aac61b6b3a[m
+Merge: 3cbf588 7f975fc
+Author: Muhamad Aji Wibisono <13521095@std.stei.itb.ac.id>
+Date:   Thu May 16 14:33:20 2024 +0700
+
+    Merge pull request #15 from GAIB20/feat/animation
+    
+    Feat/animation
+
+[33mcommit 7f975fcf60c29c65183e7a07c887a2af70c4066b[m[33m ([m[1;31morigin/feat/animation[m[33m, [m[1;32mfeat/animation[m[33m)[m
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Thu May 16 14:31:43 2024 +0700
+
+    feat: animation pause, play, reverse, loop, tweening
+
+[33mcommit 2faa1dbe0c47c866c5496763d0e7ebc49d1fbdff[m
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Thu May 16 13:06:13 2024 +0700
+
+    feat: base node animation
+
+[33mcommit 3cbf588b983a08e2c552b0d8c06918a22deef52a[m[33m ([m[1;31morigin/feature/scene-component-integration[m[33m)[m
+Author: Kenneth Ezekiel <88850771+KenEzekiel@users.noreply.github.com>
+Date:   Thu May 16 11:05:41 2024 +0700
+
+    update: schema
+
+[33mcommit 49c4ea521232832ebae0d5200a58eaa844587285[m
+Merge: 3dea94c 2f8af37
+Author: Muhamad Aji Wibisono <13521095@std.stei.itb.ac.id>
+Date:   Thu May 16 10:44:46 2024 +0700
+
+    Merge pull request #14 from GAIB20/feat/material-phong
+    
+    Feat/material phong
+
+[33mcommit 2f8af37f1635f39d00b150ed178c7d33af974444[m[33m ([m[1;31morigin/feat/material-phong[m[33m, [m[1;32mfeat/material-phong[m[33m)[m
+Merge: 9eaa903 3dea94c
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Thu May 16 10:41:20 2024 +0700
+
+    Merge branch 'main' of https://github.com/GAIB20/tugas-besar-grafkom-2-placeholder into feat/material-phong
+
+[33mcommit 9eaa90369842829f03bd054f2db27e7b69efe283[m
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Thu May 16 10:40:29 2024 +0700
+
+    chore: removed comments, console logs, unused codes
+
+[33mcommit 7dfc2739ae1028dae8328f5533667e3005149cea[m
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Thu May 16 02:11:02 2024 +0700
+
+    fix: use effect cleanup
+
+[33mcommit 56a54e0d418304d97ae9aeba153acba127c0370b[m
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Wed May 15 22:30:01 2024 +0700
+
+    refactor: attribute and uniform setters
+
+[33mcommit 3dea94c562e1bf2a24ec2bc1676130ad7bea03a3[m
+Author: Tansil011019 <13521054@std.stei.itb.ac.id>
+Date:   Wed May 15 22:19:32 2024 +0700
+
+    fix: loader conflict
+
+[33mcommit b1fbf8103f2f6b71045a6b270a64d6add45d2d1d[m
+Author: Tansil011019 <13521054@std.stei.itb.ac.id>
+Date:   Wed May 15 22:15:32 2024 +0700
+
+    fix: ui prob
+
+[33mcommit dd140c0adcfb5965d419b11b253f2344ad48f3c0[m
+Author: Tansil011019 <13521054@std.stei.itb.ac.id>
+Date:   Wed May 15 21:57:05 2024 +0700
+
+    fix: merge error
+
+[33mcommit 349d178c5d28b1b2a11697a21ebcb485232564da[m
+Author: Tansil011019 <13521054@std.stei.itb.ac.id>
+Date:   Wed May 15 15:10:34 2024 +0700
+
+    refactor: loader
+
+[33mcommit d80aff778e4af7bd15d5fdafc5aaf1d11cabe092[m
+Author: Tansil011019 <13521054@std.stei.itb.ac.id>
+Date:   Wed May 15 14:44:20 2024 +0700
+
+    feat: add connect scene graph to inspector
+
+[33mcommit b86f85b2e8f05d676826574882647a2069348395[m
+Author: Tansil011019 <13521054@std.stei.itb.ac.id>
+Date:   Wed May 15 13:39:17 2024 +0700
+
+    feat: add apply btn to controller
+
+[33mcommit d2598c6077e43b7cddead2bd05610bab95de2e67[m
+Author: Tansil011019 <13521054@std.stei.itb.ac.id>
+Date:   Wed May 15 13:31:03 2024 +0700
+
+    refactor: perspective camera singleton
+
+[33mcommit 3981a3bf59c42e65e80eaf487d111172df0b96a6[m
+Author: Tansil011019 <13521054@std.stei.itb.ac.id>
+Date:   Wed May 15 12:27:41 2024 +0700
+
+    chore: integrate tree and controller
+
+[33mcommit ab9d475ce6075316b4f51adde0a4131b048914c7[m
+Author: Kenneth Ezekiel <88850771+KenEzekiel@users.noreply.github.com>
+Date:   Wed May 15 22:11:35 2024 +0700
+
+    change: schema
+
+[33mcommit 967176b9772b63430baf254a776206d47f90c9d1[m
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Wed May 15 18:30:10 2024 +0700
+
+    Removed unused codes
+
+[33mcommit 697df2084148fe702aa1035521cb101b92eabd99[m
+Merge: ee13331 c960737
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Wed May 15 18:28:15 2024 +0700
+
+    fix: rotation
+
+[33mcommit ee133312cdafed06b5407ab37de4539fd41b17ee[m
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Wed May 15 17:17:56 2024 +0700
+
+    refactor: phong material, shaders
+
+[33mcommit c960737b6fce307fd110811d542290c45ba62d1e[m
+Merge: 0023303 23f85f8
+Author: Kenneth Ezekiel <88850771+KenEzekiel@users.noreply.github.com>
+Date:   Wed May 15 17:02:03 2024 +0700
+
+    Merge branch 'main' of https://github.com/GAIB20/tugas-besar-grafkom-2-placeholder
+
+[33mcommit 002330340bcaef0db311c60d064245022adb9e80[m
+Author: Kenneth Ezekiel <88850771+KenEzekiel@users.noreply.github.com>
+Date:   Wed May 15 17:01:41 2024 +0700
+
+    add: oblique and save method
+
+[33mcommit 23f85f88bc562bce749315eb19594b306135c509[m
+Author: Salomo309 <109785084+Salomo309@users.noreply.github.com>
+Date:   Wed May 15 16:31:51 2024 +0700
+
+    update: perspective camera import
+
+[33mcommit eb3d4077010666b72a0d871b2380eb9fa33596e0[m
+Author: Salomo309 <109785084+Salomo309@users.noreply.github.com>
+Date:   Wed May 15 16:31:37 2024 +0700
+
+    fix: get instance
+
+[33mcommit c547e7b4b647c7055ba5b998ca31755d3c9c6abd[m
+Author: Salomo309 <109785084+Salomo309@users.noreply.github.com>
+Date:   Wed May 15 16:28:28 2024 +0700
+
+    refactor: delete aspect
+
+[33mcommit 21d1ff1e1e43091ef47dc448ee95578c9cb52bf6[m
+Merge: 6e328c1 4cbe113
+Author: Salomo309 <109785084+Salomo309@users.noreply.github.com>
+Date:   Wed May 15 16:27:28 2024 +0700
+
+    Merge branch 'main' of https://github.com/GAIB20/tugas-besar-grafkom-2-placeholder
+
+[33mcommit 6e328c1316231c954d7d16f8a79e3579f8382459[m
+Author: Salomo309 <109785084+Salomo309@users.noreply.github.com>
+Date:   Wed May 15 16:27:24 2024 +0700
+
+    refactor: setDistance, tapi waktu zoom in ga ditengah
+
+[33mcommit 4cbe113694aee0dc60189812ffe3df29d1cb7004[m
+Author: Kenneth Ezekiel <88850771+KenEzekiel@users.noreply.github.com>
+Date:   Wed May 15 14:33:02 2024 +0700
+
+    add: schema
+
+[33mcommit 9612335ba9de80d65aa2eff0ca830903a798d54f[m
+Author: Kenneth Ezekiel <88850771+KenEzekiel@users.noreply.github.com>
+Date:   Wed May 15 13:04:55 2024 +0700
+
+    add: schema
+
+[33mcommit 27ee6406bfcdd75aae98c09dfa861c0b39b50e12[m
+Merge: 1e2f883 4a19436
+Author: Muhamad Aji Wibisono <13521095@std.stei.itb.ac.id>
+Date:   Tue May 14 23:45:22 2024 +0700
+
+    Merge pull request #12 from GAIB20/feat/geometry
+    
+    Feat/geometry
+
+[33mcommit 4a194368f8e96fea76ea28d5c2a180db34256822[m[33m ([m[1;31morigin/feat/geometry[m[33m, [m[1;32mfeat/geometry[m[33m)[m
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Tue May 14 23:43:28 2024 +0700
+
+    feat: integrated camera and node to renderer
+
+[33mcommit beec4615fdba13d2c08049ad79ae661a89582165[m
+Merge: 6ebe873 1e2f883
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Tue May 14 23:37:27 2024 +0700
+
+    Merge branch 'main' of https://github.com/GAIB20/tugas-besar-grafkom-2-placeholder into feat/geometry
+
+[33mcommit 6ebe873a1030284e75e723bd1506573685fa6797[m
+Author: MuhamadAjiW <16521119@mahasiswa.itb.ac.id>
+Date:   Tue May 14 23:24:37 2024 +0700
+
+    feat: integrated camera to renderer, calculate normals, added cube and block geometry
+
+[33mcommit 1e2f88
