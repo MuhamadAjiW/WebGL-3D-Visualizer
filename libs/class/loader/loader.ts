@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CameraType } from "../../libs/class/camera-types";
+import { CameraType } from "../camera-types";
 import { Scene } from "@/libs/class/scene";
 
 const ArrayIndex = z.array(z.number().int());
@@ -52,7 +52,7 @@ const AnimationTRS = z.object({
 const AnimationPath: z.ZodSchema<any> = z.lazy(() =>
   z.object({
     keyframe: AnimationTRS.optional(),
-    children: z.record(AnimationPa th).optional(),
+    children: z.record(AnimationPath).optional(),
   })
 );
 

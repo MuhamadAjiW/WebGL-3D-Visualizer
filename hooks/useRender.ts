@@ -17,7 +17,6 @@ import { PhongMaterial } from "@/libs/class/material/phong-material";
 import Camera from "@/libs/class/camera";
 import Vector3 from "@/libs/base-types/vector3";
 import M4 from "@/libs/base-types/m4";
-import PersepectiveCamera from "@/libs/class/perspective-camera";
 import { MathUtil } from "@/libs/util/math-util";
 import { useEffect, useRef } from "react";
 import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
@@ -26,6 +25,7 @@ import OrthographicCamera from "@/libs/class/orthographic-camera";
 import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
 import { BasicMaterial } from "@/libs/class/material/basic-material";
 import { HollowBlockGeometry } from "@/libs/class/geometry/hollow-block-geometry";
+import PerspectiveCamera from "@/libs/class/perspective-camera";
 
 interface HooksRenderProps {
   cameraType: string;
@@ -88,7 +88,7 @@ const useRender = ({
       let cameraInstance:
         | ObliqueCamera
         | OrthographicCamera
-        | PersepectiveCamera
+        | PerspectiveCamera
         | null = null;
       switch (cameraType) {
         case "obliqueCamera":
@@ -105,7 +105,7 @@ const useRender = ({
           );
           break;
         case "perspectiveCamera":
-          cameraInstance = PersepectiveCamera.getInstance(
+          cameraInstance = PerspectiveCamera.getInstance(
             gl.canvas.width / gl.canvas.height,
             MathUtil.DegreesToRad(30),
             1,
