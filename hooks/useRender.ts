@@ -30,12 +30,15 @@ import { AnimationClip } from "@/libs/base-types/animation";
 import { AnimationRunner } from "../libs/class/animation/animation-runner";
 import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
 import { Loader } from "@/libs/class/loader/loader";
+import { Euler } from "@/libs/base-types/euler";
+import { Quaternion } from "@/libs/base-types/quaternion";
 
 interface HooksRenderProps {
   cameraType: string;
   distance: number;
   isReset: boolean;
   handleReset: Dispatch<SetStateAction<boolean>>;
+  selectedComponent: any; // change this later
 }
 
 const useRender = ({
@@ -43,10 +46,12 @@ const useRender = ({
   distance,
   isReset,
   handleReset,
+  selectedComponent,
 }: HooksRenderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    console.log("this is selected component", selectedComponent);
     let isMouseClick = false;
     let stop = false;
     const runWebGL = async () => {
@@ -159,6 +164,22 @@ const useRender = ({
       mesh.name = "Parent";
       meshl.name = "Left";
       meshr.name = "Right";
+      if (selectedComponent) {
+        mesh.position = new Vector3(
+          selectedComponent.position.x,
+          selectedComponent.position.y,
+          selectedComponent.position.z
+        );
+
+        mesh.rotation = Quaternion.Euler(
+          new Euler(
+            selectedComponent.rotation.x,
+            selectedComponent.rotation.y,
+            selectedComponent.rotation.z,
+            "XYZ"
+          )
+        );
+      }
       meshl.position = new Vector3(-0.25, 0, 0);
       meshr.position = new Vector3(0.25, 0, 0);
 
@@ -276,7 +297,7 @@ const useRender = ({
     return () => {
       stop = true;
     };
-  }, [cameraType, distance, isReset]);
+  }, [cameraType, distance, isReset, selectedComponent]);
 
   return canvasRef;
 };

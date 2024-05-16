@@ -2,7 +2,7 @@ import { NodeSchema, SceneSchema } from "@/types/ui";
 import { TreeViewBaseItem } from "@mui/x-tree-view";
 
 export const convertGLTFToTreeView = (
-  scheneSchema: SceneSchema
+  scheneSchema: any //change this later
 ): TreeViewBaseItem => {
   return {
     id: scheneSchema.id,
@@ -12,9 +12,9 @@ export const convertGLTFToTreeView = (
 };
 
 export const findMeshById = (
-  nodeSchema: NodeSchema[],
+  nodeSchema: any, // change this later and return type
   id: string
-): NodeSchema | null => {
+) : any => {
   for (let node of nodeSchema) {
     if (node.id === id) {
       return node;
@@ -27,4 +27,42 @@ export const findMeshById = (
     }
   }
   return null;
+};
+
+export const convertLoadToTree = (
+  dict: { [key: number]: boolean },
+  nodes: any,
+  index: number
+) => {
+  if (dict[index]) {
+    const node = nodes[index];
+    dict[index] = false;
+    return {
+      id: node.name,
+      name: node.name,
+      position: {
+        x: node.translation[0],
+        y: node.translation[1],
+        z: node.translation[2],
+      },
+      rotation: {
+        x: node.rotation[0],
+        y: node.rotation[1],
+        z: node.rotation[2],
+      },
+      scale: {
+        x: node.scale[0],
+        y: node.scale[1],
+        z: node.scale[2],
+      },
+      visible: node.visible,
+      localMatrix: node.localMatrix,
+      worldMatrix: node.worldMatrix,
+      cameraIndex: node.cameraIndex,
+      meshIndex: node.meshIndex,
+      children: node.children.map((childIndex: number) =>
+        convertLoadToTree(dict, nodes, childIndex)
+      ),
+    };
+  }
 };
