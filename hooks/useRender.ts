@@ -118,10 +118,7 @@ const useRender = ({
       }
 
       if (cameraInstance == null) return;
-
       cameraInstance.position = new Vector3(0, 0, 0);
-      // console.log(M4.flatten(cameraInstance.viewProjectionMatrix));
-      // console.log(cameraInstance);
 
       // TODO: Delete, this is for testing purposes
       const dummyUniformsData = {
@@ -155,20 +152,15 @@ const useRender = ({
       const mesh = new Mesh(geometry, material);
       const meshl = new Mesh(geometryh, material);
       const meshr = new Mesh(geometryh, material);
-      const meshh = new Mesh(geometryh, material);
       mesh.name = "Parent";
       meshl.name = "Left";
       meshr.name = "Right";
-      meshh.name = "Back";
       meshl.position = new Vector3(-0.25, 0, 0);
-      meshr.position = new Vector3(0.75, 0, 0);
-      meshh.position = new Vector3(0, 0, -1);
+      meshr.position = new Vector3(0.25, 0, 0);
 
       scene.add(mesh);
       mesh.add(meshl);
       mesh.add(meshr);
-      // mesh.add(meshh);
-      console.log(meshl.geometry.position?.data);
 
       let dx = 0;
       let dy = 0;

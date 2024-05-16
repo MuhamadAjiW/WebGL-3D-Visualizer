@@ -199,8 +199,6 @@ class Object3D {
       rotation = Quaternion.Euler(rotation);
     }
     this._rotation = rotationQuat.multiply(rotation).normalized();
-    console.log("Rotation:");
-    console.log(rotationQuat);
 
     // Mark the node as dirty to recalculate the transformation matrix
     this._isDirty = true;
