@@ -585,7 +585,7 @@ export class Loader {
     if (materialObject.materialType == 0) {
       material = new BasicMaterial({
         texture: materialObject.texture,
-        diffuse: materialObject.diffuse,
+        color: materialObject.diffuse,
       });
     } else {
       material = new PhongMaterial({
