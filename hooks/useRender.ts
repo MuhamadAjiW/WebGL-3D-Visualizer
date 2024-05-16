@@ -26,6 +26,9 @@ import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
 import { BasicMaterial } from "@/libs/class/material/basic-material";
 import { HollowBlockGeometry } from "@/libs/class/geometry/hollow-block-geometry";
 import PerspectiveCamera from "@/libs/class/perspective-camera";
+import { AnimationClip } from "@/libs/base-types/animation";
+import { AnimationRunner } from "../libs/class/animation/animation-runner";
+import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
 
 interface HooksRenderProps {
   cameraType: string;
@@ -137,17 +140,17 @@ const useRender = ({
       const geometry = new BlockGeometry(0.5, 1, 0.5);
       const geometryh = new BlockGeometry(0.25, 0.5, 0.25);
       const texture = await TextureLoader.load("res/f-texture.png");
-      const material = new BasicMaterial({
-        color: new Color(0x010101ff),
-        texture,
-      });
-      // const material = new PhongMaterial({
-      //   texture: texture,
-      //   ambient: new Color(0x818181ff),
-      //   diffuse: new Color(0xffffffff),
-      //   specular: new Color(0xffffffff),
-      //   shinyness: 32,
+      // const material = new BasicMaterial({
+      //   color: new Color(0x010101ff),
+      //   texture,
       // });
+      const material = new PhongMaterial({
+        texture: texture,
+        ambient: new Color(0x818181ff),
+        diffuse: new Color(0xffffffff),
+        specular: new Color(0xffffffff),
+        shinyness: 32,
+      });
 
       const mesh = new Mesh(geometry, material);
       const meshl = new Mesh(geometryh, material);
@@ -188,10 +191,56 @@ const useRender = ({
         handleReset(false);
       }
 
+      const testAnim: AnimationClip = {
+        name: "Fox Walking",
+        frames: [
+          // 0
+          {
+            keyframe: {
+              translation: [0, 0, 0],
+              rotation: [0, 0, 0],
+            },
+            children: {
+              Left: {
+                keyframe: {
+                  rotation: [0, 0, 0],
+                },
+              },
+            },
+          },
+          // 1
+          {
+            keyframe: {
+              translation: [-0.5, 0, 0],
+              rotation: [0, 0.5, 0],
+            },
+            children: {
+              Left: {
+                keyframe: {
+                  rotation: [2, 0, 0],
+                },
+              },
+            },
+          },
+        ],
+      };
+      const animationRunner: AnimationRunner = new AnimationRunner(
+        testAnim,
+        mesh,
+        {
+          fpkey: 144,
+          easing: AnimationEasingType.EASE_IN_SINE,
+          loop: false,
+          reverse: false,
+        }
+      );
+      animationRunner.playAnimation();
+
       WebGLUtils.setUniforms(programInfo, dummyUniformsData);
       function render() {
         if (cameraInstance == null) return;
 
+        animationRunner.update();
         cameraInstance.setOrbitControl(dy, dx);
         cameraInstance.setDistance(distance);
 
