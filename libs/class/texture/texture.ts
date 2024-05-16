@@ -30,6 +30,7 @@ export class Texture {
     format?: GLenum;
     repeatS?: number;
     repeatT?: number;
+    generateMipmaps?: boolean;
   }) {
     this.isActive = false;
 
@@ -42,6 +43,7 @@ export class Texture {
     this.repeatS = options?.repeatS || 1;
     this.repeatT = options?.repeatT || 1;
     this.image = options.image;
+    this.generateMipmaps = options?.generateMipmaps || false;
   }
 
   public activate() {

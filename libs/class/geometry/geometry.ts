@@ -48,14 +48,6 @@ class BufferGeometry {
 
     this.normal = normal;
   }
-
-  // TODO: Implement
-  public toJson(): void {
-    throw new Error("Method not implemented.");
-  }
-  public fromJson(): void {
-    throw new Error("Method not implemented.");
-  }
 }
 
 export { BufferGeometry };
