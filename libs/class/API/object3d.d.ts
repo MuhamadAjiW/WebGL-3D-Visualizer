@@ -7,7 +7,7 @@ import { Euler } from "../base-types/euler";
 
 declare class Object3D {
   private _position: Vector3;
-  private _rotation: Quaternion | Euler;
+  private _rotation: Quaternion;
   private _scale: Vector3;
   private _localMatrix: M4;
   private _worldMatrix: M4;
@@ -33,13 +33,13 @@ declare class Object3D {
    * Gets the rotation of the node.
    * @returns The rotation as a Quaternion or Euler.
    */
-  get rotation(): Quaternion | Euler;
+  get rotation(): Quaternion;
 
   /**
    * Sets the rotation of the node and marks it for recalculation.
    * @param rotation - The new rotation as a Quaternion or Euler.
    */
-  set rotation(rotation: Quaternion | Euler): void;
+  set rotation(rotation: Quaternion): void;
 
   /**
    * Gets the scale of the node.

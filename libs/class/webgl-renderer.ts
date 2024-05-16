@@ -96,9 +96,6 @@ export class WebGLRenderer {
         u_materialType: node.material.materialType,
       });
 
-      console.log(node.name);
-      console.log(node);
-
       // TODO: Use indices when drawing
       this.gl.drawArrays(this.gl.TRIANGLES, 0, node.geometry.position!.length);
     }

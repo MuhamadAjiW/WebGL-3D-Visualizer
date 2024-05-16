@@ -8,11 +8,11 @@ export class Euler {
   z: number = 0;
   order: string = "XYZ";
 
-  constructor(x: number, y: number, z: number, order: string) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.order = order.toUpperCase();
+  constructor(x?: number, y?: number, z?: number, order?: string) {
+    this.x = x || 0;
+    this.y = y || 0;
+    this.z = z || 0;
+    this.order = order?.toUpperCase() || "XYZ";
   }
 
   get isEuler(): boolean {
@@ -100,16 +100,16 @@ export class Euler {
     }
 
     if (!theta2 && quadran === 14) {
-      this.x = theta1
-      this.y = psi1
-      this.z = phi1
+      this.x = theta1;
+      this.y = psi1;
+      this.z = phi1;
     } else {
-      this.x = theta2!!
-      this.y = psi2!!
-      this.z = phi2!!
+      this.x = theta2!!;
+      this.y = psi2!!;
+      this.z = phi2!!;
     }
 
-    this.order = order ?? this.order
+    this.order = order ?? this.order;
 
     return this;
   }
@@ -117,19 +117,19 @@ export class Euler {
   setFromQuaternion(q: Quaternion, order?: string): this {
     // implementation of order will always XYZ if not needed to consider the order
 
-    const sinr_cosp = 2 * (q.w * q.x + q.y * q.z)
-    const cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y)
-    this.x = Math.atan2(sinr_cosp, cosr_cosp)
+    const sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
+    const cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
+    this.x = Math.atan2(sinr_cosp, cosr_cosp);
 
-    const sinp = Math.sqrt(1 + 2 * (q.w * q.y - q.x * q.z))
-    const cosp = Math.sqrt(1 - 2 * (q.w * q.y - q.x * q.z))
-    this.y =  2 * Math.atan2(sinp, cosp) - Math.PI / 2
+    const sinp = Math.sqrt(1 + 2 * (q.w * q.y - q.x * q.z));
+    const cosp = Math.sqrt(1 - 2 * (q.w * q.y - q.x * q.z));
+    this.y = 2 * Math.atan2(sinp, cosp) - Math.PI / 2;
 
-    const siny_cosp = 2 * (q.w * q.z + q.x * q.y)
+    const siny_cosp = 2 * (q.w * q.z + q.x * q.y);
     const cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
-    this.z = Math.atan2(siny_cosp, cosy_cosp)
+    this.z = Math.atan2(siny_cosp, cosy_cosp);
 
-    this.order = order ?? this.order
+    this.order = order ?? this.order;
 
     return this;
   }
