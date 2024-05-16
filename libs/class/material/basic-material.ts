@@ -9,6 +9,8 @@ export class BasicMaterial extends ShaderMaterial {
   public static materialType: number = 0;
   private static idAutoIncrement: number = 0;
 
+  public diffuse: Color = Color.WHITE;
+
   constructor(options?: { texture?: Texture; color?: Color }) {
     super(BasicMaterial.materialType, options?.texture);
     this.diffuse = options?.color || new Color(0xffffffff);
@@ -61,6 +63,13 @@ export class BasicMaterial extends ShaderMaterial {
         new Uint8Array(Color.BLACK.get())
       );
     }
+  }
+
+  public loadUniform(renderer: WebGLRenderer): void {
+    WebGLUtil.setUniforms(renderer.currentProgram, {
+      u_diffuse: this.diffuse.getNormalized(),
+      u_materialType: this.materialType,
+    });
   }
 
   protected override generateId(): string {

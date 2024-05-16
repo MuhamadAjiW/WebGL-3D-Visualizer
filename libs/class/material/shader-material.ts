@@ -13,10 +13,6 @@ export abstract class ShaderMaterial {
   public id: string;
   public materialType: number = 0;
   public texture: Texture | undefined = undefined;
-  public ambient: Color = Color.WHITE;
-  public diffuse: Color = Color.WHITE;
-  public specular: Color = Color.WHITE;
-  public shininess: number = 1.0;
 
   constructor(materialType: number, texture?: Texture) {
     this.id = this.generateId();
@@ -25,6 +21,7 @@ export abstract class ShaderMaterial {
   }
   protected abstract generateId(): string;
   public abstract loadTexture(renderer: WebGLRenderer): void;
+  public abstract loadUniform(renderer: WebGLRenderer): void;
   public abstract toJson(): string;
 
   // public static fromJson(json: string) : ShaderMaterial{

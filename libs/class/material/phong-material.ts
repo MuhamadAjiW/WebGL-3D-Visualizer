@@ -9,6 +9,11 @@ export class PhongMaterial extends ShaderMaterial {
   public static materialType: number = 1;
   private static idAutoIncrement: number = 0;
 
+  public ambient: Color = Color.WHITE;
+  public diffuse: Color = Color.WHITE;
+  public specular: Color = Color.WHITE;
+  public shininess: number = 1.0;
+
   constructor(options?: {
     texture?: Texture;
     ambient?: Color;
@@ -71,6 +76,16 @@ export class PhongMaterial extends ShaderMaterial {
         new Uint8Array(Color.WHITE.getNormalized())
       );
     }
+  }
+
+  public loadUniform(renderer: WebGLRenderer): void {
+    WebGLUtil.setUniforms(renderer.currentProgram, {
+      u_ambient: this.ambient.getNormalized(),
+      u_diffuse: this.diffuse.getNormalized(),
+      u_specular: this.specular.getNormalized(),
+      u_shininess: this.shininess,
+      u_materialType: this.materialType,
+    });
   }
 
   protected override generateId(): string {

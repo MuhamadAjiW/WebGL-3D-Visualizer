@@ -89,12 +89,8 @@ export class WebGLRenderer {
       WebGLUtil.setUniforms(this.currentProgram, {
         u_world: M4.flatten(node.worldMatrix),
         u_normalMat: M4.flatten(node.worldMatrix.inverse().transpose()),
-        u_ambient: node.material.ambient.getNormalized(),
-        u_diffuse: node.material.diffuse.getNormalized(),
-        u_specular: node.material.specular.getNormalized(),
-        u_shininess: node.material.shininess,
-        u_materialType: node.material.materialType,
       });
+      node.material.loadUniform(this);
 
       // TODO: Use indices when drawing
       this.gl.drawArrays(this.gl.TRIANGLES, 0, node.geometry.position!.length);
