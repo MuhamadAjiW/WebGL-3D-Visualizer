@@ -5,7 +5,7 @@ import { Euler } from "../base-types/euler";
 
 class Object3D {
   private _position: Vector3 = new Vector3();
-  private _rotation: Quaternion | Euler = new Quaternion();
+  private _rotation: Quaternion = new Quaternion();
   private _scale: Vector3 = new Vector3(1, 1, 1);
   private _localMatrix: M4 = M4.identity();
   private _worldMatrix: M4 = M4.identity();
@@ -43,7 +43,12 @@ class Object3D {
   }
 
   set rotation(rotation: Quaternion | Euler) {
-    this._rotation = rotation;
+    if (rotation instanceof Euler) {
+      this._rotation = Quaternion.Euler(rotation);
+    } else {
+      this._rotation = rotation;
+    }
+
     this._isDirty = true;
   }
 
@@ -67,10 +72,10 @@ class Object3D {
   }
 
   computeLocalMatrix() {
-    if (this._isDirty) {
-      this._localMatrix = M4.TRS(this.position, this._rotation, this._scale);
-      this._isDirty = false;
-    }
+    // if (this._isDirty) {
+    this._localMatrix = M4.TRS(this.position, this._rotation, this._scale);
+    // this._isDirty = false;
+    // }
   }
 
   computeWorldMatrix(updateParent = true, updateChildren = true) {

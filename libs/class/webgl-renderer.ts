@@ -1,11 +1,11 @@
 import M4 from "../base-types/m4";
-import { AttributeKeys, UniformKeys } from "../base-types/webgl-keys";
 import { ProgramInfo } from "../base-types/webgl-program-info";
-import { WebGLUtil as WebGLUtils } from "../util/webgl-util";
+import { WebGLUtil } from "../util/webgl-util";
 import Camera from "./camera";
 import { ShaderMaterial } from "./material/shader-material";
 import { Mesh } from "./mesh";
 import Object3D from "./object3d";
+import { Scene } from "./scene";
 import { BufferUniform } from "./webgl/uniform";
 
 export class WebGLRenderer {
@@ -32,9 +32,9 @@ export class WebGLRenderer {
     this.adjustCanvas();
     window.addEventListener("resize", this.adjustCanvas);
 
-    
     // TODO: Review for hollow objects
     this.gl.enable(WebGLRenderingContext.CULL_FACE);
+    this.gl.enable(WebGLRenderingContext.DEPTH_TEST);
   }
 
   setViewport(x: number, y: number, width: number, height: number) {
@@ -63,7 +63,7 @@ export class WebGLRenderer {
 
     if (!materialStored) {
       this.materials.set(material.id, material);
-      material.loadTo(this.gl);
+      material.loadTexture(this);
 
       return materialStored;
     }
@@ -71,62 +71,51 @@ export class WebGLRenderer {
     return materialStored;
   }
 
-  public render(scene: Object3D, camera: Camera) {
+  public renderNodes(node: Object3D) {
     // TODO: Only render when dirty
     // TODO: process node, camera, light
-    scene.traverse(scene);
 
-    if (scene instanceof Mesh) {
+    if (node instanceof Mesh) {
       //TODO: Optimize this call
-      scene.computeWorldMatrix(false, false);
+      node.computeWorldMatrix(false, false);
 
-      this.createOrGetMaterial(scene.material);
+      this.createOrGetMaterial(node.material);
 
-      WebGLUtils.setAttributes(this.currentProgram, scene.geometry.attributes);
-      WebGLUtils.setUniforms(this.currentProgram, scene.material.uniforms);
+      WebGLUtil.setAttributes(this.currentProgram, {
+        a_normal: node.geometry.normal,
+        a_position: node.geometry.position,
+        a_texCoord: node.geometry.texCoords,
+      });
+      WebGLUtil.setUniforms(this.currentProgram, {
+        u_world: M4.flatten(node.worldMatrix),
+        u_normalMat: M4.flatten(node.worldMatrix.inverse().transpose()),
+        u_ambient: node.material.ambient.getNormalized(),
+        u_diffuse: node.material.diffuse.getNormalized(),
+        u_specular: node.material.specular.getNormalized(),
+        u_shininess: node.material.shininess,
+        u_materialType: node.material.materialType,
+      });
 
-      WebGLUtils.setUniform(this.currentProgram, UniformKeys.PROJECTION_MATRIX,
-        new BufferUniform(
-          new Float32Array(M4.flatten(camera.viewProjectionMatrix)),
-          16, WebGLRenderingContext.FLOAT_MAT4
-        )
-      )
-      WebGLUtils.setUniform(this.currentProgram, UniformKeys.VIEW_INVERSE,
-        new BufferUniform(
-          new Float32Array(M4.flatten(camera.cameraMatrix)),
-          16, WebGLRenderingContext.FLOAT_MAT4
-        )
-      )
-      WebGLUtils.setUniform(this.currentProgram, UniformKeys.VIEW_INVERSE,
-        new BufferUniform(
-          new Float32Array(M4.flatten(camera.cameraMatrix)),
-          16, WebGLRenderingContext.FLOAT_MAT4
-        )
-      )
-      WebGLUtils.setUniform(this.currentProgram, UniformKeys.WORLD,
-        new BufferUniform(
-          new Float32Array(M4.flatten(scene.worldMatrix)),
-          16, WebGLRenderingContext.FLOAT_MAT4
-        )
-      )
-      WebGLUtils.setUniform(this.currentProgram, UniformKeys.WORLD_INVERSE_TRANSPOSE,
-        new BufferUniform(
-          new Float32Array(M4.flatten(scene.worldMatrix.inverse().transpose())),
-          16, WebGLRenderingContext.FLOAT_MAT4
-        )
-      )
+      console.log(node.name);
+      console.log(node);
 
       // TODO: Use indices when drawing
-      this.gl.drawArrays(
-        this.gl.TRIANGLES,
-        0,
-        scene.geometry.getAttribute(AttributeKeys.POSITION).length
-      );
+      this.gl.drawArrays(this.gl.TRIANGLES, 0, node.geometry.position!.length);
     }
 
+    node.children.forEach((child) => {
+      this.renderNodes(child);
+    });
+  }
+
+  public render(scene: Scene, camera: Camera) {
+    WebGLUtil.setUniforms(this.currentProgram, {
+      u_projection: M4.flatten(camera.projectionMatrix),
+      u_view: M4.flatten(camera.computeViewMatrix()),
+    });
+
     scene.children.forEach((node) => {
-      // TODO: Only if isdirty
-      this.render(node, camera);
+      this.renderNodes(node);
     });
   }
 }

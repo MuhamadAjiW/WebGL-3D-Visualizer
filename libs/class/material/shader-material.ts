@@ -1,3 +1,6 @@
+import { Color } from "@/libs/base-types/color";
+import { Texture } from "../texture/texture";
+import { WebGLRenderer } from "../webgl-renderer";
 import { BufferUniform } from "../webgl/uniform";
 import { BasicMaterial } from "./basic-material";
 import { PhongMaterial } from "./phong-material";
@@ -7,38 +10,22 @@ export abstract class ShaderMaterial {
   // Note: After the initial use of a texture, its dimensions, format, and type cannot be changed.
 
   // This is internal and really should not be changed outside of texture or texture loader
-  public id: string;  
+  public id: string;
   public materialType: number = 0;
-  
-  private _uniforms: {[name: string]: BufferUniform};
-  
-  constructor(materialType: number){
-    this._uniforms = {};
+  public texture: Texture | undefined = undefined;
+  public ambient: Color = Color.WHITE;
+  public diffuse: Color = Color.WHITE;
+  public specular: Color = Color.WHITE;
+  public shininess: number = 1.0;
+
+  constructor(materialType: number, texture?: Texture) {
     this.id = this.generateId();
     this.materialType = materialType;
+    this.texture = texture;
   }
-
-  get uniforms() {
-    return this._uniforms;
-  }
-
-  setUniform(name: string, uniform: BufferUniform) {
-    this._uniforms[name] = uniform;
-    return this;
-  }
-
-  getUniform(name: string) {
-    return this._uniforms[name];
-  }
-
-  deleteUniform(name: string) {
-    delete this._uniforms[name];
-    return this;
-  }
-
   protected abstract generateId(): string;
-  public abstract loadTo(gl: WebGLRenderingContext): void;
-  public abstract toJson() : string;
+  public abstract loadTexture(renderer: WebGLRenderer): void;
+  public abstract toJson(): string;
 
   // public static fromJson(json: string) : ShaderMaterial{
   //   const material = JSON.parse(json);
@@ -47,8 +34,8 @@ export abstract class ShaderMaterial {
   //       return BasicMaterial.fromJson(json);
 
   //     case 1:
-  //       return PhongMaterial.fromJson(json); 
-    
+  //       return PhongMaterial.fromJson(json);
+
   //     default:
   //       throw new Error("Invalid material type index method not implemented");
   //   }

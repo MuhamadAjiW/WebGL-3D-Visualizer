@@ -6,7 +6,7 @@ export class Quaternion {
   // Note: Angles should be in radiant, convert it beforehand
 
   // Attributes
-  public w: number = 0;
+  public w: number = 1;
   public x: number = 0;
   public y: number = 0;
   public z: number = 0;
@@ -32,7 +32,7 @@ export class Quaternion {
       this.y = arg1[2];
       this.z = arg1[3];
     } else {
-      this.w = arg1 || 0;
+      this.w = arg1 || 1;
       this.x = arg2 || 0;
       this.y = arg3 || 0;
       this.z = arg4 || 0;

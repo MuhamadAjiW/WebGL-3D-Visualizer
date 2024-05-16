@@ -10,7 +10,6 @@ import { Color } from "@/libs/base-types/color";
 import { Scene } from "@/libs/class/scene";
 import { Mesh } from "@/libs/class/mesh";
 import { TextureLoader } from "@/libs/class/texture/texture-loader";
-import { AttributeKeys, UniformKeys } from "@/libs/base-types/webgl-keys";
 import { WebGLRenderer } from "@/libs/class/webgl-renderer";
 import { PhongMaterial } from "@/libs/class/material/phong-material";
 // import { BasicMaterial } from "./class/material/basic-material";
@@ -24,6 +23,8 @@ import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
 import ObliqueCamera from "@/libs/class/oblique-camera";
 import OrthographicCamera from "@/libs/class/orthographic-camera";
 import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
+import { BasicMaterial } from "@/libs/class/material/basic-material";
+import { HollowBlockGeometry } from "@/libs/class/geometry/hollow-block-geometry";
 import PerspectiveCamera from "@/libs/class/perspective-camera";
 
 interface HooksRenderProps {
@@ -43,6 +44,7 @@ const useRender = ({
 
   useEffect(() => {
     let isMouseClick = false;
+    let stop = false;
     const runWebGL = async () => {
       if (!canvasRef.current) return;
 
@@ -116,44 +118,49 @@ const useRender = ({
       }
 
       if (cameraInstance == null) return;
-
       cameraInstance.position = new Vector3(0, 0, 0);
-      console.log(M4.flatten(cameraInstance.viewProjectionMatrix));
-      console.log(cameraInstance);
 
       // TODO: Delete, this is for testing purposes
       const dummyUniformsData = {
         // Light
-        u_lightWorldPos: new BufferUniform(
-          new Float32Array([1, 0, 0]),
+        u_lightPos: new BufferUniform(
+          new Float32Array([0, 0, 1]),
           3,
           gl.FLOAT_VEC3
-        ),
-        // Light
-        u_lightColor: new BufferUniform(
-          new Float32Array([1, 1, 1, 1]),
-          4,
-          gl.FLOAT_VEC4
         ),
       };
 
       gl.useProgram(program);
 
       const scene = new Scene();
-      const geometry = new BlockGeometry(0.5, 0.5, 1);
 
-      // const material = new BasicMaterial({color:new Color(0xff00ffff)});
+      const geometry = new BlockGeometry(0.5, 1, 0.5);
+      const geometryh = new BlockGeometry(0.25, 0.5, 0.25);
       const texture = await TextureLoader.load("res/f-texture.png");
-      const material = new PhongMaterial({
-        ambient: new Color(0xa0a0a000),
-        diffuse: texture,
-        specular: new Color(0xffffffff),
-        shinyness: 32,
-        specularFactor: 0.5,
+      const material = new BasicMaterial({
+        color: new Color(0x010101ff),
+        texture,
       });
+      // const material = new PhongMaterial({
+      //   texture: texture,
+      //   ambient: new Color(0x818181ff),
+      //   diffuse: new Color(0xffffffff),
+      //   specular: new Color(0xffffffff),
+      //   shinyness: 32,
+      // });
 
       const mesh = new Mesh(geometry, material);
+      const meshl = new Mesh(geometryh, material);
+      const meshr = new Mesh(geometryh, material);
+      mesh.name = "Parent";
+      meshl.name = "Left";
+      meshr.name = "Right";
+      meshl.position = new Vector3(-0.25, 0, 0);
+      meshr.position = new Vector3(0.25, 0, 0);
+
       scene.add(mesh);
+      mesh.add(meshl);
+      mesh.add(meshr);
 
       let dx = 0;
       let dy = 0;
@@ -188,8 +195,13 @@ const useRender = ({
         cameraInstance.setOrbitControl(dy, dx);
         cameraInstance.setDistance(distance);
 
+        // mesh.rotateOnWorldAxis(Vector3.right, 0.01);
+        // mesh.rotateOnWorldAxis(Vector3.up, 0.01);
+
         renderer.render(scene, cameraInstance);
-        requestAnimationFrame(render);
+        if (!stop) {
+          requestAnimationFrame(render);
+        }
       }
       render();
 
@@ -197,6 +209,9 @@ const useRender = ({
     };
 
     runWebGL();
+    return () => {
+      stop = true;
+    };
   }, [cameraType, distance, isReset]);
 
   return canvasRef;

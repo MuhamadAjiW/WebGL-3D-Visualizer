@@ -52,7 +52,7 @@ const AnimationTRS = z.object({
 const AnimationPath: z.ZodSchema<any> = z.lazy(() =>
   z.object({
     keyframe: AnimationTRS.optional(),
-    children: z.record(AnimationPath).optional(),
+    children: z.record(AnimationPa th).optional(),
   })
 );
 

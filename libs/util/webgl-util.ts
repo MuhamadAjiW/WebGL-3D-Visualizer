@@ -3,15 +3,38 @@ import { BufferUniform } from "../class/webgl/uniform";
 import { BufferAttribute } from "../class/webgl/attribute";
 import { UniformSetterWebGLType } from "../base-types/webgl-types";
 
-type UniformSingleDataType = BufferUniform | GLfloat | Float32Array | number[];
-type UniformDataType = [UniformSingleDataType] | number[];
-type UniformSetters = (...v: UniformDataType) => void;
-type UniformMapSetters = { [key: string]: UniformSetters };
+export type UniformSingleDataType =
+  | BufferUniform
+  | GLfloat
+  | Float32Array
+  | number[];
+export type UniformDataType = [UniformSingleDataType] | number[];
+export type UniformSetters = (...v: UniformDataType) => void;
+export type UniformMapSetters = { [key: string]: UniformSetters };
 
-type AttributeSingleDataType = BufferAttribute | Float32Array | number[];
-type AttributeDataType = [AttributeSingleDataType] | number[];
-type AttributeSetters = (...v: AttributeDataType) => void;
-type AttributeMapSetters = { [key: string]: AttributeSetters };
+export type AttributeSingleDataType = BufferAttribute | Float32Array | number[];
+export type AttributeDataType = [AttributeSingleDataType] | number[];
+export type AttributeSetters = (...v: AttributeDataType) => void;
+export type AttributeMapSetters = { [key: string]: AttributeSetters };
+
+export type ShaderUniforms = {
+  u_projection?: UniformSingleDataType;
+  u_view?: UniformSingleDataType;
+  u_world?: UniformSingleDataType;
+  u_normalMat?: UniformSingleDataType;
+  u_texture?: UniformSingleDataType;
+  u_ambient?: UniformSingleDataType;
+  u_diffuse?: UniformSingleDataType;
+  u_specular?: UniformSingleDataType;
+  u_shininess?: UniformSingleDataType;
+  u_materialType?: UniformSingleDataType;
+  u_lightPos?: UniformSingleDataType;
+};
+export type ShaderAttributes = {
+  a_position?: AttributeSingleDataType;
+  a_normal?: AttributeSingleDataType;
+  a_texCoord?: AttributeSingleDataType;
+};
 
 export class WebGLUtil {
   public static createShader(
@@ -71,24 +94,20 @@ export class WebGLUtil {
         // console.log(`uniform${UniformSetterWebGLType[type]}`);
 
         if (v instanceof BufferUniform) {
-          if (v.isDirty) {
-            v.consume();
-
-            if (typeof v === "number") {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
+          if (typeof v === "number") {
+            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
+          } else {
+            if (type >= WebGLRenderingContext.FLOAT_MAT2) {
+              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
+                loc,
+                false,
+                v.data
+              );
             } else {
-              if (type >= WebGLRenderingContext.FLOAT_MAT2) {
-                (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
-                  loc,
-                  false,
-                  v.data
-                );
-              } else {
-                (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
-                  loc,
-                  v.data
-                );
-              }
+              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
+                loc,
+                v.data
+              );
             }
           }
         } else {
@@ -131,7 +150,7 @@ export class WebGLUtil {
 
   public static setUniform(
     programInfo: ProgramInfo,
-    uniformName: string,
+    uniformName: keyof ShaderUniforms,
     ...data: UniformDataType
   ) {
     const setters = programInfo.uniformSetters;
@@ -143,10 +162,13 @@ export class WebGLUtil {
   }
   public static setUniforms(
     programInfo: ProgramInfo,
-    uniforms: { [uniformName: string]: UniformSingleDataType }
+    uniforms: ShaderUniforms
   ) {
     for (let uniformName in uniforms) {
-      this.setUniform(programInfo, uniformName, uniforms[uniformName]);
+      const key = uniformName as keyof ShaderUniforms;
+      if (uniforms[uniformName as keyof ShaderUniforms] != undefined) {
+        this.setUniform(programInfo, key, uniforms[key]!);
+      }
     }
   }
 
@@ -164,11 +186,10 @@ export class WebGLUtil {
         gl.bindBuffer(gl.ARRAY_BUFFER, buf);
         const v = values[0];
         if (v instanceof BufferAttribute) {
-          if (v.isDirty) {
-            // Data Changed Time (note that buffer is already binded)
-            gl.bufferData(gl.ARRAY_BUFFER, v.data, gl.STATIC_DRAW);
-            v.consume();
-          }
+          // Data Changed Time (note that buffer is already binded)
+          // v.consume();
+          gl.bufferData(gl.ARRAY_BUFFER, v.data, gl.STATIC_DRAW);
+
           gl.enableVertexAttribArray(loc);
           gl.vertexAttribPointer(
             loc,
@@ -202,7 +223,7 @@ export class WebGLUtil {
 
   public static setAttribute(
     programInfo: ProgramInfo,
-    attributeName: string,
+    attributeName: keyof ShaderAttributes,
     ...data: AttributeDataType
   ) {
     const setters = programInfo.attributeSetters;
@@ -212,11 +233,13 @@ export class WebGLUtil {
   }
   public static setAttributes(
     programInfo: ProgramInfo,
-    attributes: { [attributeName: string]: AttributeSingleDataType }
+    attributes: ShaderAttributes
   ) {
-    for (let attributeName in attributes)
-      this.setAttribute(programInfo, attributeName, attributes[attributeName]);
+    for (let attributeName in attributes) {
+      const key = attributeName as keyof ShaderAttributes;
+      if (attributes[attributeName as keyof ShaderAttributes] != undefined) {
+        this.setAttribute(programInfo, key, attributes[key]!);
+      }
+    }
   }
 }
-
-export type { UniformMapSetters, AttributeMapSetters };
