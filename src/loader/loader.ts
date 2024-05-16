@@ -25,8 +25,9 @@ const BufferAttribute = z.object({
 });
 
 const BufferUniform = z.object({
-  name: z.string(),
-  value: BufferAttribute,
+  data: z.union([typedArraySchema, z.number()]),
+  size: z.number(),
+  dtype: z.number(),
 });
 
 // Convert enum values to a string array for Zod
@@ -52,7 +53,7 @@ const AnimationTRS = z.object({
 const AnimationPath: z.ZodSchema<any> = z.lazy(() =>
   z.object({
     keyframe: AnimationTRS.optional(),
-    children: z.record(AnimationPa th).optional(),
+    children: z.record(AnimationPath).optional(),
   })
 );
 
@@ -103,35 +104,28 @@ const GLTFSchema = z.object({
   ),
   geometries: z.array(
     z.object({
-      attributes: z.record(BufferUniform),
-      // indices: BufferAttribute.optional(),
-      geometryType: z.number(),
-      width: z.number().optional(),
-      height: z.number().optional(),
-      length: z.number().optional(),
+      position: BufferAttribute.optional(),
+      normal: BufferAttribute.optional(),
+      texCoords: BufferAttribute.optional(),
     })
   ),
   materials: z.array(
     z.object({
       id: z.string(),
       materialType: z.number(),
-      uniforms: z.record(BufferUniform),
       // Shader material has textures? tapi disini kah?
-      textures: z.array(ArrayIndex), // textures
-      color: Color.optional(),
+      texture: z.array(ArrayIndex), // textures
       ambient: Color.optional(),
       // Colors || Textures
       diffuse: ArrayIndex.optional(),
       specular: ArrayIndex.optional(),
-      shinyness: z.number().optional(),
-      specularFactor: z.number().optional(),
+      shininess: z.number().optional(),
     })
   ),
   textures: z.array(
     z.object({
       id: z.number().int(),
       // How?
-      glTexture: z.null().optional(),
       isActive: z.boolean(),
       name: z.string(),
       wrapS: z.number(),
@@ -160,5 +154,9 @@ const GLTFSchema = z.object({
 export class Loader {
   public save(scene: Scene) {
     // traverse scene tree
+  }
+
+  public load(): Scene {
+    return new Scene();
   }
 }
