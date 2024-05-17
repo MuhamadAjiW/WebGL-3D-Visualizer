@@ -163,9 +163,23 @@ const useRender = ({
       meshr.position = new Vector3(0.25, 0, 0);
 
       scene.add(mesh);
+
       mesh.add(meshl);
       mesh.add(meshr);
+      console.log(scene);
+      console.log(mesh);
+      console.log(meshl);
+      console.log(meshr);
 
+      // const fetchData = async () => {
+      //   const response = await fetch("/scene.json");
+      //   const data = await response.json();
+      //   console.log(data);
+
+      //   const loader: Loader = new Loader();
+      //   return loader.loadFromJson(JSON.stringify(data));
+      // };
+      // const scene = await fetchData();
       let dx = 0;
       let dy = 0;
 
@@ -225,23 +239,23 @@ const useRender = ({
           },
         ],
       };
-      const animationRunner: AnimationRunner = new AnimationRunner(
-        testAnim,
-        mesh,
-        {
-          fpkey: 144,
-          easing: AnimationEasingType.EASE_IN_SINE,
-          loop: false,
-          reverse: false,
-        }
-      );
-      animationRunner.playAnimation();
+      // const animationRunner: AnimationRunner = new AnimationRunner(
+      //   testAnim,
+      //   mesh,
+      //   {
+      //     fpkey: 144,
+      //     easing: AnimationEasingType.EASE_IN_SINE,
+      //     loop: false,
+      //     reverse: false,
+      //   }
+      // );
+      // animationRunner.playAnimation();
 
       WebGLUtils.setUniforms(programInfo, dummyUniformsData);
       function render() {
         if (cameraInstance == null) return;
 
-        animationRunner.update();
+        // animationRunner.update();
         cameraInstance.setOrbitControl(dy, dx);
         cameraInstance.setDistance(distance);
 
@@ -254,16 +268,6 @@ const useRender = ({
         }
       }
       render();
-
-      const fetchData = async () => {
-        const response = await fetch("/scene.json");
-        const data = await response.json();
-        console.log(data);
-
-        const loader: Loader = new Loader();
-        loader.loadFromJson(JSON.stringify(data));
-      };
-      fetchData();
 
       console.log("Done");
     };
