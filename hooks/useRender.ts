@@ -146,7 +146,7 @@ const useRender = ({
       const geometry = new HollowBlockGeometry(0.05, 0.5, 1);
       const geometry1 = new HollowBlockGeometry(0.05, 0.5, 1);
       const geometry2 = new HollowBlockGeometry(0.05, 0.5, 1);
-      const geometry3 = new HollowBlockGeometry(0.05, 0.3 , 1);
+      const geometry3 = new HollowBlockGeometry(0.05, 0.3, 1);
       const geometry4 = new HollowBlockGeometry(0.05, 0.3, 1);
       const geometry5 = new HollowBlockGeometry(0.05, 0.3, 1);
       const geometry6 = new HollowBlockGeometry(0.05, 0.5, 1);
@@ -156,7 +156,7 @@ const useRender = ({
       const geometry10 = new HollowBlockGeometry(0.05, 0.5, 1);
       const geometry11 = new HollowBlockGeometry(0.05, 0.5, 1);
       const geometry12 = new HollowBlockGeometry(0.05, 0.3, 1);
-      const geometry13 = new HollowBlockGeometry(0.05, 0.3 , 1);
+      const geometry13 = new HollowBlockGeometry(0.05, 0.3, 1);
       const geometry14 = new HollowBlockGeometry(0.05, 0.3, 1);
       const geometry15 = new HollowBlockGeometry(0.05, 0.5, 1);
       const geometry16 = new HollowBlockGeometry(0.05, 0.5, 1);
@@ -215,109 +215,37 @@ const useRender = ({
       mesh16.name = "Piece 17";
       mesh17.name = "Piece 18";
 
-      mesh.position = new Vector3(
-        0.21,
-        0,
-        0
-      )
-      mesh1.position = new Vector3(
-        0.21,
-        0,
-        0
-      )
-      mesh2.position = new Vector3(
-        0.21,
-        0,
-        0
-      )
-      mesh3.position = new Vector3(
-        0.42,
-        0,
-        0
-      )
-      mesh4.position = new Vector3(
-        0.31, 
-        0.19,
-        0
-      )
-      mesh5.position = new Vector3(
-        0.31, 
-        -0.19,
-        0
-      )
-      mesh6.position = new Vector3(
-        0,
-        0,
-        0
-      )
-      mesh7.position = new Vector3(
-        0.11, 
-        0.19,
-        0
-      )
-      mesh8.position = new Vector3(
-        0.11, 
-        -0.19,
-        0
-      )
-      mesh9.position = new Vector3(
-        -0.21,
-        0,
-        0
-      )
-      mesh10.position = new Vector3(
-        -0.21,
-        0,
-        0
-      )
-      mesh11.position = new Vector3(
-        -0.21,
-        0,
-        0
-      )
-      mesh12.position = new Vector3(
-        -0.42,
-        0,
-        0
-      )
-      mesh13.position = new Vector3(
-        -0.31, 
-        0.19,
-        0
-      )
-      mesh14.position = new Vector3(
-        -0.31, 
-        -0.19,
-        0
-      )
-      mesh15.position = new Vector3(
-        0,
-        0,
-        0
-      )
-      mesh16.position = new Vector3(
-        -0.11, 
-        0.19,
-        0
-      )
-      mesh17.position = new Vector3(
-        -0.11, 
-        -0.19,
-        0
-      )
+      mesh.position = new Vector3(0.21, 0, 0);
+      mesh1.position = new Vector3(0.21, 0, 0);
+      mesh2.position = new Vector3(0.21, 0, 0);
+      mesh3.position = new Vector3(0.42, 0, 0);
+      mesh4.position = new Vector3(0.31, 0.19, 0);
+      mesh5.position = new Vector3(0.31, -0.19, 0);
+      mesh6.position = new Vector3(0, 0, 0);
+      mesh7.position = new Vector3(0.11, 0.19, 0);
+      mesh8.position = new Vector3(0.11, -0.19, 0);
+      mesh9.position = new Vector3(-0.21, 0, 0);
+      mesh10.position = new Vector3(-0.21, 0, 0);
+      mesh11.position = new Vector3(-0.21, 0, 0);
+      mesh12.position = new Vector3(-0.42, 0, 0);
+      mesh13.position = new Vector3(-0.31, 0.19, 0);
+      mesh14.position = new Vector3(-0.31, -0.19, 0);
+      mesh15.position = new Vector3(0, 0, 0);
+      mesh16.position = new Vector3(-0.11, 0.19, 0);
+      mesh17.position = new Vector3(-0.11, -0.19, 0);
 
-      mesh.rotateOnWorldAxis(Vector3.forward, 1)
-      mesh2.rotateOnWorldAxis(Vector3.back, 1)
-      mesh4.rotateOnWorldAxis(Vector3.forward, 1)
-      mesh5.rotateOnWorldAxis(Vector3.back, 1)
-      mesh7.rotateOnWorldAxis(Vector3.forward, 1)
-      mesh8.rotateOnWorldAxis(Vector3.back, 1)
-      mesh9.rotateOnWorldAxis(Vector3.back, 1)
-      mesh11.rotateOnWorldAxis(Vector3.forward, 1)
-      mesh13.rotateOnWorldAxis(Vector3.back, 1)
-      mesh14.rotateOnWorldAxis(Vector3.forward, 1)
-      mesh16.rotateOnWorldAxis(Vector3.back, 1)
-      mesh17.rotateOnWorldAxis(Vector3.forward, 1)
+      mesh.rotateOnWorldAxis(Vector3.forward, 1);
+      mesh2.rotateOnWorldAxis(Vector3.back, 1);
+      mesh4.rotateOnWorldAxis(Vector3.forward, 1);
+      mesh5.rotateOnWorldAxis(Vector3.back, 1);
+      mesh7.rotateOnWorldAxis(Vector3.forward, 1);
+      mesh8.rotateOnWorldAxis(Vector3.back, 1);
+      mesh9.rotateOnWorldAxis(Vector3.back, 1);
+      mesh11.rotateOnWorldAxis(Vector3.forward, 1);
+      mesh13.rotateOnWorldAxis(Vector3.back, 1);
+      mesh14.rotateOnWorldAxis(Vector3.forward, 1);
+      mesh16.rotateOnWorldAxis(Vector3.back, 1);
+      mesh17.rotateOnWorldAxis(Vector3.forward, 1);
       // meshl.name = "Left";
       // meshr.name = "Right";
       // if (selectedComponent) {
