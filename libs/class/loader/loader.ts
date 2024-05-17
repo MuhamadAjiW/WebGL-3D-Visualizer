@@ -16,6 +16,11 @@ import { Color } from "@/libs/base-types/color";
 import { PhongMaterial } from "@/libs/class/material/phong-material";
 import Vector3 from "@/libs/base-types/vector3";
 import { Quaternion } from "@/libs/base-types/quaternion";
+import { BlockGeometry } from "../geometry/block-geometry";
+import { GeometryType } from "../geometry/geometry-types";
+import { CubeGeometry } from "../geometry/cube-geometry";
+import { PlaneGeometry } from "../geometry/plane-geometry";
+import { HollowBlockGeometry } from "../geometry/hollow-block-geometry";
 
 const ArrayIndex = z.array(z.number().int());
 
@@ -113,6 +118,10 @@ const GLTFSchema = z.object({
       position: BufferAttributeSchema.optional(),
       normal: BufferAttributeSchema.optional(),
       texCoords: BufferAttributeSchema.optional(),
+      type: z.number().int(),
+      width: z.number().optional(),
+      height: z.number().optional(),
+      length: z.number().optional(),
     })
   ),
   materials: z.array(
@@ -214,9 +223,9 @@ export class Loader {
     }
 
     const nodeData = {
-      translation: node.position,
-      rotation: node.rotation,
-      scale: node.scale,
+      translation: (node.position as Vector3).toJSON(),
+      rotation: (node.rotation as Quaternion).toJSON(),
+      scale: (node.scale as Vector3).toJSON(),
       children: [],
       visible: node.visible,
       name: node.name,
@@ -323,6 +332,10 @@ export class Loader {
       texCoords: this.saveBufferAttribute(
         geometry.texCoords as BufferAttribute
       ),
+      type: geometry.type,
+      width: geometry.width,
+      height: geometry.height,
+      length: geometry.length,
     };
 
     const geometryIndex = this.savedData.geometries.length;
@@ -434,7 +447,7 @@ export class Loader {
 
     this.loadNodeMap.forEach((object: Object3D) => console.log(object));
 
-    scene.computeLocalMatrix();
+    scene.computeWorldMatrix();
     return scene;
   }
 
@@ -464,6 +477,7 @@ export class Loader {
     nodeDataChildren.forEach((index: number) => {
       let child = this.loadNodeMap.get(index)!;
       node.children.push(child);
+      child.parent = node;
     });
     // console.log("load children", node);
   }
@@ -551,7 +565,28 @@ export class Loader {
     }
 
     const geometryData = this.savedData.geometries[geometryIndex];
-    const geometry = new BufferGeometry();
+    let geometry;
+
+    console.log(geometryData.type);
+    if (geometryData.type == 0) {
+      geometry = new BlockGeometry(
+        geometryData.width,
+        geometryData.height,
+        geometryData.length
+      );
+    } else if (geometryData.type == 1) {
+      geometry = new CubeGeometry(geometryData.width);
+    } else if (geometryData.type == 2) {
+      geometry = new PlaneGeometry(geometryData.width, geometryData.height);
+    } else if (geometryData.type == 3) {
+      geometry = new HollowBlockGeometry(
+        geometryData.width,
+        geometryData.height,
+        geometryData.length
+      );
+    } else {
+      geometry = new BufferGeometry();
+    }
 
     geometry.position = this.loadBufferAttribute(geometryData.position);
     geometry.normal = this.loadBufferAttribute(geometryData.normal);
@@ -562,9 +597,13 @@ export class Loader {
   }
 
   private loadBufferAttribute(attributeData: any): BufferAttribute {
-    return new BufferAttribute(attributeData._data, attributeData._size, {
-      dtype: attributeData._dtype,
-    });
+    return new BufferAttribute(
+      new Float32Array(Object.values(attributeData._data)),
+      attributeData._size,
+      {
+        dtype: attributeData._dtype,
+      }
+    );
   }
 
   private loadMaterial(materialIndex: number): ShaderMaterial {
@@ -642,6 +681,7 @@ export class Loader {
     texture.image.src = textureObject.image_path;
 
     this.loadTextureMap.set(textureIndex, texture);
+    console.log(texture);
     return texture;
   }
 

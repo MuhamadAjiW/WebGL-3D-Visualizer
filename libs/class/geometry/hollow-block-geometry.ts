@@ -3,6 +3,7 @@ import { BufferGeometry } from "./geometry";
 import { VertexBuilder } from "./vertex-builder";
 
 export class HollowBlockGeometry extends BufferGeometry {
+  type: number = 3;
   width: number;
   height: number;
   length: number;

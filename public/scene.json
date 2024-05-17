@@ -5,6 +5,10 @@
     "colors": [],
     "geometries": [
         {
+            "type": 0,
+            "width": 0.5,
+            "height": 1,
+            "length": 0.5,
             "normal": {
                 "_data": {
                     "0": 0,
@@ -313,6 +317,10 @@
             }
         },
         {
+            "type": 0,
+            "width": 0.25,
+            "height": 0.5,
+            "length": 0.25,
             "normal": {
                 "_data": {
                     "0": 0,
@@ -668,8 +676,8 @@
             ],
             "name": "Scene",
             "rotation": "[1,0,0,0]",
-            "scale": "",
-            "translation": "",
+            "scale": "[1,1,1]",
+            "translation": "[0,0,0]",
             "visible": true
         },
         {
@@ -680,8 +688,8 @@
             "meshIndex": 0,
             "name": "Parent",
             "rotation": "[1,0,0,0]",
-            "scale": "",
-            "translation": "",
+            "scale": "[1,1,1]",
+            "translation": "[0,0,0]",
             "visible": true
         },
         {
@@ -689,8 +697,8 @@
             "meshIndex": 1,
             "name": "Left",
             "rotation": "[1,0,0,0]",
-            "scale": "",
-            "translation": "",
+            "scale": "[1,1,1]",
+            "translation": "[0,0,0]",
             "visible": true
         },
         {
@@ -698,8 +706,8 @@
             "meshIndex": 2,
             "name": "Right",
             "rotation": "[1,0,0,0]",
-            "scale": "",
-            "translation": "",
+            "scale": "[1,1,1]",
+            "translation": "[0,0,0]",
             "visible": true
         }
     ],
@@ -709,7 +717,7 @@
             "format": 6408,
             "generateMipmaps": false,
             "id": 1,
-            "image": {},
+            "image_path": "res/f-texture.png",
             "isActive": false,
             "magFilter": 9728,
             "minFilter": 9728,

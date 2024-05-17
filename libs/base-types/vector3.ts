@@ -109,7 +109,7 @@ export class Vector3 {
   }
 
   toJSON(): string {
-    return "";
+    return [this.x, this.y, this.z].toString();
   }
 }
 

@@ -7,6 +7,7 @@ export class TextureLoader {
     await this.loadImage(image);
 
     let texture = new Texture({ image: image });
+    texture.image_path = imagePath;
 
     return texture;
   }

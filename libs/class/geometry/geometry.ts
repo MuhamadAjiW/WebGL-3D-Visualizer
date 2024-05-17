@@ -2,9 +2,13 @@ import Vector3 from "@/libs/base-types/vector3";
 import { BufferAttribute } from "../webgl/attribute";
 
 class BufferGeometry {
+  public type: number = 0;
   public position: BufferAttribute | undefined;
   public normal: BufferAttribute | undefined;
   public texCoords: BufferAttribute | undefined;
+  public width: number = 0;
+  public height: number = 0;
+  public length: number = 0;
 
   calculateNormals(forceNewAttribute = false) {
     const position = this.position;

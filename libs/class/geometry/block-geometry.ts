@@ -3,6 +3,7 @@ import { BufferGeometry } from "./geometry";
 import { VertexBuilder } from "./vertex-builder";
 
 export class BlockGeometry extends BufferGeometry {
+  type: number = 0;
   width: number;
   height: number;
   length: number;

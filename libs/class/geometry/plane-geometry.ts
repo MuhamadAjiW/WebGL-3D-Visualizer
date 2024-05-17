@@ -2,6 +2,7 @@ import { BufferAttribute } from "../webgl/attribute";
 import { BufferGeometry } from "./geometry";
 
 export class PlaneGeometry extends BufferGeometry {
+  type: number = 2;
   width: number;
   height: number;
 
