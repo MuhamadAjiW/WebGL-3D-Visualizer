@@ -14,6 +14,8 @@ import { Texture } from "@/libs/class/texture/texture";
 import { BasicMaterial } from "@/libs/class/material/basic-material";
 import { Color } from "@/libs/base-types/color";
 import { PhongMaterial } from "@/libs/class/material/phong-material";
+import Vector3 from "@/libs/base-types/vector3";
+import { Quaternion } from "@/libs/base-types/quaternion";
 
 const ArrayIndex = z.array(z.number().int());
 
@@ -226,6 +228,7 @@ export class Loader {
     const nodeIndex = this.savedData.nodes.length;
     this.savedData.nodes.push(nodeData);
     this.nodeMap.set(node, nodeIndex);
+    // TODO: NODE DATA POSITION MASIH HARDCODE
 
     // Traverse and save children nodes
     if (node.children && node.children.length > 0) {
@@ -315,15 +318,11 @@ export class Loader {
     }
 
     const geometryData = {
-      position: geometry.position
-        ? this.saveBufferAttribute(geometry.position)
-        : undefined,
-      normal: geometry.normal
-        ? this.saveBufferAttribute(geometry.normal)
-        : undefined,
-      texCoords: geometry.texCoords
-        ? this.saveBufferAttribute(geometry.texCoords)
-        : undefined,
+      position: this.saveBufferAttribute(geometry.position as BufferAttribute),
+      normal: this.saveBufferAttribute(geometry.normal as BufferAttribute),
+      texCoords: this.saveBufferAttribute(
+        geometry.texCoords as BufferAttribute
+      ),
     };
 
     const geometryIndex = this.savedData.geometries.length;
@@ -380,7 +379,7 @@ export class Loader {
       magFilter: texture.magFilter,
       minFilter: texture.minFilter,
       format: texture.format,
-      image: texture.image,
+      image: texture.image_path,
       repeatS: texture.repeatS,
       repeatT: texture.repeatT,
       generateMipmaps: texture.generateMipmaps,
@@ -408,7 +407,7 @@ export class Loader {
   }
 
   public load(): Scene {
-    const scene = new Scene();
+    let scene: Scene = new Scene();
     this.loadNodeMap = new Map();
     this.loadCameraMap = new Map();
     this.loadMeshMap = new Map();
@@ -418,40 +417,55 @@ export class Loader {
 
     // Reconstruct nodes
     this.savedData.nodes.forEach((nodeData: any, index: number) => {
-      this.loadNodeMap.set(index, this.loadNode(nodeData));
+      this.loadNodeMap.set(
+        index,
+        this.loadNode(nodeData, index == 0 ? true : false)
+      );
+    });
+    console.log(this.loadNodeMap);
+
+    this.savedData.nodes.forEach((nodeData: any, index: number) => {
+      console.log(index);
+      let node: Object3D = this.loadNodeMap.get(index)!;
+      this.loadChildren(this.loadNodeMap.get(index)!, nodeData.children);
     });
 
-    // Set root nodes
-    this.savedData.scene
-      .map((nodeIndex: number) => this.loadNodeMap.get(nodeIndex))!
-      .forEach((node: Object3D) => scene.add(node));
+    scene = this.loadNodeMap.get(this.savedData.scene)!;
 
+    this.loadNodeMap.forEach((object: Object3D) => console.log(object));
+
+    scene.computeLocalMatrix();
     return scene;
   }
 
-  private loadNode(nodeData: any): Object3D {
-    const node = new Object3D();
-    node.position = nodeData.translation;
-    node.rotation = nodeData.rotation;
-    node.scale = nodeData.scale;
+  private loadNode(nodeData: any, isScene: boolean = false): Object3D {
+    let node;
+    // Load cameras and meshes
+    if ("cameraIndex" in nodeData) {
+      node = this.loadCamera(nodeData.cameraIndex);
+    } else if ("meshIndex" in nodeData) {
+      node = this.loadMesh(nodeData.meshIndex);
+    } else if (isScene) {
+      node = new Scene();
+    } else {
+      node = new Object3D();
+    }
+
+    node.position = new Vector3(...(JSON.parse(nodeData.translation) as []));
+    node.rotation = new Quaternion(...(JSON.parse(nodeData.rotation) as []));
+    node.scale = new Vector3(...(JSON.parse(nodeData.scale) as []));
     node.visible = nodeData.visible;
     node.name = nodeData.name;
 
-    // Load cameras and meshes
-    if (nodeData.cameraIndex) {
-      const camera = this.loadCamera(nodeData.cameraIndex);
-      return camera;
-    } else if (nodeData.meshIndex) {
-      const mesh = this.loadMesh(nodeData.meshIndex);
-      return mesh;
-    } else {
-      // Load children
-      nodeData.children
-        .map((childIndex: number) => this.loadNodeMap.get(childIndex)!)
-        .forEach((child: Object3D) => node.add(child));
-    }
-
     return node;
+  }
+
+  private loadChildren(node: Object3D, nodeDataChildren: any) {
+    nodeDataChildren.forEach((index: number) => {
+      let child = this.loadNodeMap.get(index)!;
+      node.children.push(child);
+    });
+    // console.log("load children", node);
   }
 
   private loadCamera(cameraIndex: number): Camera {
@@ -518,19 +532,14 @@ export class Loader {
 
     const meshData = this.savedData.meshes[meshIndex];
     const meshObject = {
-      meshGeometry: meshData.meshGeometry
-        ? meshData.meshGeometry.map((geometryIndex: number) =>
-            this.loadGeometry(geometryIndex)
-          )
-        : undefined,
-      meshMaterial: meshData.meshMaterial
-        ? meshData.meshMaterial.map((materialIndex: number) =>
-            this.loadMaterial(materialIndex)
-          )
-        : undefined,
+      meshGeometry: this.loadGeometry(meshData.meshGeometry),
+      meshMaterial: this.loadMaterial(meshData.meshMaterial),
     };
 
-    let mesh = new Mesh(meshObject.meshGeometry, meshObject.meshMaterial);
+    let mesh = new Mesh(
+      meshObject.meshGeometry as BufferGeometry,
+      meshObject.meshMaterial as ShaderMaterial
+    );
 
     this.loadMeshMap.set(meshIndex, mesh);
     return mesh;
@@ -544,15 +553,9 @@ export class Loader {
     const geometryData = this.savedData.geometries[geometryIndex];
     const geometry = new BufferGeometry();
 
-    geometry.position = geometryData.position
-      ? this.loadBufferAttribute(geometryData.position)
-      : undefined;
-    geometry.normal = geometryData.normal
-      ? this.loadBufferAttribute(geometryData.normal)
-      : undefined;
-    geometry.texCoords = geometryData.texCoords
-      ? this.loadBufferAttribute(geometryData.texCoords)
-      : undefined;
+    geometry.position = this.loadBufferAttribute(geometryData.position);
+    geometry.normal = this.loadBufferAttribute(geometryData.normal);
+    geometry.texCoords = this.loadBufferAttribute(geometryData.texCoords);
 
     this.loadGeometryMap.set(geometryIndex, geometry);
     return geometry;
@@ -573,9 +576,7 @@ export class Loader {
     const materialObject = {
       id: materialData.id,
       materialType: materialData.materialType,
-      texture: materialData.texture
-        ? this.loadTexture(materialData.texture)
-        : undefined,
+      texture: this.loadTexture(materialData.texture),
       ambient: this.loadColor(materialData.ambient),
       diffuse: this.loadColor(materialData.diffuse),
       specular: this.loadColor(materialData.specular),
@@ -618,14 +619,14 @@ export class Loader {
       magFilter: textureData.magFilter,
       minFilter: textureData.minFilter,
       format: textureData.format,
-      image: textureData.image,
+      image_path: textureData.image_path,
       repeatS: textureData.repeatS,
       repeatT: textureData.repeatT,
       generateMipmaps: textureData.generateMipmaps,
     };
 
     const texture = new Texture({
-      image: textureObject.image,
+      image: new Image(),
       wrapS: textureObject.wrapS,
       wrapT: textureObject.wrapT,
       magFilter: textureObject.magFilter,
@@ -637,6 +638,8 @@ export class Loader {
     });
     texture.name = textureObject.name;
     texture.isActive = textureObject.isActive;
+    texture.image_path = textureObject.image_path;
+    texture.image.src = textureObject.image_path;
 
     this.loadTextureMap.set(textureIndex, texture);
     return texture;

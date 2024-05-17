@@ -17,6 +17,7 @@ export class Texture {
   public minFilter: GLenum = WebGLRenderingContext.LINEAR_MIPMAP_LINEAR;
   public format: GLenum = WebGLRenderingContext.RGBA;
   public image: HTMLImageElement;
+  public image_path: string = "";
   public repeatS: number = 1;
   public repeatT: number = 1;
   public generateMipmaps: boolean = false;
