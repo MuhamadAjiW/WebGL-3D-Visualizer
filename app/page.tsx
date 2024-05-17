@@ -107,7 +107,7 @@ export default function Home() {
     ],
     cameras: [
       {
-        type: "perspective",
+        type: "perspectiveCamera",
         cameraProjectionMatrix: [
           [1, 0, 0, 0],
           [0, 1, 0, 0],

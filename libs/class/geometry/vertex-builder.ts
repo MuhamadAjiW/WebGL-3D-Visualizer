@@ -146,4 +146,29 @@ export class VertexBuilder {
         throw new Error("Invalid axis in vertex rectangle generation");
     }
   }
+
+  public static generateTriangle(
+    x: number,
+    y: number,
+    z: number,
+    width: number,
+    height: number,
+    radius: number,
+    axis: string,
+    type: string
+  ): number[] {
+    console.log(x, y, z, width, height, radius);
+    switch (axis) {
+      case "XY":
+        return [x - width / 2, y, z, x + width / 2, y, z, x, y + height / 2, z];
+      case "YZ":
+        return [x, y, z - width / 2, x, y, z + width / 2, x, y + height / 2, z];
+      case "XZ":
+        return [x - width / 2, y, z, x, y, z + height / 2, x + width / 2, y, z];
+      default:
+        throw new Error(
+          "Invalid axis in vertex equilateral triangle generation"
+        );
+    }
+  }
 }
