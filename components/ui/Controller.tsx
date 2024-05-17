@@ -10,7 +10,7 @@ interface ControllerProps {
   isExpanded: boolean;
   handleClick: () => void;
   title: string;
-  component: NodeSchema; // this will be change later
+  component: any; // this will be change later
 }
 
 const Controller: React.FC<ControllerProps> = ({
@@ -20,6 +20,8 @@ const Controller: React.FC<ControllerProps> = ({
   title,
   component,
 }) => {
+  console.log("This is position component", component)
+
   return (
     <>
       {component && (

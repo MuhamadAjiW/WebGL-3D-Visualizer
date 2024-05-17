@@ -39,6 +39,7 @@ interface HooksRenderProps {
   isReset: boolean;
   handleReset: Dispatch<SetStateAction<boolean>>;
   selectedComponent: any; // change this later
+  meshes: any;
 }
 
 const useRender = ({
@@ -47,10 +48,12 @@ const useRender = ({
   isReset,
   handleReset,
   selectedComponent,
+  meshes,
 }: HooksRenderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    console.log("this is scene", meshes);
     console.log("this is selected component", selectedComponent);
     let isMouseClick = false;
     let stop = false;
@@ -143,24 +146,50 @@ const useRender = ({
 
       const scene = new Scene();
 
-      const geometry = new HollowBlockGeometry(0.05, 0.5, 1);
-      const geometry1 = new HollowBlockGeometry(0.05, 0.5, 1);
-      const geometry2 = new HollowBlockGeometry(0.05, 0.5, 1);
-      const geometry3 = new HollowBlockGeometry(0.05, 0.3, 1);
-      const geometry4 = new HollowBlockGeometry(0.05, 0.3, 1);
-      const geometry5 = new HollowBlockGeometry(0.05, 0.3, 1);
-      const geometry6 = new HollowBlockGeometry(0.05, 0.5, 1);
-      const geometry7 = new HollowBlockGeometry(0.05, 0.5, 1);
-      const geometry8 = new HollowBlockGeometry(0.05, 0.5, 1);
-      const geometry9 = new HollowBlockGeometry(0.05, 0.5, 1);
-      const geometry10 = new HollowBlockGeometry(0.05, 0.5, 1);
-      const geometry11 = new HollowBlockGeometry(0.05, 0.5, 1);
-      const geometry12 = new HollowBlockGeometry(0.05, 0.3, 1);
-      const geometry13 = new HollowBlockGeometry(0.05, 0.3, 1);
-      const geometry14 = new HollowBlockGeometry(0.05, 0.3, 1);
-      const geometry15 = new HollowBlockGeometry(0.05, 0.5, 1);
-      const geometry16 = new HollowBlockGeometry(0.05, 0.5, 1);
-      const geometry17 = new HollowBlockGeometry(0.05, 0.5, 1);
+      const meshConverter = (mesh: any) => {
+        // change the param type later
+        const geometry = mesh.geometry;
+        const material = mesh.material;
+        const meshComp = new Mesh(geometry, material);
+
+        meshComp.name = mesh.name
+        meshComp.position = mesh.position
+        meshComp.rotation = mesh.rotation
+        meshComp.scale = mesh.scale
+
+        scene.add(meshComp);
+
+        for (let child of mesh.children) {
+          meshConverter(child)
+        }
+      };
+
+      if (selectedComponent) {
+        meshConverter(selectedComponent)
+      } else {
+        for (let mesh of meshes) {
+          meshConverter(mesh)
+        }
+      }
+
+      // const geometry = new HollowBlockGeometry(0.05, 0.5, 1);
+      // const geometry1 = new HollowBlockGeometry(0.05, 0.5, 1);
+      // const geometry2 = new HollowBlockGeometry(0.05, 0.5, 1);
+      // const geometry3 = new HollowBlockGeometry(0.05, 0.3, 1);
+      // const geometry4 = new HollowBlockGeometry(0.05, 0.3, 1);
+      // const geometry5 = new HollowBlockGeometry(0.05, 0.3, 1);
+      // const geometry6 = new HollowBlockGeometry(0.05, 0.5, 1);
+      // const geometry7 = new HollowBlockGeometry(0.05, 0.5, 1);
+      // const geometry8 = new HollowBlockGeometry(0.05, 0.5, 1);
+      // const geometry9 = new HollowBlockGeometry(0.05, 0.5, 1);
+      // const geometry10 = new HollowBlockGeometry(0.05, 0.5, 1);
+      // const geometry11 = new HollowBlockGeometry(0.05, 0.5, 1);
+      // const geometry12 = new HollowBlockGeometry(0.05, 0.3, 1);
+      // const geometry13 = new HollowBlockGeometry(0.05, 0.3, 1);
+      // const geometry14 = new HollowBlockGeometry(0.05, 0.3, 1);
+      // const geometry15 = new HollowBlockGeometry(0.05, 0.5, 1);
+      // const geometry16 = new HollowBlockGeometry(0.05, 0.5, 1);
+      // const geometry17 = new HollowBlockGeometry(0.05, 0.5, 1);
 
       // const geometryh = new BlockGeometry(0.25, 0.5, 0.25);
       const texture = await TextureLoader.load("res/f-texture.png");
@@ -176,76 +205,76 @@ const useRender = ({
         shinyness: 32,
       });
 
-      const mesh = new Mesh(geometry, material);
-      const mesh1 = new Mesh(geometry1, material);
-      const mesh2 = new Mesh(geometry2, material);
-      const mesh3 = new Mesh(geometry3, material);
-      const mesh4 = new Mesh(geometry4, material);
-      const mesh5 = new Mesh(geometry5, material);
-      const mesh6 = new Mesh(geometry6, material);
-      const mesh7 = new Mesh(geometry7, material);
-      const mesh8 = new Mesh(geometry8, material);
-      const mesh9 = new Mesh(geometry9, material);
-      const mesh10 = new Mesh(geometry10, material);
-      const mesh11 = new Mesh(geometry11, material);
-      const mesh12 = new Mesh(geometry12, material);
-      const mesh13 = new Mesh(geometry13, material);
-      const mesh14 = new Mesh(geometry14, material);
-      const mesh15 = new Mesh(geometry15, material);
-      const mesh16 = new Mesh(geometry16, material);
-      const mesh17 = new Mesh(geometry17, material);
-      mesh.name = "Parent";
+      // const mesh = new Mesh(geometry, material);
+      // const mesh1 = new Mesh(geometry1, material);
+      // const mesh2 = new Mesh(geometry2, material);
+      // const mesh3 = new Mesh(geometry3, material);
+      // const mesh4 = new Mesh(geometry4, material);
+      // const mesh5 = new Mesh(geometry5, material);
+      // const mesh6 = new Mesh(geometry6, material);
+      // const mesh7 = new Mesh(geometry7, material);
+      // const mesh8 = new Mesh(geometry8, material);
+      // const mesh9 = new Mesh(geometry9, material);
+      // const mesh10 = new Mesh(geometry10, material);
+      // const mesh11 = new Mesh(geometry11, material);
+      // const mesh12 = new Mesh(geometry12, material);
+      // const mesh13 = new Mesh(geometry13, material);
+      // const mesh14 = new Mesh(geometry14, material);
+      // const mesh15 = new Mesh(geometry15, material);
+      // const mesh16 = new Mesh(geometry16, material);
+      // const mesh17 = new Mesh(geometry17, material);
+      // mesh.name = "Parent";
 
-      mesh.name = "Piece 1";
-      mesh1.name = "Piece 2";
-      mesh2.name = "Piece 3";
-      mesh3.name = "Piece 4";
-      mesh4.name = "Piece 5";
-      mesh5.name = "Piece 6";
-      mesh6.name = "Piece 7";
-      mesh7.name = "Piece 8";
-      mesh8.name = "Piece 9";
-      mesh9.name = "Piece 10";
-      mesh10.name = "Piece 11";
-      mesh11.name = "Piece 12";
-      mesh12.name = "Piece 13";
-      mesh13.name = "Piece 14";
-      mesh14.name = "Piece 15";
-      mesh15.name = "Piece 16";
-      mesh16.name = "Piece 17";
-      mesh17.name = "Piece 18";
+      // mesh.name = "Piece 1";
+      // mesh1.name = "Piece 2";
+      // mesh2.name = "Piece 3";
+      // mesh3.name = "Piece 4";
+      // mesh4.name = "Piece 5";
+      // mesh5.name = "Piece 6";
+      // mesh6.name = "Piece 7";
+      // mesh7.name = "Piece 8";
+      // mesh8.name = "Piece 9";
+      // mesh9.name = "Piece 10";
+      // mesh10.name = "Piece 11";
+      // mesh11.name = "Piece 12";
+      // mesh12.name = "Piece 13";
+      // mesh13.name = "Piece 14";
+      // mesh14.name = "Piece 15";
+      // mesh15.name = "Piece 16";
+      // mesh16.name = "Piece 17";
+      // mesh17.name = "Piece 18";
 
-      mesh.position = new Vector3(0.21, 0, 0);
-      mesh1.position = new Vector3(0.21, 0, 0);
-      mesh2.position = new Vector3(0.21, 0, 0);
-      mesh3.position = new Vector3(0.42, 0, 0);
-      mesh4.position = new Vector3(0.31, 0.19, 0);
-      mesh5.position = new Vector3(0.31, -0.19, 0);
-      mesh6.position = new Vector3(0, 0, 0);
-      mesh7.position = new Vector3(0.11, 0.19, 0);
-      mesh8.position = new Vector3(0.11, -0.19, 0);
-      mesh9.position = new Vector3(-0.21, 0, 0);
-      mesh10.position = new Vector3(-0.21, 0, 0);
-      mesh11.position = new Vector3(-0.21, 0, 0);
-      mesh12.position = new Vector3(-0.42, 0, 0);
-      mesh13.position = new Vector3(-0.31, 0.19, 0);
-      mesh14.position = new Vector3(-0.31, -0.19, 0);
-      mesh15.position = new Vector3(0, 0, 0);
-      mesh16.position = new Vector3(-0.11, 0.19, 0);
-      mesh17.position = new Vector3(-0.11, -0.19, 0);
+      // mesh.position = new Vector3(0.21, 0, 0);
+      // mesh1.position = new Vector3(0.21, 0, 0);
+      // mesh2.position = new Vector3(0.21, 0, 0);
+      // mesh3.position = new Vector3(0.42, 0, 0);
+      // mesh4.position = new Vector3(0.31, 0.19, 0);
+      // mesh5.position = new Vector3(0.31, -0.19, 0);
+      // mesh6.position = new Vector3(0, 0, 0);
+      // mesh7.position = new Vector3(0.11, 0.19, 0);
+      // mesh8.position = new Vector3(0.11, -0.19, 0);
+      // mesh9.position = new Vector3(-0.21, 0, 0);
+      // mesh10.position = new Vector3(-0.21, 0, 0);
+      // mesh11.position = new Vector3(-0.21, 0, 0);
+      // mesh12.position = new Vector3(-0.42, 0, 0);
+      // mesh13.position = new Vector3(-0.31, 0.19, 0);
+      // mesh14.position = new Vector3(-0.31, -0.19, 0);
+      // mesh15.position = new Vector3(0, 0, 0);
+      // mesh16.position = new Vector3(-0.11, 0.19, 0);
+      // mesh17.position = new Vector3(-0.11, -0.19, 0);
 
-      mesh.rotateOnWorldAxis(Vector3.forward, 1);
-      mesh2.rotateOnWorldAxis(Vector3.back, 1);
-      mesh4.rotateOnWorldAxis(Vector3.forward, 1);
-      mesh5.rotateOnWorldAxis(Vector3.back, 1);
-      mesh7.rotateOnWorldAxis(Vector3.forward, 1);
-      mesh8.rotateOnWorldAxis(Vector3.back, 1);
-      mesh9.rotateOnWorldAxis(Vector3.back, 1);
-      mesh11.rotateOnWorldAxis(Vector3.forward, 1);
-      mesh13.rotateOnWorldAxis(Vector3.back, 1);
-      mesh14.rotateOnWorldAxis(Vector3.forward, 1);
-      mesh16.rotateOnWorldAxis(Vector3.back, 1);
-      mesh17.rotateOnWorldAxis(Vector3.forward, 1);
+      // mesh.rotateOnWorldAxis(Vector3.forward, 1);
+      // mesh2.rotateOnWorldAxis(Vector3.back, 1);
+      // mesh4.rotateOnWorldAxis(Vector3.forward, 1);
+      // mesh5.rotateOnWorldAxis(Vector3.back, 1);
+      // mesh7.rotateOnWorldAxis(Vector3.forward, 1);
+      // mesh8.rotateOnWorldAxis(Vector3.back, 1);
+      // mesh9.rotateOnWorldAxis(Vector3.back, 1);
+      // mesh11.rotateOnWorldAxis(Vector3.forward, 1);
+      // mesh13.rotateOnWorldAxis(Vector3.back, 1);
+      // mesh14.rotateOnWorldAxis(Vector3.forward, 1);
+      // mesh16.rotateOnWorldAxis(Vector3.back, 1);
+      // mesh17.rotateOnWorldAxis(Vector3.forward, 1);
       // meshl.name = "Left";
       // meshr.name = "Right";
       // if (selectedComponent) {
@@ -267,24 +296,24 @@ const useRender = ({
       // meshl.position = new Vector3(-0.25, 0, 0);
       // meshr.position = new Vector3(0.25, 0, 0);
 
-      scene.add(mesh);
-      scene.add(mesh1);
-      scene.add(mesh2);
-      scene.add(mesh3);
-      scene.add(mesh4);
-      scene.add(mesh5);
-      scene.add(mesh6);
-      scene.add(mesh7);
-      scene.add(mesh8);
-      scene.add(mesh9);
-      scene.add(mesh10);
-      scene.add(mesh11);
-      scene.add(mesh12);
-      scene.add(mesh13);
-      scene.add(mesh14);
-      scene.add(mesh15);
-      scene.add(mesh16);
-      scene.add(mesh17);
+      // scene.add(mesh);
+      // scene.add(mesh1);
+      // scene.add(mesh2);
+      // scene.add(mesh3);
+      // scene.add(mesh4);
+      // scene.add(mesh5);
+      // scene.add(mesh6);
+      // scene.add(mesh7);
+      // scene.add(mesh8);
+      // scene.add(mesh9);
+      // scene.add(mesh10);
+      // scene.add(mesh11);
+      // scene.add(mesh12);
+      // scene.add(mesh13);
+      // scene.add(mesh14);
+      // scene.add(mesh15);
+      // scene.add(mesh16);
+      // scene.add(mesh17);
 
       let dx = 0;
       let dy = 0;
@@ -312,39 +341,39 @@ const useRender = ({
         handleReset(false);
       }
 
-      const testAnim: AnimationClip = {
-        name: "Fox Walking",
-        frames: [
-          // 0
-          {
-            keyframe: {
-              translation: [0, 0, 0],
-              rotation: [0, 0, 0],
-            },
-            children: {
-              Left: {
-                keyframe: {
-                  rotation: [0, 0, 0],
-                },
-              },
-            },
-          },
-          // 1
-          {
-            keyframe: {
-              translation: [-0.5, 0, 0],
-              rotation: [0, 0.5, 0],
-            },
-            children: {
-              Left: {
-                keyframe: {
-                  rotation: [2, 0, 0],
-                },
-              },
-            },
-          },
-        ],
-      };
+      // const testAnim: AnimationClip = {
+      //   name: "Fox Walking",
+      //   frames: [
+      //     // 0
+      //     {
+      //       keyframe: {
+      //         translation: [0, 0, 0],
+      //         rotation: [0, 0, 0],
+      //       },
+      //       children: {
+      //         Left: {
+      //           keyframe: {
+      //             rotation: [0, 0, 0],
+      //           },
+      //         },
+      //       },
+      //     },
+      //     // 1
+      //     {
+      //       keyframe: {
+      //         translation: [-0.5, 0, 0],
+      //         rotation: [0, 0.5, 0],
+      //       },
+      //       children: {
+      //         Left: {
+      //           keyframe: {
+      //             rotation: [2, 0, 0],
+      //           },
+      //         },
+      //       },
+      //     },
+      //   ],
+      // };
       // const animationRunner: AnimationRunner = new AnimationRunner(
       //   testAnim,
       //   mesh,
@@ -382,7 +411,7 @@ const useRender = ({
     return () => {
       stop = true;
     };
-  }, [cameraType, distance, isReset, selectedComponent]);
+  }, [cameraType, distance, isReset, selectedComponent, meshes]);
 
   return canvasRef;
 };

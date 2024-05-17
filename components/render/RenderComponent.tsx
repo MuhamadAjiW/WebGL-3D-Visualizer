@@ -1,4 +1,5 @@
 import useRender from "@/hooks/useRender";
+import { Mesh } from "@/libs/class/mesh";
 import { Dispatch, SetStateAction } from "react";
 
 interface RenderedComponentProps {
@@ -6,7 +7,8 @@ interface RenderedComponentProps {
   distance: number;
   isReset: boolean
   handleReset: Dispatch<SetStateAction<boolean>>
-  selectedComponent: any // change this later
+  selectedComponent: Mesh | null // change this later
+  meshes: any
 }
 
 const RenderedComponent: React.FC<RenderedComponentProps> = ({
@@ -15,13 +17,15 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({
   isReset,
   handleReset,
   selectedComponent,
+  meshes
 }) => {
   const canvasRef = useRender({
     cameraType,
     distance,
     isReset,
     handleReset,
-    selectedComponent
+    selectedComponent,
+    meshes,
   });
 
   return <canvas id="webgl-canvas" className="w-full h-full" ref={canvasRef} />;

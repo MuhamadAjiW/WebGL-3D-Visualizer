@@ -11,6 +11,7 @@ import { SelectChangeEvent } from "@mui/material";
 import { convertGLTFToTreeView, findMeshById } from "@/libs/helper";
 import { Loader } from "@/libs/class/loader/loader";
 import { Scene } from "@/libs/class/scene";
+import { Mesh } from "@/libs/class/mesh";
 
 export default function Home() {
   // load dummy data
@@ -29,7 +30,7 @@ export default function Home() {
     fetchData();
   }, []);
 
-  console.log("This is data", data);
+  console.log("This is data", data?.children);
 
   const GLTFTree = {
     id: `scene-${data?.name}`,
@@ -44,7 +45,7 @@ export default function Home() {
   const [camera, setCamera] = useState<string>("perspectiveCamera");
   const [distance, setDistance] = useState<number>(3);
   const [isReset, setIsReset] = useState<boolean>(false);
-  const [component, setComponent] = useState<any>(null); // change this too
+  const [component, setComponent] = useState<Mesh | null>(null); // change this too
 
   const handleComponentExpanded = () => {
     setIsComponentExpanded(!isComponentExpanded);
@@ -99,6 +100,7 @@ export default function Home() {
             isReset={isReset}
             handleReset={setIsReset}
             selectedComponent={component}
+            meshes={data.children}
           />
         </div>
       </div>
