@@ -435,10 +435,8 @@ export class Loader {
         this.loadNode(nodeData, index == 0 ? true : false)
       );
     });
-    console.log(this.loadNodeMap);
 
     this.savedData.nodes.forEach((nodeData: any, index: number) => {
-      console.log(index);
       let node: Object3D = this.loadNodeMap.get(index)!;
       this.loadChildren(this.loadNodeMap.get(index)!, nodeData.children);
     });
@@ -479,7 +477,6 @@ export class Loader {
       node.children.push(child);
       child.parent = node;
     });
-    // console.log("load children", node);
   }
 
   private loadCamera(cameraIndex: number): Camera {
@@ -567,7 +564,6 @@ export class Loader {
     const geometryData = this.savedData.geometries[geometryIndex];
     let geometry;
 
-    console.log(geometryData.type);
     if (geometryData.type == 0) {
       geometry = new BlockGeometry(
         geometryData.width,
@@ -681,7 +677,6 @@ export class Loader {
     texture.image.src = textureObject.image_path;
 
     this.loadTextureMap.set(textureIndex, texture);
-    console.log(texture);
     return texture;
   }
 
