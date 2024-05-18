@@ -11,6 +11,7 @@ interface ControllerProps {
   handleClick: () => void;
   title: string;
   component: any; // this will be change later
+  handleSubmit: (values: any) => void; // this will be change later
 }
 
 const Controller: React.FC<ControllerProps> = ({
@@ -19,28 +20,30 @@ const Controller: React.FC<ControllerProps> = ({
   handleClick,
   title,
   component,
+  handleSubmit,
 }) => {
   const formik = useFormik({
     initialValues: {
-      name: component?.name || '',
+      name: component?.name || "",
       position: {
         x: component?.position.x || 0,
         y: component?.position.y || 0,
-        z: component?.position.z || 0
+        z: component?.position.z || 0,
       },
       rotation: {
+        w: component?.rotation.w || 0,
         x: component?.rotation.x || 0,
         y: component?.rotation.y || 0,
-        z: component?.rotation.z || 0
+        z: component?.rotation.z || 0,
       },
       scale: {
         x: component?.scale.x || 0,
         y: component?.scale.y || 0,
-        z: component?.scale.z || 0
-      }
+        z: component?.scale.z || 0,
+      },
     },
-    onSubmit: values => {
-      console.log(values)
+    onSubmit: (values) => {
+      handleSubmit(values);
     },
     enableReinitialize: true,
   });
@@ -62,13 +65,13 @@ const Controller: React.FC<ControllerProps> = ({
                 <div className="w-1/4">Name</div>
                 <div className="w-3/4">
                   <TextField
-                    id='name'
-                    name='name'
+                    id="name"
+                    name="name"
                     fullWidth
                     className="bg-white"
                     size="small"
                     onChange={formik.handleChange}
-                    value={formik.values.name} 
+                    value={formik.values.name}
                   />
                 </div>
               </div>
@@ -118,8 +121,21 @@ const Controller: React.FC<ControllerProps> = ({
               </div>
               <div className="flex flex-col gap-2">
                 <div>Rotation</div>
-                <div className="flex gap-2 items-center">
-                  <div className="flex gap-1 items-center">
+                <div className="grid grid-cols-2 items-center gap-2">
+                  <div className="flex items-center justify-end">
+                    <div>W</div>
+                    <TextField
+                      id="rotation.w"
+                      name="rotation.w"
+                      type="number"
+                      fullWidth
+                      className="bg-white"
+                      size="small"
+                      onChange={formik.handleChange}
+                      value={formik.values.rotation.w}
+                    />
+                  </div>
+                  <div className="flex gap-1 items-center justify-end">
                     <div>X</div>
                     <TextField
                       id="rotation.x"
@@ -132,7 +148,7 @@ const Controller: React.FC<ControllerProps> = ({
                       value={formik.values.rotation.x}
                     />
                   </div>
-                  <div className="flex gap-1 items-center">
+                  <div className="flex gap-1 items-center justify-end">
                     <div>Y</div>
                     <TextField
                       id="rotation.y"
@@ -145,7 +161,7 @@ const Controller: React.FC<ControllerProps> = ({
                       value={formik.values.rotation.y}
                     />
                   </div>
-                  <div className="flex gap-1 items-center">
+                  <div className="flex gap-1 items-center justify-end">
                     <div>Z</div>
                     <TextField
                       id="rotation.z"
@@ -196,7 +212,7 @@ const Controller: React.FC<ControllerProps> = ({
                       name="scale.z"
                       fullWidth
                       type="number"
-                      className="bg-white"  
+                      className="bg-white"
                       size="small"
                       onChange={formik.handleChange}
                       value={formik.values.scale.z}

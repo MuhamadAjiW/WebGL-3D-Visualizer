@@ -12,10 +12,11 @@ import { convertGLTFToTreeView, findMeshById } from "@/libs/helper";
 import { Loader } from "@/libs/class/loader/loader";
 import { Scene } from "@/libs/class/scene";
 import { Mesh } from "@/libs/class/mesh";
+import Vector3 from "@/libs/base-types/vector3";
+import { Quaternion } from "@/libs/base-types/quaternion";
+import { Euler } from "@/libs/base-types/euler";
 
 export default function Home() {
-  // load dummy data
-
   const [data, setData] = useState<Scene | null>(null);
 
   const fetchData = async () => {
@@ -29,8 +30,6 @@ export default function Home() {
   useEffect(() => {
     fetchData();
   }, []);
-
-  console.log("This is data", data?.children);
 
   const GLTFTree = {
     id: `scene-${data?.name}`,
@@ -46,6 +45,43 @@ export default function Home() {
   const [distance, setDistance] = useState<number>(3);
   const [isReset, setIsReset] = useState<boolean>(false);
   const [component, setComponent] = useState<Mesh | null>(null);
+  const [isControllerChange, setIsControllerChange] = useState<boolean>(false)
+
+  const handleSubmitController = (values: any) => {
+    console.log(values)
+    console.log(component?.rotation)
+
+    const position = new Vector3(
+      values.position.x,
+      values.position.y,
+      values.position.z
+    )
+    const rotation = new Quaternion (
+      values.rotation.w,
+      values.rotation.x,
+      values.rotation.y,
+      values.rotation.z
+    )
+    const scale = new Vector3(
+      values.scale.x,
+      values.scale.y,
+      values.scale.z,
+    )
+
+    console.log(position, rotation, scale)
+
+    if (component) {
+      component.position = position
+      component.rotation = rotation
+      component.scale = scale
+      setComponent(component)
+      setIsControllerChange(!isControllerChange)
+    } else {
+      setComponent(null)
+    }
+
+    console.log(component)
+  }
 
   const handleComponentExpanded = () => {
     setIsComponentExpanded(!isComponentExpanded);
@@ -101,6 +137,7 @@ export default function Home() {
             handleReset={setIsReset}
             selectedComponent={component}
             meshes={data.children}
+            isControllerChange = {isControllerChange}
           />
         </div>
       </div>
@@ -162,6 +199,7 @@ export default function Home() {
             handleClick={handleComponentExpanded}
             title="Component Controller"
             component={component!!}
+            handleSubmit={handleSubmitController}
           />
           <CameraController
             id="camera-controller"

@@ -40,6 +40,7 @@ interface HooksRenderProps {
   handleReset: Dispatch<SetStateAction<boolean>>;
   selectedComponent: any; // change this later
   meshes: any;
+  isControllerChange: boolean
 }
 
 const useRender = ({
@@ -49,6 +50,7 @@ const useRender = ({
   handleReset,
   selectedComponent,
   meshes,
+  isControllerChange
 }: HooksRenderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -411,7 +413,7 @@ const useRender = ({
     return () => {
       stop = true;
     };
-  }, [cameraType, distance, isReset, selectedComponent, meshes]);
+  }, [cameraType, distance, isReset, selectedComponent, meshes, isControllerChange]);
 
   return canvasRef;
 };

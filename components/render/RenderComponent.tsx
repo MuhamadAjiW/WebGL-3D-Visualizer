@@ -9,6 +9,7 @@ interface RenderedComponentProps {
   handleReset: Dispatch<SetStateAction<boolean>>
   selectedComponent: Mesh | null // change this later
   meshes: any
+  isControllerChange: boolean
 }
 
 const RenderedComponent: React.FC<RenderedComponentProps> = ({
@@ -17,7 +18,8 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({
   isReset,
   handleReset,
   selectedComponent,
-  meshes
+  meshes,
+  isControllerChange
 }) => {
   const canvasRef = useRender({
     cameraType,
@@ -26,6 +28,7 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({
     handleReset,
     selectedComponent,
     meshes,
+    isControllerChange
   });
 
   return <canvas id="webgl-canvas" className="w-full h-full" ref={canvasRef} />;
