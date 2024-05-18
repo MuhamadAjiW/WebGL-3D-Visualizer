@@ -2,9 +2,10 @@ interface ButtonProps {
   id: string;
   text: string;
   disable?: boolean;
-  handleClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  handleClick: () => void;
   className?: string;
   textClassName?: string;
+  type?: 'button' | 'submit' | 'reset';
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -14,10 +15,12 @@ const Button: React.FC<ButtonProps> = ({
   className,
   handleClick,
   textClassName,
+  type = 'button'
 }) => {
   return (
     <button
       id={id}
+      type = {type}
       disabled={disable}
       className={className}
       onClick={handleClick}

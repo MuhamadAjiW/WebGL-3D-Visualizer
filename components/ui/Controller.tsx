@@ -3,7 +3,7 @@ import { GoChevronDown } from "react-icons/go";
 import { Collapse } from "react-collapse";
 import { TextField } from "@mui/material";
 import Button from "./Button";
-import { NodeSchema } from "@/types/ui";
+import { useFormik } from "formik";
 
 interface ControllerProps {
   id: string;
@@ -20,7 +20,30 @@ const Controller: React.FC<ControllerProps> = ({
   title,
   component,
 }) => {
-  console.log("This is position component", component)
+  const formik = useFormik({
+    initialValues: {
+      name: component?.name || '',
+      position: {
+        x: component?.position.x || 0,
+        y: component?.position.y || 0,
+        z: component?.position.z || 0
+      },
+      rotation: {
+        x: component?.rotation.x || 0,
+        y: component?.rotation.y || 0,
+        z: component?.rotation.z || 0
+      },
+      scale: {
+        x: component?.scale.x || 0,
+        y: component?.scale.y || 0,
+        z: component?.scale.z || 0
+      }
+    },
+    onSubmit: values => {
+      console.log(values)
+    },
+    enableReinitialize: true,
+  });
 
   return (
     <>
@@ -39,11 +62,13 @@ const Controller: React.FC<ControllerProps> = ({
                 <div className="w-1/4">Name</div>
                 <div className="w-3/4">
                   <TextField
-                    id="name-field"
+                    id='name'
+                    name='name'
                     fullWidth
                     className="bg-white"
                     size="small"
-                    value={component.name} // this also will be changed
+                    onChange={formik.handleChange}
+                    value={formik.values.name} 
                   />
                 </div>
               </div>
@@ -53,34 +78,40 @@ const Controller: React.FC<ControllerProps> = ({
                   <div className="flex gap-1 items-center">
                     <div>X</div>
                     <TextField
-                      id="x-field"
+                      id="position.x"
+                      name="position.x"
                       type="number"
                       fullWidth
                       className="bg-white"
                       size="small"
-                      value={component.position.x || 0}
+                      onChange={formik.handleChange}
+                      value={formik.values.position.x}
                     />
                   </div>
                   <div className="flex gap-1 items-center">
                     <div>Y</div>
                     <TextField
-                      id="y-field"
+                      id="position.y"
+                      name="position.y"
                       fullWidth
                       type="number"
                       className="bg-white"
                       size="small"
-                      value={component.position.y || 0}
+                      onChange={formik.handleChange}
+                      value={formik.values.position.y}
                     />
                   </div>
                   <div className="flex gap-1 items-center">
                     <div>Z</div>
                     <TextField
-                      id="z-field"
+                      id="position.z"
+                      name="position.z"
                       fullWidth
                       type="number"
                       className="bg-white"
                       size="small"
-                      value={component.position.z || 0}
+                      onChange={formik.handleChange}
+                      value={formik.values.position.z}
                     />
                   </div>
                 </div>
@@ -91,34 +122,40 @@ const Controller: React.FC<ControllerProps> = ({
                   <div className="flex gap-1 items-center">
                     <div>X</div>
                     <TextField
-                      id="x-field"
+                      id="rotation.x"
+                      name="rotation.x"
                       type="number"
                       fullWidth
                       className="bg-white"
                       size="small"
-                      value={component.rotation.x || 0 }
+                      onChange={formik.handleChange}
+                      value={formik.values.rotation.x}
                     />
                   </div>
                   <div className="flex gap-1 items-center">
                     <div>Y</div>
                     <TextField
-                      id="y-field"
+                      id="rotation.y"
+                      name="rotation.y"
                       fullWidth
                       type="number"
                       className="bg-white"
                       size="small"
-                      value={component.rotation.y || 0 }
+                      onChange={formik.handleChange}
+                      value={formik.values.rotation.y}
                     />
                   </div>
                   <div className="flex gap-1 items-center">
                     <div>Z</div>
                     <TextField
-                      id="z-field"
+                      id="rotation.z"
+                      name="rotation.z"
                       fullWidth
                       type="number"
                       className="bg-white"
                       size="small"
-                      value={component.rotation.z || 0 }
+                      onChange={formik.handleChange}
+                      value={formik.values.rotation.z}
                     />
                   </div>
                 </div>
@@ -129,34 +166,40 @@ const Controller: React.FC<ControllerProps> = ({
                   <div className="flex gap-1 items-center">
                     <div>X</div>
                     <TextField
-                      id="x-field"
+                      id="scale.x"
+                      name="scale.x"
                       type="number"
                       fullWidth
                       className="bg-white"
                       size="small"
-                      value={component.scale.x || 0}
+                      onChange={formik.handleChange}
+                      value={formik.values.scale.x}
                     />
                   </div>
                   <div className="flex gap-1 items-center">
                     <div>Y</div>
                     <TextField
-                      id="y-field"
+                      id="scale.y"
+                      name="scale.y"
                       fullWidth
                       type="number"
                       className="bg-white"
                       size="small"
-                      value={component.scale.y || 0}
+                      onChange={formik.handleChange}
+                      value={formik.values.scale.y}
                     />
                   </div>
                   <div className="flex gap-1 items-center">
                     <div>Z</div>
                     <TextField
-                      id="z-field"
+                      id="scale.z"
+                      name="scale.z"
                       fullWidth
                       type="number"
                       className="bg-white"  
                       size="small"
-                      value={component.scale.z || 0}
+                      onChange={formik.handleChange}
+                      value={formik.values.scale.z}
                     />
                   </div>
                 </div>
@@ -165,7 +208,8 @@ const Controller: React.FC<ControllerProps> = ({
                 <Button
                   id="apply-button"
                   text="Apply"
-                  handleClick={() => {}}
+                  type="submit"
+                  handleClick={formik.handleSubmit}
                   className="bg-white text-black px-4 py-1"
                 />
               </div>

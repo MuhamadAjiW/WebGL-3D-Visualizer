@@ -45,7 +45,7 @@ export default function Home() {
   const [camera, setCamera] = useState<string>("perspectiveCamera");
   const [distance, setDistance] = useState<number>(3);
   const [isReset, setIsReset] = useState<boolean>(false);
-  const [component, setComponent] = useState<Mesh | null>(null); // change this too
+  const [component, setComponent] = useState<Mesh | null>(null);
 
   const handleComponentExpanded = () => {
     setIsComponentExpanded(!isComponentExpanded);
