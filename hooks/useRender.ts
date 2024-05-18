@@ -193,6 +193,8 @@ const useRender = ({
       // const geometry16 = new HollowBlockGeometry(0.05, 0.5, 1);
       // const geometry17 = new HollowBlockGeometry(0.05, 0.5, 1);
 
+      // const geometry18 = new HollowPlaneGeometry(1, 1);
+
       // const geometryh = new BlockGeometry(0.25, 0.5, 0.25);
       const texture = await TextureLoader.load("res/f-texture.png");
       // const material = new BasicMaterial({
