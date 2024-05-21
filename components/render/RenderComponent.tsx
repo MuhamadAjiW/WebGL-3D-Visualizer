@@ -1,5 +1,6 @@
 import useRender from "@/hooks/useRender";
 import { Mesh } from "@/libs/class/mesh";
+import { AnimationController } from "@/types/ui";
 import { Dispatch, SetStateAction } from "react";
 
 interface RenderedComponentProps {
@@ -10,7 +11,8 @@ interface RenderedComponentProps {
   selectedComponent: Mesh | null; // change this later
   meshes: any;
   isControllerChange: boolean;
-  isAnimation?: boolean;
+  animationController?: AnimationController;
+  setAnimationController?: Dispatch<SetStateAction<AnimationController>>;
 }
 
 const RenderedComponent: React.FC<RenderedComponentProps> = ({
@@ -21,7 +23,8 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({
   selectedComponent,
   meshes,
   isControllerChange,
-  isAnimation,
+  animationController,
+  setAnimationController,
 }: RenderedComponentProps) => {
   const canvasRef = useRender({
     cameraType,
@@ -31,7 +34,8 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({
     selectedComponent,
     meshes,
     isControllerChange,
-    isAnimation
+    animationController,
+    setAnimationController,
   });
 
   return <canvas id="webgl-canvas" className="w-full h-full" ref={canvasRef} />;

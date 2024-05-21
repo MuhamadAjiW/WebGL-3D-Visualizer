@@ -32,6 +32,7 @@ import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
 import { Loader } from "@/libs/class/loader/loader";
 import { Euler } from "@/libs/base-types/euler";
 import { Quaternion } from "@/libs/base-types/quaternion";
+import { AnimationController } from "@/types/ui";
 
 interface HooksRenderProps {
   cameraType: string;
@@ -41,7 +42,8 @@ interface HooksRenderProps {
   selectedComponent: any; // change this later
   meshes: any;
   isControllerChange: boolean;
-  isAnimation?: boolean;
+  animationController?: AnimationController;
+  setAnimationController?: Dispatch<SetStateAction<AnimationController>>;
 }
 
 const useRender = ({
@@ -52,7 +54,8 @@ const useRender = ({
   selectedComponent,
   meshes,
   isControllerChange,
-  isAnimation = false,
+  animationController,
+  setAnimationController
 }: HooksRenderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -347,11 +350,11 @@ const useRender = ({
         handleReset(false);
       }
 
-      console.log("This is animation scene", isAnimation);
+      console.log("This is animation scene", animationController);
 
       let animationRunner: AnimationRunner;
 
-      if (isAnimation) {
+      if (animationController) {
         const testAnim: AnimationClip = {
           name: "Fox Walking",
           frames: [
@@ -395,14 +398,26 @@ const useRender = ({
             reverse: false,
           }
         );
-        animationRunner.playAnimation();
+
+        if (setAnimationController) {
+          if(animationController.play) {
+            animationRunner.playAnimation()
+            setAnimationController(prevState => ({
+              ...prevState,
+              play: false,
+            }));
+          };
+        } 
+        // if(animationController.pause) animationRunner;
+        // if(animationController.play) animationRunner.playAnimation();
+        // if(animationController.play) animationRunner.playAnimation();
       }
 
       WebGLUtils.setUniforms(programInfo, dummyUniformsData);
       function render() {
         if (cameraInstance == null) return;
 
-        if(isAnimation) animationRunner.update();
+        if(animationController) animationRunner.update();
         cameraInstance.setOrbitControl(dy, dx);
         cameraInstance.setDistance(distance);
 
@@ -430,6 +445,10 @@ const useRender = ({
     selectedComponent,
     meshes,
     isControllerChange,
+    animationController?.play,
+    animationController?.pause,
+    animationController?.reverse,
+    animationController?.playback
   ]);
 
   return canvasRef;
