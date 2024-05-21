@@ -276,9 +276,9 @@ const useRender = ({
 
       canvas.addEventListener("mousedown", () => {
         isMouseClick = true;
-        canvas.addEventListener("mouseup", () => {});
-
-        isMouseClick = false;
+        canvas.addEventListener("mouseup", () => {
+          isMouseClick = false;
+        });
       });
 
       canvas.addEventListener("mousemove", (event) => {
