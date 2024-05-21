@@ -58,22 +58,22 @@ export default function Home() {
     if (controller === "play") {
       setAnimationController(prevState => ({
         ...prevState,
-        play: true,
+        play: !animationController.play,
       }));
     } else if (controller === "pause") {
       setAnimationController(prevState => ({
         ...prevState,
-        pause: true,
+        pause: !animationController.pause,
       }));
     } else if (controller === "reverse") {
       setAnimationController(prevState => ({
         ...prevState,
-        reverse: true,
+        reverse: !animationController.reverse,
       }));
     } else if (controller === "playback") {
       setAnimationController(prevState => ({
         ...prevState,
-        playback: true,
+        playback: !animationController.playback,
       }));
     }
   }
