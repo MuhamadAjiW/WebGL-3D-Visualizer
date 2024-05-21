@@ -55,13 +55,14 @@ const useRender = ({
   meshes,
   isControllerChange,
   animationController,
-  setAnimationController
+  setAnimationController,
 }: HooksRenderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     console.log("this is scene", meshes);
     console.log("this is selected component", selectedComponent);
+    let isPlaying = false;
     let isMouseClick = false;
     let stop = false;
     const runWebGL = async () => {
@@ -388,26 +389,17 @@ const useRender = ({
             },
           ],
         };
-        animationRunner = new AnimationRunner(
-          testAnim,
-          scene,
-          {
-            fpkey: 144,
-            easing: AnimationEasingType.EASE_IN_SINE,
-            loop: false,
-            reverse: false,
-          }
-        );
+        animationRunner = new AnimationRunner(testAnim, scene, {
+          fpkey: 144,
+          easing: AnimationEasingType.EASE_IN_SINE,
+          loop: false,
+          reverse: false,
+        });
 
-        if (setAnimationController) {
-          if(animationController.play) {
-            animationRunner.playAnimation()
-            setAnimationController(prevState => ({
-              ...prevState,
-              play: false,
-            }));
-          };
-        } 
+        if (animationController.play) {
+          animationRunner.playAnimation();
+        }
+
         // if(animationController.pause) animationRunner;
         // if(animationController.play) animationRunner.playAnimation();
         // if(animationController.play) animationRunner.playAnimation();
@@ -415,9 +407,10 @@ const useRender = ({
 
       WebGLUtils.setUniforms(programInfo, dummyUniformsData);
       function render() {
+        console.log("This is play", animationController?.play);
         if (cameraInstance == null) return;
-
-        if(animationController) animationRunner.update();
+        if (animationController) animationRunner.update();
+        
         cameraInstance.setOrbitControl(dy, dx);
         cameraInstance.setDistance(distance);
 
@@ -448,7 +441,7 @@ const useRender = ({
     animationController?.play,
     animationController?.pause,
     animationController?.reverse,
-    animationController?.playback
+    animationController?.playback,
   ]);
 
   return canvasRef;
