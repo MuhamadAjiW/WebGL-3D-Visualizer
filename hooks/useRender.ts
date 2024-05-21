@@ -348,61 +348,62 @@ const useRender = ({
         handleReset(false);
       }
 
-      // const testAnim: AnimationClip = {
-      //   name: "Fox Walking",
-      //   frames: [
-      //     // 0
-      //     {
-      //       keyframe: {
-      //         translation: [0, 0, 0],
-      //         rotation: [0, 0, 0],
-      //       },
-      //       children: {
-      //         Left: {
-      //           keyframe: {
-      //             rotation: [0, 0, 0],
-      //           },
-      //         },
-      //       },
-      //     },
-      //     // 1
-      //     {
-      //       keyframe: {
-      //         translation: [-0.5, 0, 0],
-      //         rotation: [0, 0.5, 0],
-      //       },
-      //       children: {
-      //         Left: {
-      //           keyframe: {
-      //             rotation: [2, 0, 0],
-      //           },
-      //         },
-      //       },
-      //     },
-      //   ],
-      // };
-      // const animationRunner: AnimationRunner = new AnimationRunner(
-      //   testAnim,
-      //   mesh,
-      //   {
-      //     fpkey: 144,
-      //     easing: AnimationEasingType.EASE_IN_SINE,
-      //     loop: false,
-      //     reverse: false,
-      //   }
-      // );
-      // animationRunner.playAnimation();
+      const testAnim: AnimationClip = {
+        name: "Test",
+        frames: [
+          // 0
+          {
+            keyframe: {
+              translation: [0, 0, 0],
+              rotation: [0, 0, 0],
+            },
+            children: {
+              Left: {
+                keyframe: {
+                  rotation: [0, 0, 0],
+                },
+              },
+            },
+          },
+          // 1
+          {
+            keyframe: {
+              translation: [-0.5, 0, 0],
+              rotation: [0, 0.5, 0],
+            },
+            children: {
+              Left: {
+                keyframe: {
+                  rotation: [2, 0, 0],
+                },
+              },
+            },
+          },
+        ],
+      };
+      const animationRunner: AnimationRunner = new AnimationRunner(
+        testAnim,
+        mesh,
+        {
+          fpkey: 144,
+          fps: 1,
+          easing: AnimationEasingType.EASE_IN_SINE,
+          loop: true,
+          reverse: false,
+        }
+      );
+      animationRunner.playAnimation();
 
       WebGLUtils.setUniforms(programInfo, dummyUniformsData);
       function render() {
         if (cameraInstance == null) return;
 
-        // animationRunner.update();
+        animationRunner.update();
         cameraInstance.setOrbitControl(dy, dx);
         cameraInstance.setDistance(distance);
 
-        mesh.rotateOnWorldAxis(Vector3.right, 0.01);
-        mesh.rotateOnWorldAxis(Vector3.up, 0.01);
+        // mesh.rotateOnWorldAxis(Vector3.right, 0.01);
+        // mesh.rotateOnWorldAxis(Vector3.up, 0.01);
 
         renderer.render(scene, cameraInstance);
         if (!stop) {
