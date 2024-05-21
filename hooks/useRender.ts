@@ -399,6 +399,12 @@ const useRender = ({
         if (animationController.play) {
           animationRunner.playAnimation();
         }
+        if (animationController.pause) {
+          animationRunner.togglePause()
+        }
+        if (animationController.reverse) {
+          animationRunner.toggleReverse()
+        }
 
         // if(animationController.pause) animationRunner;
         // if(animationController.play) animationRunner.playAnimation();
@@ -407,7 +413,6 @@ const useRender = ({
 
       WebGLUtils.setUniforms(programInfo, dummyUniformsData);
       function render() {
-        console.log("This is play", animationController?.play);
         if (cameraInstance == null) return;
         if (animationController) animationRunner.update();
         
