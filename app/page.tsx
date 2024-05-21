@@ -76,6 +76,7 @@ export default function Home() {
         playback: !animationController.playback,
       }));
     }
+    setIsControllerChange(!isControllerChange);
   }
 
   const handleSubmitController = (values: any) => {
@@ -165,6 +166,8 @@ export default function Home() {
             selectedComponent={component}
             meshes={data.children}
             isControllerChange={isControllerChange}
+            animationController={animationController}
+            setAnimationController={setAnimationController}
           />
         </div>
       </div>
