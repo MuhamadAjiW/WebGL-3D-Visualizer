@@ -40,7 +40,7 @@ interface HooksRenderProps {
   handleReset: Dispatch<SetStateAction<boolean>>;
   selectedComponent: any; // change this later
   meshes: any;
-  isControllerChange: boolean
+  isControllerChange: boolean;
 }
 
 const useRender = ({
@@ -50,7 +50,7 @@ const useRender = ({
   handleReset,
   selectedComponent,
   meshes,
-  isControllerChange
+  isControllerChange,
 }: HooksRenderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -148,33 +148,33 @@ const useRender = ({
 
       const scene = new Scene();
 
-      const meshConverter = (mesh: any) => {
-        // change the param type later
-        const geometry = mesh.geometry;
-        const material = mesh.material;
-        const meshComp = new Mesh(geometry, material);
+      // const meshConverter = (mesh: any) => {
+      //   // change the param type later
+      //   const geometry = mesh.geometry;
+      //   const material = mesh.material;
+      //   const meshComp = new Mesh(geometry, material);
 
-        meshComp.name = mesh.name
-        meshComp.position = mesh.position
-        meshComp.rotation = mesh.rotation
-        meshComp.scale = mesh.scale
+      //   meshComp.name = mesh.name;
+      //   meshComp.position = mesh.position;
+      //   meshComp.rotation = mesh.rotation;
+      //   meshComp.scale = mesh.scale;
 
-        scene.add(meshComp);
+      //   scene.add(meshComp);
 
-        for (let child of mesh.children) {
-          meshConverter(child)
-        }
-      };
+      //   for (let child of mesh.children) {
+      //     meshConverter(child);
+      //   }
+      // };
 
-      if (selectedComponent) {
-        meshConverter(selectedComponent)
-      } else {
-        for (let mesh of meshes) {
-          meshConverter(mesh)
-        }
-      }
+      // if (selectedComponent) {
+      //   meshConverter(selectedComponent);
+      // } else {
+      //   for (let mesh of meshes) {
+      //     meshConverter(mesh);
+      //   }
+      // }
 
-      // const geometry = new HollowBlockGeometry(0.05, 0.5, 1);
+      const geometry = new BlockGeometry(0.5, 0.5, 1);
       // const geometry1 = new HollowBlockGeometry(0.05, 0.5, 1);
       // const geometry2 = new HollowBlockGeometry(0.05, 0.5, 1);
       // const geometry3 = new HollowBlockGeometry(0.05, 0.3, 1);
@@ -196,20 +196,22 @@ const useRender = ({
       // const geometry18 = new HollowPlaneGeometry(1, 1);
 
       // const geometryh = new BlockGeometry(0.25, 0.5, 0.25);
-      const texture = await TextureLoader.load("res/f-texture.png");
+      const fTexture = await TextureLoader.load("res/f-texture.png");
+      const brickTexture = await TextureLoader.load("res/brick.jpg");
       // const material = new BasicMaterial({
       //   color: new Color(0x010101ff),
       //   texture,
       // });
       const material = new PhongMaterial({
-        texture: texture,
+        diffuseTexture: fTexture,
+        // specularTexture: brickTexture,
         ambient: new Color(0x818181ff),
-        diffuse: new Color(0xffffffff),
-        specular: new Color(0xffffffff),
+        diffuse: new Color(0x00ffffff),
+        specular: new Color(0x00ffffff),
         shinyness: 32,
       });
 
-      // const mesh = new Mesh(geometry, material);
+      const mesh = new Mesh(geometry, material);
       // const mesh1 = new Mesh(geometry1, material);
       // const mesh2 = new Mesh(geometry2, material);
       // const mesh3 = new Mesh(geometry3, material);
@@ -227,7 +229,8 @@ const useRender = ({
       // const mesh15 = new Mesh(geometry15, material);
       // const mesh16 = new Mesh(geometry16, material);
       // const mesh17 = new Mesh(geometry17, material);
-      // mesh.name = "Parent";
+      mesh.name = "Parent";
+      scene.add(mesh);
 
       // mesh.name = "Piece 1";
       // mesh1.name = "Piece 2";
@@ -403,7 +406,7 @@ const useRender = ({
 
         renderer.render(scene, cameraInstance);
         if (!stop) {
-          requestAnimationFrame(render);
+          //   requestAnimationFrame(render);
         }
       }
       render();
@@ -415,7 +418,14 @@ const useRender = ({
     return () => {
       stop = true;
     };
-  }, [cameraType, distance, isReset, selectedComponent, meshes, isControllerChange]);
+  }, [
+    cameraType,
+    distance,
+    isReset,
+    selectedComponent,
+    meshes,
+    isControllerChange,
+  ]);
 
   return canvasRef;
 };

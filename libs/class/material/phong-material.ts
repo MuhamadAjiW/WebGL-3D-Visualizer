@@ -12,73 +12,42 @@ export class PhongMaterial extends ShaderMaterial {
   public diffuse: Color = Color.WHITE;
   public specular: Color = Color.WHITE;
   public shininess: number = 1.0;
+  public diffuseTexture?: Texture;
+  public specularTexture?: Texture;
 
   constructor(options?: {
-    texture?: Texture;
+    diffuseTexture?: Texture;
+    specularTexture?: Texture;
     ambient?: Color;
     diffuse?: Color;
     specular?: Color;
     shinyness?: number;
+    normalTexture?: Texture;
+    parallaxTexture?: Texture;
   }) {
-    super(PhongMaterial.materialType, options?.texture);
+    super(PhongMaterial.materialType, {
+      normalTexture: options?.normalTexture,
+      parallaxTexture: options?.parallaxTexture,
+    });
 
     this.ambient = options?.ambient || new Color(0xffffffff);
     this.diffuse = options?.diffuse || new Color(0xffffffff);
     this.specular = options?.specular || new Color(0xffffffff);
     this.shininess = options?.shinyness || 1;
+
+    this.diffuseTexture = options?.diffuseTexture || new Texture();
+    this.specularTexture = options?.specularTexture || new Texture();
   }
 
   public loadTexture(renderer: WebGLRenderer): void {
-    let loadedTexture = renderer.gl.createTexture();
-    renderer.gl.bindTexture(renderer.gl.TEXTURE_2D, loadedTexture);
-
-    if (this.texture?.image != null) {
-      renderer.gl.texParameteri(
-        renderer.gl.TEXTURE_2D,
-        renderer.gl.TEXTURE_WRAP_S,
-        this.texture.wrapS
-      );
-      renderer.gl.texParameteri(
-        renderer.gl.TEXTURE_2D,
-        renderer.gl.TEXTURE_WRAP_T,
-        this.texture.wrapT
-      );
-      renderer.gl.texParameteri(
-        renderer.gl.TEXTURE_2D,
-        renderer.gl.TEXTURE_MIN_FILTER,
-        this.texture.minFilter
-      );
-      renderer.gl.texParameteri(
-        renderer.gl.TEXTURE_2D,
-        renderer.gl.TEXTURE_MAG_FILTER,
-        this.texture.magFilter
-      );
-
-      renderer.gl.texImage2D(
-        renderer.gl.TEXTURE_2D,
-        0,
-        renderer.gl.RGBA,
-        renderer.gl.RGBA,
-        renderer.gl.UNSIGNED_BYTE,
-        this.texture?.image
-      );
-    } else {
-      renderer.gl.texImage2D(
-        renderer.gl.TEXTURE_2D,
-        0,
-        renderer.gl.RGBA,
-        1,
-        1,
-        0,
-        renderer.gl.RGBA,
-        renderer.gl.UNSIGNED_BYTE,
-        new Uint8Array(Color.WHITE.getNormalized())
-      );
-    }
+    this.diffuseTexture?.load(renderer, 0);
+    this.specularTexture?.load(renderer, 1);
   }
 
   public loadUniform(renderer: WebGLRenderer): void {
     WebGLUtil.setUniforms(renderer.currentProgram, {
+      u_textureDiffuse: 0,
+      u_textureSpecular: 1,
       u_ambient: this.ambient.getNormalized(),
       u_diffuse: this.diffuse.getNormalized(),
       u_specular: this.specular.getNormalized(),

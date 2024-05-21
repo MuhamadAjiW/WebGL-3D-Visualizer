@@ -9,36 +9,47 @@ export class BasicMaterial extends ShaderMaterial {
   private static idAutoIncrement: number = 0;
 
   public diffuse: Color = Color.WHITE;
+  public diffuseTexture?: Texture;
 
-  constructor(options?: { texture?: Texture; color?: Color }) {
-    super(BasicMaterial.materialType, options?.texture);
+  constructor(options?: {
+    texture?: Texture;
+    color?: Color;
+    normalTexture?: Texture;
+    parallaxTexture?: Texture;
+  }) {
+    super(BasicMaterial.materialType, {
+      normalTexture: options?.normalTexture,
+      parallaxTexture: options?.parallaxTexture,
+    });
+
     this.diffuse = options?.color || new Color(0xffffffff);
+    this.diffuseTexture = options?.texture || new Texture();
   }
 
   public loadTexture(renderer: WebGLRenderer): void {
     let loadedTexture = renderer.gl.createTexture();
     renderer.gl.bindTexture(renderer.gl.TEXTURE_2D, loadedTexture);
 
-    if (this.texture?.image != null) {
+    if (this.diffuseTexture?.image != null) {
       renderer.gl.texParameteri(
         renderer.gl.TEXTURE_2D,
         renderer.gl.TEXTURE_WRAP_S,
-        this.texture.wrapS
+        this.diffuseTexture.wrapS
       );
       renderer.gl.texParameteri(
         renderer.gl.TEXTURE_2D,
         renderer.gl.TEXTURE_WRAP_T,
-        this.texture.wrapT
+        this.diffuseTexture.wrapT
       );
       renderer.gl.texParameteri(
         renderer.gl.TEXTURE_2D,
         renderer.gl.TEXTURE_MIN_FILTER,
-        this.texture.minFilter
+        this.diffuseTexture.minFilter
       );
       renderer.gl.texParameteri(
         renderer.gl.TEXTURE_2D,
         renderer.gl.TEXTURE_MAG_FILTER,
-        this.texture.magFilter
+        this.diffuseTexture.magFilter
       );
 
       renderer.gl.texImage2D(
@@ -47,7 +58,7 @@ export class BasicMaterial extends ShaderMaterial {
         renderer.gl.RGBA,
         renderer.gl.RGBA,
         renderer.gl.UNSIGNED_BYTE,
-        this.texture?.image
+        this.diffuseTexture?.image
       );
     } else {
       renderer.gl.texImage2D(
@@ -59,7 +70,7 @@ export class BasicMaterial extends ShaderMaterial {
         0,
         renderer.gl.RGBA,
         renderer.gl.UNSIGNED_BYTE,
-        new Uint8Array(Color.BLACK.get())
+        new Uint8Array(Color.WHITE.get())
       );
     }
   }

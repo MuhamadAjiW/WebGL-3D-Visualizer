@@ -7,7 +7,10 @@ varying vec3 v_position;        // Vertex position
 varying vec2 v_texCoord;        // Vertex position
 
 // Material color
-uniform sampler2D u_texture;
+uniform sampler2D u_textureDiffuse;
+uniform sampler2D u_textureSpecular;
+uniform sampler2D u_textureNormal;
+uniform sampler2D u_textureParallax;
 uniform vec4 u_ambient;
 uniform vec4 u_diffuse;
 uniform vec4 u_specular;
@@ -17,14 +20,16 @@ uniform int u_materialType;
 uniform vec3 u_lightPos;        // Light position
 
 void main() {
-    vec4 texture = texture2D(u_texture, v_texCoord);
+    vec4 textureDiffuse = texture2D(u_textureDiffuse, v_texCoord);
+    vec4 textureSpecular = texture2D(u_textureSpecular, v_texCoord);
+    // vec4 texture = texture2D(u_textureDiffuse, v_texCoord);
+    // vec4 texture = texture2D(u_textureDiffuse, v_texCoord);
 
     vec4 outColor;
     if(u_materialType == 0){
-        outColor = u_diffuse * texture;
-
+        outColor = u_diffuse * textureDiffuse;
+        
     } else if (u_materialType == 1){
-
         vec3 N = normalize(v_normal);
         vec3 L = normalize(u_lightPos - v_position);
 
@@ -40,7 +45,7 @@ void main() {
         }
 
         outColor = (u_ambient +
-                    lambertian * u_diffuse) * texture +
+                    lambertian * u_diffuse) * textureSpecular +
                     (specular * u_specular);
     }
 

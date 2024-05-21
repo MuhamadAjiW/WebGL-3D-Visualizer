@@ -22,7 +22,10 @@ export type ShaderUniforms = {
   u_view?: UniformSingleDataType;
   u_world?: UniformSingleDataType;
   u_normalMat?: UniformSingleDataType;
-  u_texture?: UniformSingleDataType;
+  u_textureDiffuse?: UniformSingleDataType;
+  u_textureSpecular?: UniformSingleDataType;
+  u_textureNormal?: UniformSingleDataType;
+  u_textureParallax?: UniformSingleDataType;
   u_ambient?: UniformSingleDataType;
   u_diffuse?: UniformSingleDataType;
   u_specular?: UniformSingleDataType;
@@ -92,6 +95,16 @@ export class WebGLUtil {
         // console.log(info.name);
         // console.log(`${type}`);
         // console.log(`uniform${UniformSetterWebGLType[type]}`);
+
+        if (
+          info.name == "u_textureDiffuse" ||
+          info.name == "u_textureSpecular"
+        ) {
+          console.log(v);
+          console.log(info.name);
+          console.log(`${type}`);
+          console.log(`uniform${UniformSetterWebGLType[type]}`);
+        }
 
         if (v instanceof BufferUniform) {
           if (typeof v === "number") {
