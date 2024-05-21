@@ -80,15 +80,7 @@ export class WebGLRenderer {
 
       this.createOrGetMaterial(node.material);
 
-      WebGLUtil.setAttributes(this.currentProgram, {
-        a_normal: node.geometry.normal,
-        a_position: node.geometry.position,
-        a_texCoord: node.geometry.texCoords,
-      });
-      WebGLUtil.setUniforms(this.currentProgram, {
-        u_world: M4.flatten(node.worldMatrix),
-        u_normalMat: M4.flatten(node.worldMatrix.inverse().transpose()),
-      });
+      node.load(this);
       node.material.loadUniform(this);
 
       // TODO: Use indices when drawing

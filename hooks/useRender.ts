@@ -204,7 +204,7 @@ const useRender = ({
       // });
       const material = new PhongMaterial({
         diffuseTexture: fTexture,
-        // specularTexture: brickTexture,
+        specularTexture: brickTexture,
         ambient: new Color(0x818181ff),
         diffuse: new Color(0x00ffffff),
         specular: new Color(0x00ffffff),

@@ -1,7 +1,7 @@
-import { TypedArray } from "../../base-types/webgl-types";
+import { GLTexture, TypedArray } from "../../base-types/webgl-types";
 
 class BufferUniform {
-  private _data: TypedArray | GLfloat | GLint;
+  private _data: TypedArray | GLfloat | GLint | GLTexture;
   private _size: number;
   private _dtype: number;
 
@@ -15,7 +15,7 @@ class BufferUniform {
    * @memberof BufferUniform
    */
   constructor(
-    data: TypedArray | GLfloat | GLint,
+    data: TypedArray | GLfloat | GLint | GLTexture,
     size: number,
     dtype?: number
   ) {
@@ -39,7 +39,7 @@ class BufferUniform {
   }
   // Public set accessor to private properties.
   // Should toggle isDirty flag to true.
-  set data(data: TypedArray | GLfloat | GLint) {
+  set data(data: TypedArray | GLfloat | GLint | GLTexture) {
     this._data = data;
     this._isDirty = true;
   }
@@ -66,7 +66,7 @@ class BufferUniform {
    * Jumlah elemen dalam buffer (elemen = data.length / size).
    */
   get count() {
-    if (typeof this._data === "number") {
+    if (typeof this._data === "number" || this._data instanceof GLTexture) {
       return 1;
     } else {
       return this._data.length / this._size;
@@ -77,7 +77,7 @@ class BufferUniform {
    * Panjang dari buffer (data.length = elemen * size).
    */
   get length() {
-    if (typeof this._data === "number") {
+    if (typeof this._data === "number" || this._data instanceof GLTexture) {
       return 1;
     } else {
       return this._data.length;
@@ -85,7 +85,7 @@ class BufferUniform {
   }
 
   set(index: number, data: number[] = []) {
-    if (typeof this._data === "number") {
+    if (typeof this._data === "number" || this._data instanceof GLTexture) {
       this._data = index;
     } else {
       this._isDirty = true;

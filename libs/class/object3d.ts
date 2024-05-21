@@ -3,6 +3,8 @@ import M4 from "../base-types/m4";
 import { Quaternion } from "../base-types/quaternion";
 import { Euler } from "../base-types/euler";
 import { assert } from "console";
+import { WebGLRenderer } from "./webgl-renderer";
+import { WebGLUtil } from "../util/webgl-util";
 
 class Object3D {
   private _position: Vector3 = new Vector3();

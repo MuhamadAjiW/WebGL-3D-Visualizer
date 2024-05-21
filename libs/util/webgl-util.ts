@@ -1,11 +1,12 @@
 import { ProgramInfo } from "../base-types/webgl-program-info";
 import { BufferUniform } from "../class/webgl/uniform";
 import { BufferAttribute } from "../class/webgl/attribute";
-import { UniformSetterWebGLType } from "../base-types/webgl-types";
+import { GLTexture, UniformSetterWebGLType } from "../base-types/webgl-types";
 
 export type UniformSingleDataType =
   | BufferUniform
   | GLfloat
+  | GLTexture
   | Float32Array
   | number[];
 export type UniformDataType = [UniformSingleDataType] | number[];
@@ -96,58 +97,67 @@ export class WebGLUtil {
         // console.log(`${type}`);
         // console.log(`uniform${UniformSetterWebGLType[type]}`);
 
-        if (
-          info.name == "u_textureDiffuse" ||
-          info.name == "u_textureSpecular"
-        ) {
+        if (v instanceof BufferUniform) {
+          if (v.data instanceof GLTexture) {
+            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
+              loc,
+              v.data.unit
+            );
+            gl.activeTexture(gl.TEXTURE0 + v.data.unit);
+            gl.bindTexture(gl.TEXTURE_2D, v.data.webGLTexture);
+            return;
+          }
+
+          if (typeof v.data === "number") {
+            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v.data);
+            return;
+          }
+
+          if (type >= WebGLRenderingContext.FLOAT_MAT2) {
+            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
+              loc,
+              false,
+              v.data
+            );
+            return;
+          }
+
+          (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v.data);
+          return;
+        }
+
+        if (v instanceof GLTexture) {
           console.log(v);
           console.log(info.name);
           console.log(`${type}`);
           console.log(`uniform${UniformSetterWebGLType[type]}`);
+          return;
         }
 
-        if (v instanceof BufferUniform) {
-          if (typeof v === "number") {
-            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
-          } else {
-            if (type >= WebGLRenderingContext.FLOAT_MAT2) {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
-                loc,
-                false,
-                v.data
-              );
-            } else {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
-                loc,
-                v.data
-              );
-            }
+        if (v instanceof Float32Array) {
+          if (type >= WebGLRenderingContext.FLOAT_MAT2) {
+            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
+              loc,
+              false,
+              v
+            );
+            return;
           }
-        } else {
-          if (v instanceof Float32Array) {
-            if (type >= WebGLRenderingContext.FLOAT_MAT2) {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
-                loc,
-                false,
-                v
-              );
-            } else {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
-            }
-          } else if (typeof v === "number") {
-            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
-          } else {
-            if (type >= WebGLRenderingContext.FLOAT_MAT2) {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
-                loc,
-                false,
-                v
-              );
-            } else {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
-            }
-          }
+          (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
+          return;
         }
+
+        if (typeof v === "number") {
+          (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
+          return;
+        }
+
+        if (type >= WebGLRenderingContext.FLOAT_MAT2) {
+          (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, false, v);
+          return;
+        }
+        (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
+        return;
       };
     }
 

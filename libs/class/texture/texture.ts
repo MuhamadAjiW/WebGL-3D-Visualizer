@@ -1,5 +1,7 @@
 import { Color } from "@/libs/base-types/color";
 import { WebGLRenderer } from "../webgl-renderer";
+import { GLTexture } from "@/libs/base-types/webgl-types";
+import { BufferUniform } from "../webgl/uniform";
 
 export class Texture {
   // TODO: Review this note, might be a better way to improve it
@@ -10,7 +12,7 @@ export class Texture {
   public readonly id: number;
 
   // TODO: Review whether this is necessary or not
-  public glTexture: WebGLTexture | null = null;
+  public glTexture: BufferUniform | undefined;
   public isActive: boolean;
 
   public image?: HTMLImageElement;
@@ -97,10 +99,18 @@ export class Texture {
   }
 
   public load(renderer: WebGLRenderer, unit: number) {
-    // if (this.glTexture != null) renderer.gl.deleteTexture(this.glTexture);
+    if (this.glTexture != null)
+      renderer.gl.deleteTexture(
+        (this.glTexture.data as GLTexture).webGLTexture
+      );
 
-    this.glTexture = renderer.gl.createTexture();
-    renderer.gl.bindTexture(renderer.gl.TEXTURE_2D, this.glTexture);
+    const glTexture = new GLTexture(unit, renderer.gl.createTexture()!);
+    this.glTexture = new BufferUniform(glTexture, 1);
+
+    renderer.gl.bindTexture(
+      renderer.gl.TEXTURE_2D,
+      (this.glTexture.data as GLTexture).webGLTexture
+    );
 
     if (this.image != null) {
       renderer.gl.texParameteri(
@@ -145,9 +155,6 @@ export class Texture {
         new Uint8Array(Color.WHITE.get())
       );
     }
-
-    renderer.gl.activeTexture(renderer.gl.TEXTURE0 + unit);
-    renderer.gl.bindTexture(renderer.gl.TEXTURE_2D, this.glTexture);
   }
 
   //TODO: Implement

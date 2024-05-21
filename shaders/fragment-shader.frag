@@ -45,7 +45,7 @@ void main() {
         }
 
         outColor = (u_ambient +
-                    lambertian * u_diffuse) * textureSpecular +
+                    lambertian * u_diffuse) * textureDiffuse +
                     (specular * u_specular);
     }
 

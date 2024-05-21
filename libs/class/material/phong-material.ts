@@ -46,8 +46,8 @@ export class PhongMaterial extends ShaderMaterial {
 
   public loadUniform(renderer: WebGLRenderer): void {
     WebGLUtil.setUniforms(renderer.currentProgram, {
-      u_textureDiffuse: 0,
-      u_textureSpecular: 1,
+      u_textureDiffuse: this.diffuseTexture?.glTexture,
+      u_textureSpecular: this.specularTexture?.glTexture,
       u_ambient: this.ambient.getNormalized(),
       u_diffuse: this.diffuse.getNormalized(),
       u_specular: this.specular.getNormalized(),
