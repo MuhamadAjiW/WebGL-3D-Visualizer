@@ -40,7 +40,8 @@ interface HooksRenderProps {
   handleReset: Dispatch<SetStateAction<boolean>>;
   selectedComponent: any; // change this later
   meshes: any;
-  isControllerChange: boolean
+  isControllerChange: boolean;
+  isAnimation?: boolean;
 }
 
 const useRender = ({
@@ -50,7 +51,8 @@ const useRender = ({
   handleReset,
   selectedComponent,
   meshes,
-  isControllerChange
+  isControllerChange,
+  isAnimation,
 }: HooksRenderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -148,29 +150,29 @@ const useRender = ({
 
       const scene = new Scene();
 
-      const meshConverter = (mesh: any) => {
+      const meshConverter =  async (mesh: any) => {
         // change the param type later
         const geometry = mesh.geometry;
-        const material = mesh.material;
+        const material = await mesh.material;
         const meshComp = new Mesh(geometry, material);
 
-        meshComp.name = mesh.name
-        meshComp.position = mesh.position
-        meshComp.rotation = mesh.rotation
-        meshComp.scale = mesh.scale
+        meshComp.name = mesh.name;
+        meshComp.position = mesh.position;
+        meshComp.rotation = mesh.rotation;
+        meshComp.scale = mesh.scale;
 
         scene.add(meshComp);
 
         for (let child of mesh.children) {
-          meshConverter(child)
+          meshConverter(child);
         }
       };
 
       if (selectedComponent) {
-        meshConverter(selectedComponent)
+        meshConverter(selectedComponent);
       } else {
         for (let mesh of meshes) {
-          meshConverter(mesh)
+          meshConverter(mesh);
         }
       }
 
@@ -196,18 +198,18 @@ const useRender = ({
       // const geometry18 = new HollowPlaneGeometry(1, 1);
 
       // const geometryh = new BlockGeometry(0.25, 0.5, 0.25);
-      const texture = await TextureLoader.load("res/f-texture.png");
+      // const texture = await TextureLoader.load("res/f-texture.png");
       // const material = new BasicMaterial({
       //   color: new Color(0x010101ff),
       //   texture,
       // });
-      const material = new PhongMaterial({
-        texture: texture,
-        ambient: new Color(0x818181ff),
-        diffuse: new Color(0xffffffff),
-        specular: new Color(0xffffffff),
-        shinyness: 32,
-      });
+      // const material = new PhongMaterial({
+      //   texture: texture,
+      //   ambient: new Color(0x818181ff),
+      //   diffuse: new Color(0xffffffff),
+      //   specular: new Color(0xffffffff),
+      //   shinyness: 32,
+      // });
 
       // const mesh = new Mesh(geometry, material);
       // const mesh1 = new Mesh(geometry1, material);
@@ -415,7 +417,14 @@ const useRender = ({
     return () => {
       stop = true;
     };
-  }, [cameraType, distance, isReset, selectedComponent, meshes, isControllerChange]);
+  }, [
+    cameraType,
+    distance,
+    isReset,
+    selectedComponent,
+    meshes,
+    isControllerChange,
+  ]);
 
   return canvasRef;
 };
