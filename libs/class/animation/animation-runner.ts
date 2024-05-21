@@ -9,6 +9,7 @@ export class AnimationRunner {
   isPlaying: boolean = false;
   loop: boolean = false;
   reverse: boolean = false;
+  fps: number = 1;
   fpkey: number = 30;
   easing: AnimationEasingType = AnimationEasingType.LINEAR;
   private root: Object3D;
@@ -20,6 +21,7 @@ export class AnimationRunner {
     clip: AnimationClip,
     root: Object3D,
     options: {
+      fps?: number;
       fpkey?: number;
       easing?: AnimationEasingType;
       loop?: boolean;
@@ -28,6 +30,7 @@ export class AnimationRunner {
   ) {
     this.currentAnimation = clip;
     this.root = root;
+    this.fps = options.fps || 1;
     this.fpkey = options.fpkey || 144;
     this.easing = options.easing || AnimationEasingType.LINEAR;
     this.loop = options.loop || false;
@@ -71,7 +74,7 @@ export class AnimationRunner {
 
   update() {
     if (this.isPlaying) {
-      const progress = this.deltaFrame / this.fpkey;
+      const progress = (this.deltaFrame / this.fpkey) * this.fps;
       const modifier = AnimationEasingFunc[this.easing](progress);
 
       this.updateSceneGraph(this.root, this.nextFrame, modifier);
@@ -98,17 +101,25 @@ export class AnimationRunner {
   }
 
   public playAnimation() {
+    console.log("Animation: Playing");
     this.isPlaying = true;
     this.currentFrame = 0;
     this.initialize();
   }
 
-  public togglePause() {
-    this.isPlaying != this.isPlaying;
+  public Pause() {
+    console.log("Animation: Pausing");
+    this.isPlaying = false;
   }
 
-  public toggleReverse() {
-    this.reverse != this.reverse;
+  public Reverse() {
+    console.log("Animation: Reversing");
+    this.reverse = this.reverse;
+  }
+
+  public Loop() {
+    console.log("Animation: Looping");
+    this.loop = true;
   }
 
   private updateSceneGraph(
