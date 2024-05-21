@@ -31,6 +31,7 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({
     selectedComponent,
     meshes,
     isControllerChange,
+    isAnimation
   });
 
   return <canvas id="webgl-canvas" className="w-full h-full" ref={canvasRef} />;

@@ -52,7 +52,7 @@ const useRender = ({
   selectedComponent,
   meshes,
   isControllerChange,
-  isAnimation,
+  isAnimation = false,
 }: HooksRenderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -150,7 +150,7 @@ const useRender = ({
 
       const scene = new Scene();
 
-      const meshConverter =  async (mesh: any) => {
+      const meshConverter = async (mesh: any) => {
         // change the param type later
         const geometry = mesh.geometry;
         const material = await mesh.material;
@@ -347,56 +347,62 @@ const useRender = ({
         handleReset(false);
       }
 
-      // const testAnim: AnimationClip = {
-      //   name: "Fox Walking",
-      //   frames: [
-      //     // 0
-      //     {
-      //       keyframe: {
-      //         translation: [0, 0, 0],
-      //         rotation: [0, 0, 0],
-      //       },
-      //       children: {
-      //         Left: {
-      //           keyframe: {
-      //             rotation: [0, 0, 0],
-      //           },
-      //         },
-      //       },
-      //     },
-      //     // 1
-      //     {
-      //       keyframe: {
-      //         translation: [-0.5, 0, 0],
-      //         rotation: [0, 0.5, 0],
-      //       },
-      //       children: {
-      //         Left: {
-      //           keyframe: {
-      //             rotation: [2, 0, 0],
-      //           },
-      //         },
-      //       },
-      //     },
-      //   ],
-      // };
-      // const animationRunner: AnimationRunner = new AnimationRunner(
-      //   testAnim,
-      //   mesh,
-      //   {
-      //     fpkey: 144,
-      //     easing: AnimationEasingType.EASE_IN_SINE,
-      //     loop: false,
-      //     reverse: false,
-      //   }
-      // );
-      // animationRunner.playAnimation();
+      console.log("This is animation scene", isAnimation);
+
+      let animationRunner: AnimationRunner;
+
+      if (isAnimation) {
+        const testAnim: AnimationClip = {
+          name: "Fox Walking",
+          frames: [
+            // 0
+            {
+              keyframe: {
+                translation: [0, 0, 0],
+                rotation: [0, 0, 0],
+              },
+              children: {
+                Left: {
+                  keyframe: {
+                    rotation: [0, 0, 0],
+                  },
+                },
+              },
+            },
+            // 1
+            {
+              keyframe: {
+                translation: [-0.5, 0, 0],
+                rotation: [0, 0.5, 0],
+              },
+              children: {
+                Left: {
+                  keyframe: {
+                    rotation: [2, 0, 0],
+                  },
+                },
+              },
+            },
+          ],
+        };
+        animationRunner = new AnimationRunner(
+          testAnim,
+          scene,
+          {
+            fpkey: 144,
+            easing: AnimationEasingType.EASE_IN_SINE,
+            loop: false,
+            reverse: false,
+          }
+        );
+        animationRunner.playAnimation();
+      }
 
       WebGLUtils.setUniforms(programInfo, dummyUniformsData);
       function render() {
         if (cameraInstance == null) return;
 
-        // animationRunner.update();
+        if(isAnimation) animationRunner.update();
         cameraInstance.setOrbitControl(dy, dx);
         cameraInstance.setDistance(distance);
 
