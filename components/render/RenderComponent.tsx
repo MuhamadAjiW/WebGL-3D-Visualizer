@@ -5,11 +5,12 @@ import { Dispatch, SetStateAction } from "react";
 interface RenderedComponentProps {
   cameraType: string;
   distance: number;
-  isReset: boolean
-  handleReset: Dispatch<SetStateAction<boolean>>
-  selectedComponent: Mesh | null // change this later
-  meshes: any
-  isControllerChange: boolean
+  isReset: boolean;
+  handleReset: Dispatch<SetStateAction<boolean>>;
+  selectedComponent: Mesh | null; // change this later
+  meshes: any;
+  isControllerChange: boolean;
+  isAnimation?: boolean;
 }
 
 const RenderedComponent: React.FC<RenderedComponentProps> = ({
@@ -19,8 +20,9 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({
   handleReset,
   selectedComponent,
   meshes,
-  isControllerChange
-}) => {
+  isControllerChange,
+  isAnimation,
+}: RenderedComponentProps) => {
   const canvasRef = useRender({
     cameraType,
     distance,
@@ -28,7 +30,7 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({
     handleReset,
     selectedComponent,
     meshes,
-    isControllerChange
+    isControllerChange,
   });
 
   return <canvas id="webgl-canvas" className="w-full h-full" ref={canvasRef} />;

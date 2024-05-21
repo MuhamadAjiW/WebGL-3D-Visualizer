@@ -41,6 +41,7 @@ interface HooksRenderProps {
   selectedComponent: any; // change this later
   meshes: any;
   isControllerChange: boolean;
+  isAnimation?: boolean;
 }
 
 const useRender = ({
@@ -51,6 +52,7 @@ const useRender = ({
   selectedComponent,
   meshes,
   isControllerChange,
+  isAnimation,
 }: HooksRenderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -148,10 +150,10 @@ const useRender = ({
 
       const scene = new Scene();
 
-      // const meshConverter = (mesh: any) => {
+      // const meshConverter = async (mesh: any) => {
       //   // change the param type later
       //   const geometry = mesh.geometry;
-      //   const material = mesh.material;
+      //   const material = await mesh.material;
       //   const meshComp = new Mesh(geometry, material);
 
       //   meshComp.name = mesh.name;
@@ -174,7 +176,7 @@ const useRender = ({
       //   }
       // }
 
-      const geometry = new BlockGeometry(0.5, 0.5, 1);
+      const geometry = new BlockGeometry(0.5, 0.5, 0.5);
       // const geometry1 = new HollowBlockGeometry(0.05, 0.5, 1);
       // const geometry2 = new HollowBlockGeometry(0.05, 0.5, 1);
       // const geometry3 = new HollowBlockGeometry(0.05, 0.3, 1);
@@ -208,7 +210,7 @@ const useRender = ({
         ambient: new Color(0x818181ff),
         diffuse: new Color(0xffffffff),
         specular: new Color(0xffffffff),
-        shinyness: 0.05,
+        shinyness: 0.1,
       });
 
       const mesh = new Mesh(geometry, material);
@@ -229,7 +231,7 @@ const useRender = ({
       // const mesh15 = new Mesh(geometry15, material);
       // const mesh16 = new Mesh(geometry16, material);
       // const mesh17 = new Mesh(geometry17, material);
-      mesh.name = "Parent";
+      // mesh.name = "Parent";
       scene.add(mesh);
 
       // mesh.name = "Piece 1";
@@ -411,6 +413,7 @@ const useRender = ({
         }
       }
       render();
+      // renderer.render(scene, cameraInstance);
 
       //   console.log("Done");
     };

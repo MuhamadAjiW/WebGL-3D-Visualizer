@@ -45,43 +45,39 @@ export default function Home() {
   const [distance, setDistance] = useState<number>(3);
   const [isReset, setIsReset] = useState<boolean>(false);
   const [component, setComponent] = useState<Mesh | null>(null);
-  const [isControllerChange, setIsControllerChange] = useState<boolean>(false)
+  const [isControllerChange, setIsControllerChange] = useState<boolean>(false);
 
   const handleSubmitController = (values: any) => {
-    console.log(values)
-    console.log(component?.rotation)
+    console.log(values);
+    console.log(component?.rotation);
 
     const position = new Vector3(
       values.position.x,
       values.position.y,
       values.position.z
-    )
-    const rotation = new Quaternion (
+    );
+    const rotation = new Quaternion(
       values.rotation.w,
       values.rotation.x,
       values.rotation.y,
       values.rotation.z
-    )
-    const scale = new Vector3(
-      values.scale.x,
-      values.scale.y,
-      values.scale.z,
-    )
+    );
+    const scale = new Vector3(values.scale.x, values.scale.y, values.scale.z);
 
-    console.log(position, rotation, scale)
+    console.log(position, rotation, scale);
 
     if (component) {
-      component.position = position
-      component.rotation = rotation
-      component.scale = scale
-      setComponent(component)
-      setIsControllerChange(!isControllerChange)
+      component.position = position;
+      component.rotation = rotation;
+      component.scale = scale;
+      setComponent(component);
+      setIsControllerChange(!isControllerChange);
     } else {
-      setComponent(null)
+      setComponent(null);
     }
 
-    console.log(component)
-  }
+    console.log(component);
+  };
 
   const handleComponentExpanded = () => {
     setIsComponentExpanded(!isComponentExpanded);
@@ -137,7 +133,7 @@ export default function Home() {
             handleReset={setIsReset}
             selectedComponent={component}
             meshes={data.children}
-            isControllerChange = {isControllerChange}
+            isControllerChange={isControllerChange}
           />
         </div>
       </div>
@@ -183,8 +179,17 @@ export default function Home() {
               className="bg-white text-black px-4"
             />
           </div>
-          <div className="bg-gray-900 flex-grow">
-            This is the place for animation
+          <div className="bg-white flex-grow">
+            <RenderComponent
+              cameraType={camera}
+              distance={distance}
+              isReset={isReset}
+              handleReset={setIsReset}
+              selectedComponent={component}
+              meshes={data.children}
+              isControllerChange={isControllerChange}
+              isAnimation={true}
+            />
           </div>
         </div>
       </div>
