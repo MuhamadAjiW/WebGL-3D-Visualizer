@@ -22,8 +22,8 @@ uniform vec3 u_lightPos;        // Light position
 void main() {
     vec4 textureDiffuse = texture2D(u_textureDiffuse, v_texCoord);
     vec4 textureSpecular = texture2D(u_textureSpecular, v_texCoord);
-    // vec4 texture = texture2D(u_textureDiffuse, v_texCoord);
-    // vec4 texture = texture2D(u_textureDiffuse, v_texCoord);
+    vec4 textureNormal = texture2D(u_textureNormal, v_texCoord);
+    vec4 textureParallax = texture2D(u_textureParallax, v_texCoord);
 
     vec4 outColor;
     if(u_materialType == 0){
@@ -46,7 +46,7 @@ void main() {
 
         outColor = (u_ambient +
                     lambertian * u_diffuse) * textureDiffuse +
-                    (specular * u_specular);
+                    (specular * u_specular) * textureSpecular;
     }
 
     gl_FragColor = outColor;

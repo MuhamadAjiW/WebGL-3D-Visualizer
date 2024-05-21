@@ -206,9 +206,9 @@ const useRender = ({
         diffuseTexture: fTexture,
         specularTexture: brickTexture,
         ambient: new Color(0x818181ff),
-        diffuse: new Color(0x00ffffff),
-        specular: new Color(0x00ffffff),
-        shinyness: 32,
+        diffuse: new Color(0xffffffff),
+        specular: new Color(0xffffffff),
+        shinyness: 0.05,
       });
 
       const mesh = new Mesh(geometry, material);
@@ -401,12 +401,12 @@ const useRender = ({
         cameraInstance.setOrbitControl(dy, dx);
         cameraInstance.setDistance(distance);
 
-        // mesh.rotateOnWorldAxis(Vector3.right, 0.01);
-        // mesh.rotateOnWorldAxis(Vector3.up, 0.01);
+        mesh.rotateOnWorldAxis(Vector3.right, 0.01);
+        mesh.rotateOnWorldAxis(Vector3.up, 0.01);
 
         renderer.render(scene, cameraInstance);
         if (!stop) {
-          //   requestAnimationFrame(render);
+          requestAnimationFrame(render);
         }
       }
       render();

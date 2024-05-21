@@ -127,10 +127,9 @@ export class WebGLUtil {
         }
 
         if (v instanceof GLTexture) {
-          console.log(v);
-          console.log(info.name);
-          console.log(`${type}`);
-          console.log(`uniform${UniformSetterWebGLType[type]}`);
+          (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v.unit);
+          gl.activeTexture(gl.TEXTURE0 + v.unit);
+          gl.bindTexture(gl.TEXTURE_2D, v.webGLTexture);
           return;
         }
 
