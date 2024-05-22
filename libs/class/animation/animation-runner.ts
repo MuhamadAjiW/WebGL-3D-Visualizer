@@ -37,12 +37,13 @@ export class AnimationRunner {
     this.reverse = options.reverse || false;
   }
 
+  // TODO: Optimize, What the fuck is even this
   private createSnapshot() {
     this.snapshot = this.root.cloneOrientation();
-    this.root.children.forEach((child) => {
-      const branch = child.cloneOrientation();
-      this.snapshot.add(branch);
-    });
+  }
+
+  private createSnapshotInternal(cloned: Object3D, node: Object3D) {
+    cloned.add(node);
   }
 
   get CurrentFrame() {
@@ -224,7 +225,7 @@ export class AnimationRunner {
       node.position = new Vector3(path.keyframe?.scale);
     }
 
-    for (let animChild in this.frame.children) {
+    for (let animChild in path.children) {
       for (let index = 0; index < node.children.length; index++) {
         const element = node.children[index];
         if (animChild == element.name) {

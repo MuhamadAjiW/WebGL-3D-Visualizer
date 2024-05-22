@@ -205,6 +205,17 @@ class Object3D {
   }
 
   cloneOrientation(): Object3D {
+    const retval = this.cloneOrientationNonRecursive();
+
+    this.children.forEach((child) => {
+      const clonedChild = child.cloneOrientation();
+      retval.add(clonedChild);
+    });
+
+    return retval;
+  }
+
+  cloneOrientationNonRecursive(): Object3D {
     const retval = new Object3D();
     retval.name = this.name;
     retval.position = this.position;

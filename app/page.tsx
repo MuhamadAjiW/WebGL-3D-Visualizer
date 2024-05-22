@@ -78,7 +78,6 @@ export default function Home() {
   // UI
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === "number") {
-      console.log(newValue)
       setAnimationController((prevState) => ({
         ...prevState,
         manualUpdate: true,
@@ -158,14 +157,12 @@ export default function Home() {
         setActiveComponent(data);
       } else {
         setActiveComponent(selectedComponent);
-        console.log(selectedComponent.name);
       }
     }
   };
 
   const handleFPSChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     if(+event.target.value){
-      console.log(+event.target.value)
       setAnimationController((prev) => ({
         ...prev,
         fps: +event.target.value

@@ -33,46 +33,61 @@ interface HooksRenderProps {
 
 // TODO: Delete
 const testAnim: AnimationClip = {
-  name: "Fox Walking",
+  name: "Test",
   frames: [
     // 0
     {
-      keyframe: {
-        translation: [0, 0, 0],
-        rotation: [0, 0, 0],
-      },
+      keyframe: {},
       children: {
-        Left: {
+        Parent: {
           keyframe: {
+            translation: [0, 0, 0],
             rotation: [0, 0, 0],
+          },
+          children: {
+            Left: {
+              keyframe: {
+                rotation: [0, 0, 0],
+              },
+            },
           },
         },
       },
     },
     // 1
     {
-      keyframe: {
-        translation: [-0.5, 0, 0],
-        rotation: [0, 0.5, 0],
-      },
+      keyframe: {},
       children: {
-        Left: {
+        Parent: {
           keyframe: {
-            rotation: [2, 0, 0],
+            translation: [-0.5, 0, 0],
+            rotation: [0, 0.5, 0],
+          },
+          children: {
+            Left: {
+              keyframe: {
+                rotation: [2, 0, 0],
+              },
+            },
           },
         },
       },
     },
     // 2
     {
-      keyframe: {
-        translation: [0.5, 0, 0],
-        rotation: [0, 0.25, 0],
-      },
+      keyframe: {},
       children: {
-        Left: {
+        Parent: {
           keyframe: {
-            rotation: [0, 1, 0],
+            translation: [0.5, 0, 0],
+            rotation: [0, 0.25, 0],
+          },
+          children: {
+            Left: {
+              keyframe: {
+                rotation: [0, 1, 0],
+              },
+            },
           },
         },
       },
@@ -262,7 +277,6 @@ const useRender = ({
       const scene = activeComponentRef.current as Object3D;
 
       if (animationController) {
-        console.log("Refreshing animationController");
         animationRunner.fps = animationController.fps;
         animationRunner.easing = animationController.easing;
       }
