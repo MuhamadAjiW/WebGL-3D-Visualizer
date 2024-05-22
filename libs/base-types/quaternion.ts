@@ -1,5 +1,4 @@
 import { MathUtil } from "../util/math-util";
-import { Vector3 } from "./vector3";
 import { Euler } from "./euler";
 
 export class Quaternion {

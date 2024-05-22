@@ -1,14 +1,12 @@
-import { GoChevronRight } from "react-icons/go";
-import { GoChevronDown } from "react-icons/go";
-import { Collapse } from "react-collapse";
-import { TextField } from "@mui/material";
-import Button from "./Button";
-import { useFormik } from "formik";
-import Object3D from "@/libs/class/object3d";
-import { Quaternion } from "@/libs/base-types/quaternion";
 import { Euler } from "@/libs/base-types/euler";
+import { Quaternion } from "@/libs/base-types/quaternion";
 import Vector3 from "@/libs/base-types/vector3";
-import { useEffect, useRef } from "react";
+import Object3D from "@/libs/class/object3d";
+import { TextField } from "@mui/material";
+import { useFormik } from "formik";
+import { useRef } from "react";
+import { Collapse } from "react-collapse";
+import { GoChevronDown, GoChevronRight } from "react-icons/go";
 
 interface ControllerProps {
   id: string;

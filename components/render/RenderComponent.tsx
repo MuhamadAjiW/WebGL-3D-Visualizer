@@ -1,7 +1,7 @@
 import useRender from "@/hooks/useRender";
-import { Dispatch, SetStateAction } from "react";
-import { AnimationControllerType, CameraControllerType } from "@/libs/controllers";
 import Object3D from "@/libs/class/object3d";
+import { AnimationControllerType, CameraControllerType } from "@/libs/controllers";
+import { Dispatch, SetStateAction } from "react";
 
 interface RenderedComponentProps {
   activeComponent: Object3D; // change this later

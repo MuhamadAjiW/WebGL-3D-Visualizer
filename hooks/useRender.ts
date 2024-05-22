@@ -104,7 +104,7 @@ const useRender = ({
   const activeComponentRef = useRef<Object3D | null>(null);
   const animationRunnerRef = useRef<AnimationRunner | null>(null);
   const refreshRequest = useRef<number>(0);
-  const refreshRequestDelay = 0.05;
+  const refreshRequestDelay = 0.0;
   let newAnimationControllerState: AnimationControllerType;
   let newCameraControllerState: CameraControllerType;
 
@@ -215,10 +215,7 @@ const useRender = ({
       return;
     }
     // console.log("Setting up Animation Runner");
-    animationRunnerRef.current = new AnimationRunner(clip, scene, {
-      fps: 1,
-      easing: AnimationEasingType.EASE_IN_OUT_BOUNCE,
-    });
+    animationRunnerRef.current = new AnimationRunner(clip, scene);
     newAnimationControllerState.maxFrame = clip.frames.length;
   }
 
@@ -264,6 +261,12 @@ const useRender = ({
       const animationRunner = animationRunnerRef.current as AnimationRunner;
       const scene = activeComponentRef.current as Object3D;
 
+      if (animationController) {
+        console.log("Refreshing animationController");
+        animationRunner.fps = animationController.fps;
+        animationRunner.easing = animationController.easing;
+      }
+
       // Apply camera controls
       activeCamera.setDistance(cameraController.distance);
       let dx = 0;
@@ -304,6 +307,10 @@ const useRender = ({
           animationRunner.playAnimation();
           newAnimationControllerState.play = false;
         }
+        if (animationController.manualUpdate) {
+          animationRunner.setFrame(animationController.currentFrame - 1);
+          newAnimationControllerState.manualUpdate = false;
+        }
       }
 
       WebGLUtils.setUniforms(renderer.currentProgram, dummyUniformsData);
@@ -314,8 +321,10 @@ const useRender = ({
         if (animationRunnerRef.current) {
           animationRunner.update();
           if (animationController && setAnimationController) {
-            newAnimationControllerState.currentFrame =
-              animationRunner.CurrentFrame + 1;
+            if (!animationController.manualUpdate) {
+              newAnimationControllerState.currentFrame =
+                animationRunner.CurrentFrame + 1;
+            }
             updateAnimationController(newAnimationControllerState);
           }
         }

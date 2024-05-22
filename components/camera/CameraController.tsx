@@ -1,10 +1,10 @@
+import { CameraControllerType } from "@/libs/controllers";
 import { InputOptions } from "@/types/ui";
 import { MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
-import React, { Dispatch, SetStateAction, useState } from "react";
-import Button from "../ui/Button";
-import { GoChevronDown, GoChevronRight } from "react-icons/go";
+import React, { Dispatch, SetStateAction } from "react";
 import { Collapse } from "react-collapse";
-import { CameraControllerType } from "@/libs/controllers";
+import { GoChevronDown, GoChevronRight } from "react-icons/go";
+import Button from "../ui/Button";
 
 interface ControllerProps {
   id: string;

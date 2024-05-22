@@ -1,4 +1,3 @@
-import { NodeSchema, SceneSchema } from "@/types/ui";
 import { TreeViewBaseItem } from "@mui/x-tree-view";
 import Object3D from "../class/object3d";
 

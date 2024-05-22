@@ -9,8 +9,8 @@ import TreeView from "@/components/ui/TreeView";
 import { Euler } from "@/libs/base-types/euler";
 import { Quaternion } from "@/libs/base-types/quaternion";
 import Vector3 from "@/libs/base-types/vector3";
+import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
 import { Loader } from "@/libs/class/loader/loader";
-import { Mesh } from "@/libs/class/mesh";
 import Object3D from "@/libs/class/object3d";
 import { Scene } from "@/libs/class/scene";
 import {
@@ -19,7 +19,8 @@ import {
 } from "@/libs/controllers";
 import { convertGLTFToTreeView, findMeshById } from "@/libs/helper";
 import { MathUtil } from "@/libs/util/math-util";
-import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
+import { InputOptions } from "@/types/ui";
+import { Checkbox, FormControlLabel, FormGroup, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { TreeViewBaseItem } from "@mui/x-tree-view";
 import React, { useEffect, useState } from "react";
 
@@ -45,6 +46,9 @@ export default function Home() {
       playback: false,
       currentFrame: 0,
       maxFrame: 0,
+      fps: 1,
+      easing: AnimationEasingType.LINEAR,
+      manualUpdate: false
     });
 
   // Fetch data with default to initialize
@@ -74,8 +78,10 @@ export default function Home() {
   // UI
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === "number") {
+      console.log(newValue)
       setAnimationController((prevState) => ({
         ...prevState,
+        manualUpdate: true,
         currentFrame: newValue,
       }));
       // console.log("Slider value: ", newValue)
@@ -108,9 +114,6 @@ export default function Home() {
   };
 
   const handleSubmitController = (values: any) => {
-    // console.log(values);
-    // console.log(component?.rotation);
-
     const position = new Vector3(
       values.position.x,
       values.position.y,
@@ -133,8 +136,6 @@ export default function Home() {
       setActiveComponent(activeComponent);
       setIsControllerChange(!isControllerChange);
     }
-
-    // console.log("This is Current Component", component);
   };
 
   const handleComponentExpanded = () => {
@@ -161,6 +162,57 @@ export default function Home() {
       }
     }
   };
+
+  const handleFPSChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    if(+event.target.value){
+      console.log(+event.target.value)
+      setAnimationController((prev) => ({
+        ...prev,
+        fps: +event.target.value
+      }))
+      setIsControllerChange(!isControllerChange);
+    }
+  }
+
+  const handleEasingChange = (event: SelectChangeEvent) => {
+    setAnimationController((prev) => ({
+      ...prev,
+      easing: +event.target.value
+    }))
+    setIsControllerChange(!isControllerChange);
+  }
+
+  // Dropdown values
+  const easeType: InputOptions[] = [
+    {
+      name: "Linear",
+      value: AnimationEasingType.LINEAR,
+    },
+    {
+      name: "Sine in",
+      value: AnimationEasingType.EASE_IN_SINE,
+    },
+    {
+      name: "Sine out",
+      value: AnimationEasingType.EASE_OUT_SINE,
+    },
+    {
+      name: "Sine in-out",
+      value: AnimationEasingType.EASE_IN_OUT_SINE,
+    },
+    {
+      name: "Bounce in",
+      value: AnimationEasingType.EASE_IN_BOUNCE,
+    },
+    {
+      name: "Bounce out",
+      value: AnimationEasingType.EASE_OUT_BOUNCE,
+    },
+    {
+      name: "Bounce in-out",
+      value: AnimationEasingType.EASE_IN_OUT_BOUNCE,
+    },
+  ];
 
   if (!data || !activeComponent)
     return <div>Loading...</div>;
@@ -262,6 +314,32 @@ export default function Home() {
               label="Auto Replay"
             ></FormControlLabel>
           </FormGroup>
+          <div className="flex items-center justify-between gap-3">
+            <div>FPS</div>
+            <TextField
+              id="distance-field"
+              type="number"
+              className="bg-white"
+              size="small"
+              onChange={handleFPSChange}
+              value={animationController.fps || ""}
+            />
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <div>Easing</div>
+            <Select
+              value={animationController.easing}
+              onChange={handleEasingChange}
+              className="bg-white"
+              size="small"
+            >
+              {easeType.map((option, index) => (
+                <MenuItem key={index} value={option.value}>
+                  {option.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </div>
           <div className="flex gap-5 py-4 items-center justify-between">
             <div>Frame</div>
             <CustomSlider

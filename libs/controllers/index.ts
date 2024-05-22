@@ -1,14 +1,15 @@
-import { Euler } from "@/libs/base-types/euler";
-import Vector3 from "@/libs/base-types/vector3";
-import Object3D from "@/libs/class/object3d";
+import { AnimationEasingType } from "../class/animation/animation-easing";
 
 export type AnimationControllerType = {
   play: boolean;
   pause: boolean;
   reverse: boolean;
   playback: boolean;
+  manualUpdate: boolean;
   currentFrame: number;
   maxFrame: number;
+  fps: number;
+  easing: AnimationEasingType;
 };
 
 export type CameraControllerType = {
