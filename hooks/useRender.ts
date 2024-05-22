@@ -1,44 +1,29 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
-import vertexShaderSource from "@/shaders/vertex-shader.vert?raw";
-import fragmentShaderSource from "@/shaders/fragment-shader.frag?raw";
 import { ProgramInfo } from "@/libs/base-types/webgl-program-info";
-import { WebGLUtil as WebGLUtils } from "@/libs/util/webgl-util";
-import { BufferAttribute } from "@/libs/class/webgl/attribute";
-import { BufferUniform } from "@/libs/class/webgl/uniform";
-import { PlaneGeometry } from "@/libs/class/geometry/plane-geometry";
-import { Color } from "@/libs/base-types/color";
-import { Scene } from "@/libs/class/scene";
 import { Mesh } from "@/libs/class/mesh";
-import { TextureLoader } from "@/libs/class/texture/texture-loader";
+import { Scene } from "@/libs/class/scene";
 import { WebGLRenderer } from "@/libs/class/webgl-renderer";
-import { PhongMaterial } from "@/libs/class/material/phong-material";
-// import { BasicMaterial } from "./class/material/basic-material";
-// Import kelas Camera
-import Camera from "@/libs/class/camera";
+import { BufferUniform } from "@/libs/class/webgl/uniform";
+import { WebGLUtil as WebGLUtils } from "@/libs/util/webgl-util";
+import fragmentShaderSource from "@/shaders/fragment-shader.frag?raw";
+import vertexShaderSource from "@/shaders/vertex-shader.vert?raw";
+import { Dispatch, SetStateAction } from "react";
+import { AnimationClip } from "@/libs/base-types/animation";
 import Vector3 from "@/libs/base-types/vector3";
-import M4 from "@/libs/base-types/m4";
-import { MathUtil } from "@/libs/util/math-util";
-import { useEffect, useRef } from "react";
-import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
+import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
+import Camera from "@/libs/class/camera";
+import Object3D from "@/libs/class/object3d";
 import ObliqueCamera from "@/libs/class/oblique-camera";
 import OrthographicCamera from "@/libs/class/orthographic-camera";
-import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
-import { BasicMaterial } from "@/libs/class/material/basic-material";
-import { HollowBlockGeometry } from "@/libs/class/geometry/hollow-block-geometry";
 import PerspectiveCamera from "@/libs/class/perspective-camera";
-import { AnimationClip } from "@/libs/base-types/animation";
-import { AnimationRunner } from "../libs/class/animation/animation-runner";
-import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
-import { Loader } from "@/libs/class/loader/loader";
-import { Euler } from "@/libs/base-types/euler";
-import { Quaternion } from "@/libs/base-types/quaternion";
-import Object3D from "@/libs/class/object3d";
+import { MathUtil } from "@/libs/util/math-util";
 import {
   AnimationControllerType,
   CameraControllerType,
   checkAnimationUpdate,
   checkCameraUpdate,
 } from "@/types/controllers/controllers";
+import { useEffect, useRef } from "react";
+import { AnimationRunner } from "../libs/class/animation/animation-runner";
 
 interface HooksRenderProps {
   selectedComponent: any; // change this later
@@ -395,10 +380,15 @@ const useRender = ({
     selectedComponent,
     meshes,
     isControllerChange,
-    cameraController,
-    setCameraController,
-    animationController,
-    setAnimationController,
+    cameraController.distance,
+    cameraController.reset,
+    cameraController.type,
+    animationController?.currentFrame,
+    animationController?.maxFrame,
+    animationController?.pause,
+    animationController?.play,
+    animationController?.playback,
+    animationController?.reverse,
   ]);
 
   return canvasRef;

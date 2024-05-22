@@ -48,7 +48,6 @@ export default function Home() {
 
   const [isComponentExpanded, setIsComponentExpanded] = useState<boolean>(true);
   const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(true);
-  const [isReset, setIsReset] = useState<boolean>(false);
   const [component, setComponent] = useState<Mesh | null>(null);
   const [isControllerChange, setIsControllerChange] = useState<boolean>(false);
 
