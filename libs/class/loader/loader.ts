@@ -21,6 +21,7 @@ import { GeometryType } from "../geometry/geometry-types";
 import { CubeGeometry } from "../geometry/cube-geometry";
 import { PlaneGeometry } from "../geometry/plane-geometry";
 import { HollowBlockGeometry } from "../geometry/hollow-block-geometry";
+import { HollowPlaneGeometry } from "../geometry/hollow-plane-geometry";
 
 const ArrayIndex = z.array(z.number().int());
 
@@ -195,7 +196,7 @@ export class Loader {
     this.loadTextureMap = new Map();
   }
 
-  public save(scene: Scene) {
+  public save(scene: Scene, filename: string) {
     // traverse scene tree
     this.savedData = {
       scene: null,
@@ -446,6 +447,14 @@ export class Loader {
     this.loadNodeMap.forEach((object: Object3D) => console.log(object));
 
     scene.computeWorldMatrix();
+
+    // check valid
+    const result = GLTFSchema.safeParse(this.savedData);
+    if (result.success) {
+      console.log("Validation successful:", result.data);
+    } else {
+      console.error("Validation failed:", result.error.errors);
+    }
     return scene;
   }
 
@@ -580,6 +589,11 @@ export class Loader {
         geometryData.height,
         geometryData.length
       );
+    } else if (geometryData.type == 4) {
+      geometry = new HollowPlaneGeometry(
+        geometryData.width,
+        geometryData.height
+      );
     } else {
       geometry = new BufferGeometry();
     }
@@ -682,5 +696,9 @@ export class Loader {
 
   private loadColor(color: any): Color {
     return new Color(color.r, color.g, color.b, color.a);
+  }
+
+  public validateSceneData(sceneData: any) {
+    return GLTFSchema.safeParse(sceneData);
   }
 }

@@ -98,6 +98,7 @@ export class AnimationRunner {
       const progress =
         ((new Date().getTime() - this.lastFrameTime) / 1000) * this.fps;
       const modifier = AnimationEasingFunc[this.easing](progress);
+      console.log(modifier);
 
       this.updateSceneGraph(
         this.root,
@@ -112,7 +113,6 @@ export class AnimationRunner {
         this.createSnapshot();
 
         this.CurrentFrame += this.reverse ? -1 : 1;
-
         if (
           !this.loop &&
           ((this.currentFrame == this.currentAnimation!.frames.length - 1 &&
