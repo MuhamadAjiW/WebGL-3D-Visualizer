@@ -4,26 +4,27 @@ import Vector3 from "../../base-types/vector3";
 import { Euler } from "../../base-types/euler";
 import { Quaternion } from "../../base-types/quaternion";
 import { AnimationEasingFunc, AnimationEasingType } from "./animation-easing";
+import { late } from "zod";
 
 export class AnimationRunner {
   isPlaying: boolean = false;
+  isFinished: boolean = true;
   loop: boolean = false;
   reverse: boolean = false;
   fps: number = 1;
-  fpkey: number = 30;
   easing: AnimationEasingType = AnimationEasingType.LINEAR;
   private root: Object3D;
   private currentFrame: number = 0;
-  private deltaFrame: number = 0;
   private currentAnimation?: AnimationClip;
   private snapshot: Object3D = new Object3D();
+  private lastFrameTime: number = 0;
+  private pauseTimeOffset: number = 0;
 
   constructor(
     clip: AnimationClip,
     root: Object3D,
     options: {
       fps?: number;
-      fpkey?: number;
       easing?: AnimationEasingType;
       loop?: boolean;
       reverse?: boolean;
@@ -32,7 +33,6 @@ export class AnimationRunner {
     this.currentAnimation = clip;
     this.root = root;
     this.fps = options.fps || 1;
-    this.fpkey = options.fpkey || 144;
     this.easing = options.easing || AnimationEasingType.LINEAR;
     this.loop = options.loop || false;
     this.reverse = options.reverse || false;
@@ -86,21 +86,33 @@ export class AnimationRunner {
     return this.currentAnimation!.frames[index];
   }
 
-  update() {
-    if (this.isPlaying) {
-      const progress = (this.deltaFrame / this.fpkey) * this.fps;
-      const modifier = AnimationEasingFunc[this.easing](progress);
-      console.log(modifier);
+  public setFrame(frameIndex: number) {
+    // console.log("Setting frame: ", frameIndex);
+    // console.log("Setting node: ", this.root);
+    this.CurrentFrame = frameIndex;
+    this.setKeyframe(this.root, this.currentAnimation!.frames[frameIndex]);
+  }
 
-      this.updateSceneGraph(this.root, this.snapshot, this.nextFrame, modifier);
+  public update() {
+    if (this.isPlaying) {
+      const progress =
+        ((new Date().getTime() - this.lastFrameTime) / 1000) * this.fps;
+      const modifier = AnimationEasingFunc[this.easing](progress);
+
+      this.updateSceneGraph(
+        this.root,
+        this.snapshot,
+        this.nextFrame,
+        modifier > 1 ? 1 : modifier
+      );
 
       if (progress >= 1) {
+        this.lastFrameTime = new Date().getTime();
+
         this.createSnapshot();
 
-        console.log(progress);
-        this.deltaFrame = 0;
-
         this.CurrentFrame += this.reverse ? -1 : 1;
+
         if (
           !this.loop &&
           ((this.currentFrame == this.currentAnimation!.frames.length - 1 &&
@@ -108,35 +120,35 @@ export class AnimationRunner {
             (this.currentFrame == 0 && this.reverse))
         ) {
           this.isPlaying = false;
-          this.currentFrame = 0;
+          this.isFinished = true;
           return;
         }
       }
-
-      this.deltaFrame++;
     }
   }
 
   public playAnimation() {
-    console.log("Animation: Playing");
+    if (this.isPlaying) return;
+
     this.isPlaying = true;
-    // this.currentFrame = 0;
-    this.createSnapshot()
+    this.lastFrameTime = new Date().getTime();
+    if (this.isFinished) {
+      this.setFrame(
+        this.reverse ? this.currentAnimation!.frames.length - 1 : 0
+      );
+    } else {
+      this.lastFrameTime -= this.pauseTimeOffset;
+      this.pauseTimeOffset = 0;
+    }
+    this.isFinished = false;
+    this.createSnapshot();
   }
 
-  public Pause() {
-    console.log("Animation: Pausing");
+  public pause() {
+    if (!this.isPlaying) return;
+
+    this.pauseTimeOffset = new Date().getTime() - this.lastFrameTime;
     this.isPlaying = false;
-  }
-
-  public Reverse() {
-    console.log("Animation: Reversing");
-    this.reverse = this.reverse;
-  }
-
-  public Loop() {
-    console.log("Animation: Looping");
-    this.loop = true;
   }
 
   private updateSceneGraph(
@@ -196,7 +208,7 @@ export class AnimationRunner {
     }
   }
 
-  private initialize(
+  private setKeyframe(
     node: Object3D = this.root,
     path: AnimationPath = this.reverse
       ? this.currentAnimation!.frames[this.length - 1]
@@ -225,7 +237,7 @@ export class AnimationRunner {
       for (let index = 0; index < node.children.length; index++) {
         const element = node.children[index];
         if (animChild == element.name) {
-          this.initialize(element, path.children![animChild] as AnimationPath);
+          this.setKeyframe(element, path.children![animChild] as AnimationPath);
           break;
         }
       }

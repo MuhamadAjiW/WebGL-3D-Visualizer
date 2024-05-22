@@ -23,4 +23,6 @@ export type AnimationController = {
   pause: boolean;
   reverse: boolean;
   playback: boolean;
+  currentFrame: number;
+  maxFrame: number;
 };

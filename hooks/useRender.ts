@@ -79,6 +79,20 @@ const testAnim: AnimationClip = {
         },
       },
     },
+    // 2
+    {
+      keyframe: {
+        translation: [0.5, 0, 0],
+        rotation: [0, 0.25, 0],
+      },
+      children: {
+        Left: {
+          keyframe: {
+            rotation: [0, 1, 0],
+          },
+        },
+      },
+    },
   ],
 };
 //
@@ -109,6 +123,35 @@ const useRender = ({
   const activeComponentRef = useRef<Object3D | null>(null);
   const selectedComponentRef = useRef<any | null>(null);
   const animationRunnerRef = useRef<AnimationRunner | null>(null);
+  const refreshRequest = useRef<number>(0);
+  const refreshRequestDelay = 0.05;
+  let newAnimationControllerState: AnimationController;
+
+  function checkAnimationUpdate(
+    newControllerState: AnimationController
+  ): boolean {
+    if (!animationController || !setAnimationController) return false;
+
+    return (
+      newControllerState.currentFrame != animationController.currentFrame ||
+      newControllerState.maxFrame != animationController.maxFrame ||
+      newControllerState.pause != animationController.pause ||
+      newControllerState.play != animationController.play ||
+      newControllerState.playback != animationController.playback ||
+      newControllerState.reverse != animationController.reverse
+    );
+  }
+
+  function updateAnimationController(newControllerState: AnimationController) {
+    if (
+      !checkAnimationUpdate(newControllerState) ||
+      new Date().getTime() - (refreshRequest.current + refreshRequestDelay) < 0
+    )
+      return;
+
+    refreshRequest.current = new Date().getTime();
+    setAnimationController!(newControllerState);
+  }
 
   function setupRenderer() {
     // console.log("Setting up renderer");
@@ -195,12 +238,15 @@ const useRender = ({
   }
 
   function setupAnimationRunner(clip: AnimationClip, scene: Object3D) {
+    if (!animationController || !setAnimationController) {
+      return;
+    }
     // console.log("Setting up Animation Runner");
     animationRunnerRef.current = new AnimationRunner(clip, scene, {
       fps: 1,
-      fpkey: 144,
       easing: AnimationEasingType.EASE_IN_OUT_BOUNCE,
     });
+    newAnimationControllerState.maxFrame = clip.frames.length;
   }
 
   function setupComponent(selectedComponent: any) {
@@ -235,16 +281,21 @@ const useRender = ({
   }
 
   useEffect(() => {
-    console.log("this is scene", meshes);
-    console.log("this is selected component", selectedComponent);
+    // console.log("this is scene", meshes);
+    // console.log("this is selected component", selectedComponent);
     let isMouseClick = false;
     let stop = false;
+
+    if (animationController) {
+      newAnimationControllerState = { ...animationController };
+    }
 
     const runWebGL = async () => {
       // Setup refs if not already
       if (!canvasRef.current) {
         return;
       }
+
       if (!rendererRef.current) {
         setupRenderer();
       }
@@ -255,10 +306,7 @@ const useRender = ({
         setupCamera(cameraType);
       }
 
-      if (
-        selectedComponent ||
-        !activeComponentRef.current
-      ) {
+      if (selectedComponent || !activeComponentRef.current) {
         setupComponent(selectedComponent);
         setupAnimationRunner(testAnim, activeComponentRef.current!);
       }
@@ -298,32 +346,36 @@ const useRender = ({
 
       // Apply animation controls
       // console.log("animationController:", animationController);
-      if (animationController) {
-        const newAnimationController = animationController;
-
+      if (animationController && setAnimationController) {
         // console.log("this is reverse", animationController.reverse)
         animationRunner.loop = animationController.playback;
         animationRunner.reverse = animationController.reverse;
         if (animationController.pause) {
-          animationRunner.Pause();
-          animationController.play = false;
+          animationRunner.pause();
+          newAnimationControllerState.pause = false;
         }
         if (animationController.play) {
-          // console.log("Playing");
+          console.log("Playing");
           animationRunner.playAnimation();
-          newAnimationController.play = false;
+          newAnimationControllerState.play = false;
         }
-
-        if(setAnimationController) setAnimationController(newAnimationController);
       }
 
       // console.log("This is animation scene", animationController);
 
       WebGLUtils.setUniforms(renderer.currentProgram, dummyUniformsData);
+
       function render() {
         if (!renderer) return;
         if (activeCameraRef.current == null) return;
-        if (animationRunnerRef.current) animationRunner.update();
+        if (animationRunnerRef.current) {
+          animationRunner.update();
+          if (animationController && setAnimationController) {
+            newAnimationControllerState.currentFrame =
+              animationRunner.CurrentFrame + 1;
+            updateAnimationController(newAnimationControllerState);
+          }
+        }
 
         activeCamera.setOrbitControl(dy, dx);
 
@@ -337,7 +389,7 @@ const useRender = ({
       }
       render();
 
-      //   console.log("Done");
+      console.log("Done");
     };
 
     runWebGL();
@@ -351,10 +403,8 @@ const useRender = ({
     selectedComponent,
     meshes,
     isControllerChange,
-    animationController?.play,
-    animationController?.pause,
-    animationController?.reverse,
-    animationController?.playback,
+    animationController,
+    setAnimationController,
   ]);
 
   return canvasRef;

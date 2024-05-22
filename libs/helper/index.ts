@@ -4,8 +4,7 @@ import { TreeViewBaseItem } from "@mui/x-tree-view";
 export const convertGLTFToTreeView = (
   scheneSchema: any //change this later
 ): TreeViewBaseItem => {
-
-  console.log("This is schene Schema", scheneSchema)
+  // console.log("This is schene Schema", scheneSchema)
   return {
     id: scheneSchema.name,
     label: scheneSchema.name,
@@ -16,7 +15,7 @@ export const convertGLTFToTreeView = (
 export const findMeshById = (
   nodeSchema: any, // change this later and return type
   id: string
-) : any => {
+): any => {
   for (let node of nodeSchema) {
     if (node.name === id) {
       return node;

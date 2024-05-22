@@ -59,14 +59,19 @@ export default function Home() {
       pause: false,
       reverse: false,
       playback: false,
+      currentFrame: 0,
+      maxFrame: 0,
     });
-  const [frameSlider, setFrameSlider] = useState<number>(0);
 
   const { reverse, playback } = animationController;
 
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === "number") {
-      setFrameSlider(newValue);
+      setAnimationController((prevState) => ({
+        ...prevState,
+        currentFrame: newValue
+      }));
+      // console.log("Slider value: ", newValue)
     }
   };
 
@@ -97,8 +102,8 @@ export default function Home() {
   };
 
   const handleSubmitController = (values: any) => {
-    console.log(values);
-    console.log(component?.rotation);
+    // console.log(values);
+    // console.log(component?.rotation);
 
     const position = new Vector3(
       values.position.x,
@@ -123,7 +128,7 @@ export default function Home() {
       setComponent(null);
     }
 
-    console.log("This is Current Component", component);
+    // console.log("This is Current Component", component);
   };
 
   const handleComponentExpanded = () => {
@@ -158,7 +163,7 @@ export default function Home() {
       if (!GLTFTree.children) return;
       const selectedComponent = findMeshById(GLTFTree.children, itemId);
       setComponent(selectedComponent);
-      console.log(itemId, selectedComponent);
+      // console.log(itemId, selectedComponent);
     } else {
       setComponent(null);
     }
@@ -269,8 +274,10 @@ export default function Home() {
           <div className="flex gap-5 py-4 items-center justify-between">
             <div>Frame</div>
             <CustomSlider
-              aria-label="ios slider"
-              value={frameSlider}
+              aria-label="animation frame slider"
+              value={animationController.currentFrame}
+              min={1}
+              max={animationController.maxFrame}
               onChange={handleSliderChange}
               valueLabelDisplay="on"
             />
