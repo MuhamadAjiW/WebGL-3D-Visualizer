@@ -233,22 +233,6 @@ export default function Home() {
               text="Pause"
               className="bg-white text-black px-4"
             />
-            {/* <Button
-              id="reverse-button"
-              handleClick={() => {
-                handleAnimationController("reverse");
-              }}
-              text="Reverse"
-              className="bg-white text-black px-4"
-            />
-            <Button
-              id="auto-replay-button"
-              handleClick={() => {
-                handleAnimationController("playback");
-              }}
-              text="Auto Replay"
-              className="bg-white text-black px-4"
-            /> */}
           </div>
           <FormGroup>
             <FormControlLabel
