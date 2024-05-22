@@ -22,6 +22,11 @@ import { CubeGeometry } from "../geometry/cube-geometry";
 import { PlaneGeometry } from "../geometry/plane-geometry";
 import { HollowBlockGeometry } from "../geometry/hollow-block-geometry";
 import { HollowPlaneGeometry } from "../geometry/hollow-plane-geometry";
+import {
+  AnimationClip,
+  AnimationPath,
+  AnimationTRS,
+} from "@/libs/base-types/animation";
 
 const ArrayIndex = z.array(z.number().int());
 
@@ -65,16 +70,21 @@ const ColorSchema = z.object({
   a: z.number(),
 });
 
-const AnimationTRS = z.object({
+const AnimationTRSSchema = z.object({
   translation: z.array(z.number()).optional(),
   rotation: z.array(z.number()).optional(),
   scale: z.array(z.number()).optional(),
 });
 
-const AnimationPath: z.ZodSchema<any> = z.lazy(() =>
+const AnimationPathSchema: z.ZodSchema<any> = z.lazy(() =>
   z.object({
-    keyframe: AnimationTRS.optional(),
-    children: z.record(AnimationPath).optional(),
+    keyframe: AnimationTRSSchema.optional(),
+    children: z
+      .object({
+        name: z.string(),
+        child: ArrayIndex,
+      })
+      .optional(),
   })
 );
 
@@ -162,7 +172,7 @@ const GLTFSchema = z.object({
       frames: z.array(ArrayIndex), // animationpaths
     })
   ),
-  animationpaths: z.array(AnimationPath),
+  animationpaths: z.array(AnimationPathSchema),
 });
 
 export class Loader {
@@ -174,6 +184,7 @@ export class Loader {
   private geometryMap: Map<BufferGeometry, number>;
   private materialMap: Map<ShaderMaterial, number>;
   private textureMap: Map<Texture, number>;
+  private animationPathMap: Map<AnimationPath, number>;
   private loadNodeMap: Map<number, Object3D>;
   private loadCameraMap: Map<number, Camera>;
   private loadMeshMap: Map<number, Mesh>;
@@ -188,6 +199,7 @@ export class Loader {
     this.geometryMap = new Map();
     this.materialMap = new Map();
     this.textureMap = new Map();
+    this.animationPathMap = new Map();
     this.loadNodeMap = new Map();
     this.loadCameraMap = new Map();
     this.loadMeshMap = new Map();
@@ -196,7 +208,7 @@ export class Loader {
     this.loadTextureMap = new Map();
   }
 
-  public save(scene: Scene, filename: string) {
+  public save(scene: Scene, animationList: AnimationClip[] = []) {
     // traverse scene tree
     this.savedData = {
       scene: null,
@@ -212,6 +224,14 @@ export class Loader {
     };
 
     this.savedData.scene = this.traverseNode(scene);
+
+    // Save animation list
+    if (animationList.length > 0) {
+      for (let i = 0; i < animationList.length; i++) {
+        this.saveAnimationClip(animationList[i]);
+      }
+    }
+
     // Now savedData contains the serialized scene data
     console.log(JSON.stringify(this.savedData));
   }
@@ -413,6 +433,60 @@ export class Loader {
       b: color.b,
       a: color.a,
     };
+  }
+
+  private saveAnimationClip(clip: AnimationClip) {
+    const animationData = {
+      name: clip.name,
+      frames: this.saveAnimationPathList(clip.frames),
+    };
+
+    this.savedData.animations.push(animationData);
+  }
+
+  private saveAnimationPathList(pathList: AnimationPath[]) {
+    // return a list of animation path indexes
+    let ret = [];
+    for (const path of pathList) {
+      ret.push(this.saveAnimationPath(path));
+    }
+    return ret;
+  }
+
+  private saveAnimationPath(path: AnimationPath) {
+    if (this.animationPathMap.has(path)) {
+      return this.animationPathMap.get(path)!;
+    }
+
+    const animationPathData = {
+      keyframe: path.keyframe ? this.saveTRS(path.keyframe) : null,
+      children: path.children
+        ? this.saveAnimationPathChild(path.children)
+        : null,
+    };
+
+    // return index of animation path
+    const animationIndex = this.savedData.animationpaths.length;
+    this.savedData.animationpaths.push(animationPathData);
+    this.animationPathMap.set(path, animationIndex);
+
+    return animationIndex;
+  }
+
+  private saveTRS(keyframe: AnimationTRS) {
+    return {
+      translation: keyframe.translation,
+      rotation: keyframe.rotation,
+      scale: keyframe.scale,
+    };
+  }
+
+  private saveAnimationPathChild(children: any) {
+    const childData = {
+      name: children.name,
+      child: this.saveAnimationPath(children.child),
+    };
+    return childData;
   }
 
   public loadFromJson(jsonString: string): Scene {
