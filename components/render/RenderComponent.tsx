@@ -11,8 +11,8 @@ interface RenderedComponentProps {
   selectedComponent: Mesh | null; // change this later
   meshes: any;
   isControllerChange: boolean;
-  animationController: AnimationController;
-  setAnimationController: Dispatch<SetStateAction<AnimationController>>;
+  animationController?: AnimationController;
+  setAnimationController?: Dispatch<SetStateAction<AnimationController>>;
 }
 
 const RenderedComponent: React.FC<RenderedComponentProps> = ({
