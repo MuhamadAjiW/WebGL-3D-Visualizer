@@ -13,6 +13,7 @@ interface RenderedComponentProps {
   isControllerChange: boolean;
   animationController?: AnimationController;
   setAnimationController?: Dispatch<SetStateAction<AnimationController>>;
+  className?: string
 }
 
 const RenderedComponent: React.FC<RenderedComponentProps> = ({
@@ -25,6 +26,7 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({
   isControllerChange,
   animationController,
   setAnimationController,
+  className
 }: RenderedComponentProps) => {
   const canvasRef = useRender({
     cameraType,
@@ -38,7 +40,7 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({
     setAnimationController,
   });
 
-  return <canvas id="webgl-canvas" className="w-full h-full" ref={canvasRef} />;
+  return <canvas id="webgl-canvas" className={`w-full h-full ${className}`} ref={canvasRef}/>;
 };
 
 export default RenderedComponent;

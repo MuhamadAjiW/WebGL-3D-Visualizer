@@ -21,6 +21,7 @@ import Vector3 from "@/libs/base-types/vector3";
 import { Quaternion } from "@/libs/base-types/quaternion";
 import { Euler } from "@/libs/base-types/euler";
 import { AnimationController } from "@/types/ui";
+import CustomSlider from "@/components/ui/slider";
 
 export default function Home() {
   const [data, setData] = useState<Scene | null>(null);
@@ -59,32 +60,41 @@ export default function Home() {
       reverse: false,
       playback: false,
     });
+  const [frameSlider, setFrameSlider] = useState<number>(0);
 
-  const {reverse, playback} = animationController
+  const { reverse, playback } = animationController;
+
+  const handleSliderChange = (event: Event, newValue: number | number[]) => {
+    if (typeof newValue === "number") {
+      setFrameSlider(newValue);
+    }
+  };
 
   const handleAnimationControllerButton = (controller: string) => {
     if (controller === "play") {
       setAnimationController((prevState) => ({
         ...prevState,
         play: !animationController.play,
-        pause: false
+        pause: false,
       }));
     } else if (controller === "pause") {
       setAnimationController((prevState) => ({
         ...prevState,
         pause: !animationController.pause,
-        play: false
+        play: false,
       }));
     }
     setIsControllerChange(!isControllerChange);
   };
 
-  const handleAnimationControllerCheckbox = (event: React.ChangeEvent<HTMLInputElement>) =>{
-    setAnimationController(prevState => ({
+  const handleAnimationControllerCheckbox = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setAnimationController((prevState) => ({
       ...prevState,
-      [event.target.name]: event.target.checked
-    }))
-  }
+      [event.target.name]: event.target.checked,
+    }));
+  };
 
   const handleSubmitController = (values: any) => {
     console.log(values);
@@ -177,7 +187,7 @@ export default function Home() {
         </div>
       </div>
       <div className="w-1/4 flex flex-col border-x-2">
-        <div className="h-1/2 border-b-2 py-5 px-7 flex flex-col">
+        <div className="h-1/3 border-b-2 py-5 px-7 flex flex-col">
           <div className="pb-6 flex items-center justify-between">
             <div className="text-2xl font-bold bg-gray-900">Scene Graph</div>
             <div className="flex items-center justify-center gap-3">
@@ -202,7 +212,7 @@ export default function Home() {
             />
           </div>
         </div>
-        <div className="py-5 px-7 flex flex-col h-1/2">
+        <div className="py-5 px-7 flex flex-col h-2/3">
           <div className="">
             <div className="text-2xl font-bold bg-gray-900">Animation</div>
           </div>
@@ -274,7 +284,15 @@ export default function Home() {
               label="Auto Replay"
             ></FormControlLabel>
           </FormGroup>
-          <div className="bg-white flex-grow">
+          <div className="pt-2">
+            <CustomSlider
+              aria-label="ios slider"
+              value={frameSlider}
+              onChange={handleSliderChange}
+              valueLabelDisplay="on"
+            />
+          </div>
+          <div className="bg-white flex-grow relative">
             <RenderComponent
               cameraType={camera}
               distance={distance}
