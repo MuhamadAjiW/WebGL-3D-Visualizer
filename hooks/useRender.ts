@@ -149,8 +149,17 @@ const useRender = ({
       gl.useProgram(program);
 
       const scene = new Scene();
+      const fetchData = async () => {
+        const response = await fetch("/articulated-ken.json");
+        const data = await response.json();
+        console.log(data);
 
-      const meshConverter =  async (mesh: any) => {
+        const loader: Loader = new Loader();
+        return loader.loadFromJson(JSON.stringify(data));
+      };
+      const scene1 = await fetchData();
+
+      const meshConverter = async (mesh: any) => {
         // change the param type later
         const geometry = mesh.geometry;
         const material = await mesh.material;
@@ -403,7 +412,7 @@ const useRender = ({
         // mesh.rotateOnWorldAxis(Vector3.right, 0.01);
         // mesh.rotateOnWorldAxis(Vector3.up, 0.01);
 
-        renderer.render(scene, cameraInstance);
+        renderer.render(scene1, cameraInstance);
         if (!stop) {
           requestAnimationFrame(render);
         }
