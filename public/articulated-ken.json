@@ -693,7 +693,7 @@
             "meshIndex": 0,
             "name": "Parent",
             "rotation": "[1,0,0,0]",
-            "scale": "[1,1,1]",
+            "scale": "[0.7,0.7,0.7]",
             "translation": "[0,0,0]",
             "visible": true
         },
@@ -702,7 +702,7 @@
             "meshIndex": 1,
             "name": "Left",
             "rotation": "[1,0,0,0]",
-            "scale": "[1,0.5,2]",
+            "scale": "[1.3,0.6,2]",
             "translation": "[-0.35,-0.6,0]",
             "visible": true
         },
@@ -711,7 +711,7 @@
             "meshIndex": 2,
             "name": "Right",
             "rotation": "[1,0,0,0]",
-            "scale": "[1,0.5,2]",
+            "scale": "[1.3,0.6,2]",
             "translation": "[0.35,-0.6,0]",
             "visible": true
         },
@@ -720,7 +720,7 @@
             "meshIndex": 3,
             "name": "Head",
             "rotation": "[1,0,0,0]",
-            "scale": "[3,0.8,3]",
+            "scale": "[3,1,2.5]",
             "translation": "[0,0.65,0]",
             "visible": true
         }
