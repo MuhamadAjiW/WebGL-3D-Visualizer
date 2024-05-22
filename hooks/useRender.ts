@@ -197,9 +197,9 @@ const useRender = ({
   function setupAnimationRunner(clip: AnimationClip, scene: Object3D) {
     console.log("Setting up Animation Runner");
     animationRunnerRef.current = new AnimationRunner(clip, scene, {
-      fps: 0.01,
+      fps: 1,
       fpkey: 144,
-      easing: AnimationEasingType.EASE_IN_SINE,
+      easing: AnimationEasingType.EASE_IN_OUT_BOUNCE,
     });
   }
 
