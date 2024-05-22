@@ -157,7 +157,7 @@ export class VertexBuilder {
     axis: string,
     type: string
   ): number[] {
-    console.log(x, y, z, width, height, radius);
+    // console.log(x, y, z, width, height, radius);
     switch (axis) {
       case "XY":
         return [x - width / 2, y, z, x + width / 2, y, z, x, y + height / 2, z];

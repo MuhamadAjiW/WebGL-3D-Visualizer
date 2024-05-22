@@ -1,26 +1,29 @@
 import { AnimationClip, AnimationPath } from "../../base-types/animation";
-import Object3D from "../object3d";
-import Vector3 from "../../base-types/vector3";
 import { Euler } from "../../base-types/euler";
 import { Quaternion } from "../../base-types/quaternion";
+import Vector3 from "../../base-types/vector3";
+import Object3D from "../object3d";
 import { AnimationEasingFunc, AnimationEasingType } from "./animation-easing";
 
 export class AnimationRunner {
   isPlaying: boolean = false;
+  isFinished: boolean = true;
   loop: boolean = false;
   reverse: boolean = false;
-  fpkey: number = 30;
+  fps: number = 1;
   easing: AnimationEasingType = AnimationEasingType.LINEAR;
   private root: Object3D;
   private currentFrame: number = 0;
-  private deltaFrame: number = 0;
   private currentAnimation?: AnimationClip;
+  private snapshot: Object3D = new Object3D();
+  private lastFrameTime: number = 0;
+  private pauseTimeOffset: number = 0;
 
   constructor(
     clip: AnimationClip,
     root: Object3D,
     options: {
-      fpkey?: number;
+      fps?: number;
       easing?: AnimationEasingType;
       loop?: boolean;
       reverse?: boolean;
@@ -28,10 +31,18 @@ export class AnimationRunner {
   ) {
     this.currentAnimation = clip;
     this.root = root;
-    this.fpkey = options.fpkey || 144;
+    this.fps = options.fps || 1;
     this.easing = options.easing || AnimationEasingType.LINEAR;
     this.loop = options.loop || false;
     this.reverse = options.reverse || false;
+  }
+
+  private createSnapshot() {
+    this.snapshot = this.root.cloneOrientation();
+    this.root.children.forEach((child) => {
+      const branch = child.cloneOrientation();
+      this.snapshot.add(branch);
+    });
   }
 
   get CurrentFrame() {
@@ -69,18 +80,30 @@ export class AnimationRunner {
     return this.currentAnimation!.frames[index];
   }
 
-  update() {
+  public setFrame(frameIndex: number) {
+    this.CurrentFrame = frameIndex;
+    this.setKeyframe(this.root, this.currentAnimation!.frames[frameIndex]);
+  }
+
+  public update() {
     if (this.isPlaying) {
-      const progress = this.deltaFrame / this.fpkey;
+      const progress =
+        ((new Date().getTime() - this.lastFrameTime) / 1000) * this.fps;
       const modifier = AnimationEasingFunc[this.easing](progress);
 
-      this.updateSceneGraph(this.root, this.nextFrame, modifier);
+      this.updateSceneGraph(
+        this.root,
+        this.snapshot,
+        this.nextFrame,
+        modifier > 1 ? 1 : modifier
+      );
 
       if (progress >= 1) {
-        this.deltaFrame = 0;
+        this.lastFrameTime = new Date().getTime();
+
+        this.createSnapshot();
 
         this.CurrentFrame += this.reverse ? -1 : 1;
-
         if (
           !this.loop &&
           ((this.currentFrame == this.currentAnimation!.frames.length - 1 &&
@@ -88,31 +111,40 @@ export class AnimationRunner {
             (this.currentFrame == 0 && this.reverse))
         ) {
           this.isPlaying = false;
-          this.currentFrame = 0;
+          this.isFinished = true;
           return;
         }
       }
-
-      this.deltaFrame++;
     }
   }
 
   public playAnimation() {
+    if (this.isPlaying) return;
+
     this.isPlaying = true;
-    this.currentFrame = 0;
-    this.initialize();
+    this.lastFrameTime = new Date().getTime();
+    if (this.isFinished) {
+      this.setFrame(
+        this.reverse ? this.currentAnimation!.frames.length - 1 : 0
+      );
+    } else {
+      this.lastFrameTime -= this.pauseTimeOffset;
+      this.pauseTimeOffset = 0;
+    }
+    this.isFinished = false;
+    this.createSnapshot();
   }
 
-  public togglePause() {
-    this.isPlaying != this.isPlaying;
-  }
+  public pause() {
+    if (!this.isPlaying) return;
 
-  public toggleReverse() {
-    this.reverse != this.reverse;
+    this.pauseTimeOffset = new Date().getTime() - this.lastFrameTime;
+    this.isPlaying = false;
   }
 
   private updateSceneGraph(
     node: Object3D,
+    snapshotNode: Object3D,
     path: AnimationPath,
     modifier: number
   ) {
@@ -121,7 +153,7 @@ export class AnimationRunner {
 
     // Translation
     if (path.keyframe?.translation) {
-      const start = node.position;
+      const start = snapshotNode.position;
       const end = new Vector3(path.keyframe?.translation);
 
       node.position = start.add(end.substract(start).multiplyScalar(modifier));
@@ -130,7 +162,7 @@ export class AnimationRunner {
     // Rotation
     if (path.keyframe?.rotation) {
       const initialRotation: Euler = new Euler();
-      initialRotation.setFromQuaternion(node.rotation as Quaternion);
+      initialRotation.setFromQuaternion(snapshotNode.rotation as Quaternion);
 
       const start = new Vector3(
         initialRotation.x,
@@ -145,28 +177,29 @@ export class AnimationRunner {
 
     // Scale
     if (path.keyframe?.scale) {
-      const start = node.position;
+      const start = snapshotNode.position;
       const end = new Vector3(path.keyframe?.scale);
 
-      node.position = start.add(end.substract(start).multiplyScalar(modifier));
+      node.scale = start.add(end.substract(start).multiplyScalar(modifier));
     }
 
     for (let animChild in path.children) {
-      for (let index = 0; index < node.children.length; index++) {
-        const element = node.children[index];
-        if (animChild == element.name) {
-          this.updateSceneGraph(
-            element,
-            path.children![animChild] as AnimationPath,
-            modifier
-          );
-          break;
-        }
+      const childNode = node.getChild(animChild);
+      const childSnapshot = snapshotNode.getChild(animChild);
+
+      for (let i = 0; i < childNode.length; i++) {
+        const element = childNode[i];
+        this.updateSceneGraph(
+          childNode[i],
+          childSnapshot[i],
+          path.children![animChild] as AnimationPath,
+          modifier
+        );
       }
     }
   }
 
-  private initialize(
+  private setKeyframe(
     node: Object3D = this.root,
     path: AnimationPath = this.reverse
       ? this.currentAnimation!.frames[this.length - 1]
@@ -195,11 +228,13 @@ export class AnimationRunner {
       for (let index = 0; index < node.children.length; index++) {
         const element = node.children[index];
         if (animChild == element.name) {
-          this.initialize(element, path.children![animChild] as AnimationPath);
+          this.setKeyframe(element, path.children![animChild] as AnimationPath);
           break;
         }
       }
     }
+
+    this.createSnapshot();
   }
 
   private load(animFile: string): AnimationClip | undefined {

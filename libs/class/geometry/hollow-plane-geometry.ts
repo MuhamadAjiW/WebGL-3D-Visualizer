@@ -3,7 +3,7 @@ import { BufferGeometry } from "./geometry";
 import { VertexBuilder } from "./vertex-builder";
 
 export class HollowPlaneGeometry extends BufferGeometry {
-  type: number = 4;  // Unique identifier for this geometry type
+  type: number = 4; // Unique identifier for this geometry type
   width: number;
   height: number;
 
@@ -16,10 +16,10 @@ export class HollowPlaneGeometry extends BufferGeometry {
     const frameWidth = width / 8;
     const frameHeight = height / 8;
 
-    console.log(halfWidth);
-    console.log(halfHeight);
-    console.log(frameWidth);
-    console.log(frameHeight);
+    // console.log(halfWidth);
+    // console.log(halfHeight);
+    // console.log(frameWidth);
+    // console.log(frameHeight);
 
     const vertices = new Float32Array([
       // Outer frame - front face
@@ -180,26 +180,16 @@ export class HollowPlaneGeometry extends BufferGeometry {
     ]);
 
     const textureCoordinates = new Float32Array([
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
+      0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0,
+      1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1,
+      1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1,
+      1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1,
+      0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0,
+      0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0,
+      1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1,
+      0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0,
+      0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0,
+      0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
     ]);
 
     this.position = new BufferAttribute(vertices, 3);
