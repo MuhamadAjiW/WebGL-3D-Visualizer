@@ -1,41 +1,36 @@
 import useRender from "@/hooks/useRender";
 import { Mesh } from "@/libs/class/mesh";
-import { AnimationControllerType } from "@/types/ui";
 import { Dispatch, SetStateAction } from "react";
+import CameraController from '@/components/camera/CameraController';
+import { AnimationControllerType, CameraControllerType } from "@/types/controllers/controllers";
 
 interface RenderedComponentProps {
-  cameraType: string;
-  distance: number;
-  isReset: boolean;
-  handleReset: Dispatch<SetStateAction<boolean>>;
   selectedComponent: Mesh | null; // change this later
   meshes: any;
   isControllerChange: boolean;
+  cameraController: CameraControllerType
+  setCameraController: Dispatch<SetStateAction<CameraControllerType>>
   animationController?: AnimationControllerType;
   setAnimationController?: Dispatch<SetStateAction<AnimationControllerType>>;
   className?: string
 }
 
 const RenderedComponent: React.FC<RenderedComponentProps> = ({
-  cameraType,
-  distance,
-  isReset,
-  handleReset,
   selectedComponent,
   meshes,
   isControllerChange,
+  setCameraController,
   animationController,
   setAnimationController,
+  cameraController,
   className
 }: RenderedComponentProps) => {
   const canvasRef = useRender({
-    cameraType,
-    distance,
-    isReset,
-    handleReset,
     selectedComponent,
     meshes,
     isControllerChange,
+    cameraController,
+    setCameraController,
     animationController,
     setAnimationController,
   });

@@ -32,17 +32,20 @@ import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
 import { Loader } from "@/libs/class/loader/loader";
 import { Euler } from "@/libs/base-types/euler";
 import { Quaternion } from "@/libs/base-types/quaternion";
-import { AnimationControllerType } from "@/types/ui";
 import Object3D from "@/libs/class/object3d";
+import {
+  AnimationControllerType,
+  CameraControllerType,
+  checkAnimationUpdate,
+  checkCameraUpdate,
+} from "@/types/controllers/controllers";
 
 interface HooksRenderProps {
-  cameraType: string;
-  distance: number;
-  isReset: boolean;
-  handleReset: Dispatch<SetStateAction<boolean>>;
   selectedComponent: any; // change this later
   meshes: any;
   isControllerChange: boolean;
+  cameraController: CameraControllerType;
+  setCameraController: Dispatch<SetStateAction<CameraControllerType>>;
   animationController?: AnimationControllerType;
   setAnimationController?: Dispatch<SetStateAction<AnimationControllerType>>;
 }
@@ -106,13 +109,11 @@ const dummyUniformsData = {
 };
 
 const useRender = ({
-  cameraType,
-  distance,
-  isReset,
-  handleReset,
   selectedComponent,
   meshes,
   isControllerChange,
+  cameraController,
+  setCameraController,
   animationController,
   setAnimationController,
 }: HooksRenderProps) => {
@@ -126,33 +127,32 @@ const useRender = ({
   const refreshRequest = useRef<number>(0);
   const refreshRequestDelay = 0.05;
   let newAnimationControllerState: AnimationControllerType;
-
-  function checkAnimationUpdate(
-    newControllerState: AnimationControllerType
-  ): boolean {
-    if (!animationController || !setAnimationController) return false;
-
-    return (
-      newControllerState.currentFrame != animationController.currentFrame ||
-      newControllerState.maxFrame != animationController.maxFrame ||
-      newControllerState.pause != animationController.pause ||
-      newControllerState.play != animationController.play ||
-      newControllerState.playback != animationController.playback ||
-      newControllerState.reverse != animationController.reverse
-    );
-  }
+  let newCameraControllerState: CameraControllerType;
 
   function updateAnimationController(
     newControllerState: AnimationControllerType
   ) {
+    if (!animationController) return;
+
     if (
-      !checkAnimationUpdate(newControllerState) ||
+      !checkAnimationUpdate(newControllerState, animationController) ||
       new Date().getTime() - (refreshRequest.current + refreshRequestDelay) < 0
     )
       return;
 
     refreshRequest.current = new Date().getTime();
     setAnimationController!(newControllerState);
+  }
+
+  function updateCameraController(newControllerState: CameraControllerType) {
+    if (
+      !checkCameraUpdate(newControllerState, cameraController) ||
+      new Date().getTime() - (refreshRequest.current + refreshRequestDelay) < 0
+    )
+      return;
+
+    refreshRequest.current = new Date().getTime();
+    setCameraController!(newControllerState);
   }
 
   function setupRenderer() {
@@ -223,20 +223,12 @@ const useRender = ({
         );
         break;
       default:
-        console.error(`Unknown camera type: ${cameraType}`);
+        console.error(`Unknown camera type: ${type}`);
         break;
     }
 
     if (activeCameraRef == null) return;
-    if (oldCopy != null) {
-      // console.log("Copying old camera values");
-      activeCameraRef.current!.angleX = oldCopy.angleX;
-      activeCameraRef.current!.angleY = oldCopy.angleY;
-      activeCameraRef.current!.cameraMatrix = oldCopy.cameraMatrix;
-      activeCameraRef.current!.distance = oldCopy.distance;
-    } else {
-      activeCameraRef.current!.position = new Vector3(0, 0, 0);
-    }
+    activeCameraRef.current!.position = new Vector3(0, 0, 0);
   }
 
   function setupAnimationRunner(clip: AnimationClip, scene: Object3D) {
@@ -291,6 +283,7 @@ const useRender = ({
     if (animationController) {
       newAnimationControllerState = { ...animationController };
     }
+    newCameraControllerState = { ...cameraController };
 
     const runWebGL = async () => {
       // Setup refs if not already
@@ -302,10 +295,10 @@ const useRender = ({
         setupRenderer();
       }
       if (
-        cameraType != activeCameraTypeRef.current ||
+        cameraController.type != activeCameraTypeRef.current ||
         !activeCameraRef.current
       ) {
-        setupCamera(cameraType);
+        setupCamera(cameraController.type);
       }
 
       if (selectedComponent || !activeComponentRef.current) {
@@ -320,7 +313,7 @@ const useRender = ({
       const scene = activeComponentRef.current as Object3D;
 
       // Apply camera controls
-      activeCamera.setDistance(distance);
+      activeCamera.setDistance(cameraController.distance);
       let dx = 0;
       let dy = 0;
 
@@ -340,10 +333,10 @@ const useRender = ({
         dy = event.clientY - rect.top;
       });
 
-      if (isReset) {
+      if (cameraController.reset) {
         dx = 0;
         dy = 0;
-        handleReset(false);
+        newCameraControllerState.reset = false;
       }
 
       // Apply animation controls
@@ -399,12 +392,11 @@ const useRender = ({
       stop = true;
     };
   }, [
-    cameraType,
-    distance,
-    isReset,
     selectedComponent,
     meshes,
     isControllerChange,
+    cameraController,
+    setCameraController,
     animationController,
     setAnimationController,
   ]);

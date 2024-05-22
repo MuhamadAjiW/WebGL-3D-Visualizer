@@ -20,8 +20,8 @@ import { Mesh } from "@/libs/class/mesh";
 import Vector3 from "@/libs/base-types/vector3";
 import { Quaternion } from "@/libs/base-types/quaternion";
 import { Euler } from "@/libs/base-types/euler";
-import { AnimationControllerType, CameraControllerType, ComponentControllerType } from "@/types/ui";
 import CustomSlider from "@/components/ui/slider";
+import { AnimationControllerType, CameraControllerType, ComponentControllerType } from "@/types/controllers/controllers";
 
 export default function Home() {
   const [data, setData] = useState<Scene | null>(null);
@@ -48,15 +48,14 @@ export default function Home() {
 
   const [isComponentExpanded, setIsComponentExpanded] = useState<boolean>(true);
   const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(true);
-  const [camera, setCamera] = useState<string>("perspectiveCamera");
-  const [distance, setDistance] = useState<number>(3);
   const [isReset, setIsReset] = useState<boolean>(false);
   const [component, setComponent] = useState<Mesh | null>(null);
   const [isControllerChange, setIsControllerChange] = useState<boolean>(false);
 
   const [cameraController, setCameraController] = useState<CameraControllerType>({
     type: "orthographicCamera",
-    distance: 1
+    distance: 3,
+    reset: false
   }) 
   const [componentController, setComponentController] = useState<ComponentControllerType>({
     position: new Vector3(),
@@ -148,21 +147,6 @@ export default function Home() {
     setIsCameraExpanded(!isCameraExpanded);
   };
 
-  const handleCameraChange = (event: SelectChangeEvent) => {
-    setCamera(event.target.value);
-  };
-
-  const handleDistanceChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
-    setDistance(+event.target.value);
-  };
-
-  const handleResetChange = () => {
-    setIsReset(true);
-    setDistance(3);
-  };
-
   const handleItemSelection = (
     event: React.SyntheticEvent,
     itemId: string,
@@ -188,13 +172,11 @@ export default function Home() {
         </div>
         <div className="bg-white text-black flex-grow">
           <RenderComponent
-            cameraType={camera}
-            distance={distance}
-            isReset={isReset}
-            handleReset={setIsReset}
             selectedComponent={component}
             meshes={data.children}
             isControllerChange={isControllerChange}
+            cameraController={cameraController}
+            setCameraController={setCameraController}
           />
         </div>
       </div>
@@ -293,13 +275,11 @@ export default function Home() {
           </div>
           <div className="bg-white flex-grow relative">
             <RenderComponent
-              cameraType={camera}
-              distance={distance}
-              isReset={isReset}
-              handleReset={setIsReset}
               selectedComponent={component}
               meshes={data.children}
               isControllerChange={isControllerChange}
+              cameraController={cameraController}
+              setCameraController={setCameraController}
               animationController={animationController}
               setAnimationController={setAnimationController}
             />
@@ -324,11 +304,8 @@ export default function Home() {
             isExpanded={isCameraExpanded}
             handleClick={handleCameraExpanded}
             title="Camera Controller"
-            camera={camera}
-            handleCameraChange={handleCameraChange}
-            distance={distance}
-            handleDistanceChange={handleDistanceChange}
-            handleResetChange={handleResetChange}
+            cameraController={cameraController}
+            setCameraController={setCameraController}
           />
         </div>
       </div>

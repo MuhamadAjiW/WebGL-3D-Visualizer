@@ -1,22 +1,18 @@
 import { InputOptions } from "@/types/ui";
 import { MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import Button from "../ui/Button";
 import { GoChevronDown, GoChevronRight } from "react-icons/go";
 import { Collapse } from "react-collapse";
+import { CameraControllerType } from "@/types/controllers/controllers";
 
 interface ControllerProps {
   id: string;
   isExpanded: boolean;
   handleClick: () => void;
   title: string;
-  camera: string;
-  handleCameraChange: (event: SelectChangeEvent) => void;
-  distance: number;
-  handleDistanceChange: (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => void;
-  handleResetChange: () => void;
+  cameraController: CameraControllerType
+  setCameraController: Dispatch<SetStateAction<CameraControllerType>>
 }
 
 const CameraController: React.FC<ControllerProps> = ({
@@ -24,11 +20,8 @@ const CameraController: React.FC<ControllerProps> = ({
   isExpanded,
   handleClick,
   title,
-  camera,
-  handleCameraChange,
-  distance,
-  handleDistanceChange,
-  handleResetChange,
+  cameraController,
+  setCameraController
 }) => {
   const cameraType: InputOptions[] = [
     {
@@ -44,6 +37,22 @@ const CameraController: React.FC<ControllerProps> = ({
       value: "perspectiveCamera",
     },
   ];
+
+  let newCameraState: CameraControllerType = { ...cameraController }
+  const handleDistanceChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    newCameraState.distance = +event.target.value;
+    setCameraController(newCameraState);
+  }
+
+  const handleCameraChange = (event: SelectChangeEvent) => {
+    newCameraState.type = event.target.value;
+    setCameraController(newCameraState);
+  }
+  
+  const handleCameraReset = () => {
+    newCameraState.reset = true;
+    setCameraController(newCameraState);
+  }
 
   return (
     <div className="w-full py-2" id={id}>
@@ -65,13 +74,13 @@ const CameraController: React.FC<ControllerProps> = ({
                 className="bg-white"
                 size="small"
                 onChange={handleDistanceChange}
-                value={distance || ""}
+                value={cameraController.distance || ""}
               />
             </div>
             <div className="flex items-center justify-between gap-3">
               <div>Camera Type</div>
               <Select
-                value={camera}
+                value={cameraController.type}
                 onChange={handleCameraChange}
                 className="bg-white"
                 size="small"
@@ -88,7 +97,7 @@ const CameraController: React.FC<ControllerProps> = ({
                 id="reset-default"
                 text="Reset"
                 className="bg-white text-black py-1 px-4 rounded-sm"
-                handleClick={handleResetChange}
+                handleClick={handleCameraReset}
               />
             </div>
           </div>
