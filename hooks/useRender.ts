@@ -111,7 +111,7 @@ const useRender = ({
   const animationRunnerRef = useRef<AnimationRunner | null>(null);
 
   function setupRenderer() {
-    console.log("Setting up renderer");
+    // console.log("Setting up renderer");
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -184,7 +184,7 @@ const useRender = ({
 
     if (activeCameraRef == null) return;
     if (oldCopy != null) {
-      console.log("Copying old camera values");
+      // console.log("Copying old camera values");
       activeCameraRef.current!.angleX = oldCopy.angleX;
       activeCameraRef.current!.angleY = oldCopy.angleY;
       activeCameraRef.current!.cameraMatrix = oldCopy.cameraMatrix;
@@ -195,7 +195,7 @@ const useRender = ({
   }
 
   function setupAnimationRunner(clip: AnimationClip, scene: Object3D) {
-    console.log("Setting up Animation Runner");
+    // console.log("Setting up Animation Runner");
     animationRunnerRef.current = new AnimationRunner(clip, scene, {
       fps: 1,
       fpkey: 144,
@@ -226,7 +226,6 @@ const useRender = ({
     };
 
     if (selectedComponent) {
-      console.log("Component selected");
       meshConverter(selectedComponent);
     } else {
       for (let mesh of meshes) {
@@ -255,8 +254,9 @@ const useRender = ({
       ) {
         setupCamera(cameraType);
       }
+
       if (
-        selectedComponent != selectedComponentRef.current ||
+        selectedComponent ||
         !activeComponentRef.current
       ) {
         setupComponent(selectedComponent);
@@ -297,11 +297,11 @@ const useRender = ({
       }
 
       // Apply animation controls
-      console.log("animationController:", animationController);
+      // console.log("animationController:", animationController);
       if (animationController) {
         const newAnimationController = animationController;
 
-        console.log("this is reverse", animationController.reverse)
+        // console.log("this is reverse", animationController.reverse)
         animationRunner.loop = animationController.playback;
         animationRunner.reverse = animationController.reverse;
         if (animationController.pause) {
@@ -309,7 +309,7 @@ const useRender = ({
           animationController.play = false;
         }
         if (animationController.play) {
-          console.log("Playing");
+          // console.log("Playing");
           animationRunner.playAnimation();
           newAnimationController.play = false;
         }
@@ -317,7 +317,7 @@ const useRender = ({
         if(setAnimationController) setAnimationController(newAnimationController);
       }
 
-      console.log("This is animation scene", animationController);
+      // console.log("This is animation scene", animationController);
 
       WebGLUtils.setUniforms(renderer.currentProgram, dummyUniformsData);
       function render() {
