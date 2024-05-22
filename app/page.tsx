@@ -15,6 +15,7 @@ import { Mesh } from "@/libs/class/mesh";
 import Vector3 from "@/libs/base-types/vector3";
 import { Quaternion } from "@/libs/base-types/quaternion";
 import { Euler } from "@/libs/base-types/euler";
+import { AnimationController } from "@/types/ui";
 
 export default function Home() {
   const [data, setData] = useState<Scene | null>(null);
@@ -46,6 +47,38 @@ export default function Home() {
   const [isReset, setIsReset] = useState<boolean>(false);
   const [component, setComponent] = useState<Mesh | null>(null);
   const [isControllerChange, setIsControllerChange] = useState<boolean>(false);
+  const [animationController, setAnimationController] =
+    useState<AnimationController>({
+      play: false,
+      pause: false,
+      reverse: false,
+      playback: false,
+    });
+
+  const handleAnimationController = (controller: string) => {
+    if (controller === "play") {
+      setAnimationController((prevState) => ({
+        ...prevState,
+        play: !animationController.play,
+      }));
+    } else if (controller === "pause") {
+      setAnimationController((prevState) => ({
+        ...prevState,
+        pause: !animationController.pause,
+      }));
+    } else if (controller === "reverse") {
+      setAnimationController((prevState) => ({
+        ...prevState,
+        reverse: !animationController.reverse,
+      }));
+    } else if (controller === "playback") {
+      setAnimationController((prevState) => ({
+        ...prevState,
+        playback: !animationController.playback,
+      }));
+    }
+    setIsControllerChange(!isControllerChange);
+  }
 
   const handleSubmitController = (values: any) => {
     console.log(values);
@@ -134,13 +167,29 @@ export default function Home() {
             selectedComponent={component}
             meshes={data.children}
             isControllerChange={isControllerChange}
+            animationController={animationController}
+            setAnimationController={setAnimationController}
           />
         </div>
       </div>
       <div className="w-1/4 flex flex-col border-x-2">
         <div className="h-1/2 border-b-2 py-5 px-7 flex flex-col">
-          <div className="pb-6">
+          <div className="pb-6 flex items-center justify-between">
             <div className="text-2xl font-bold bg-gray-900">Scene Graph</div>
+            <div className="flex items-center justify-center gap-3">
+              <Button
+                id="load-button"
+                handleClick={() => {}}
+                text="Load"
+                className="bg-white text-black px-4 rounded-sm"
+              />
+              <Button
+                id="save-button"
+                handleClick={() => {}}
+                text="Save"
+                className="bg-white text-black px-4 rounded-sm"
+              />
+            </div>
           </div>
           <div className="bg-gray-900 flex-grow overflow-y-auto p-5">
             <TreeView
@@ -156,25 +205,33 @@ export default function Home() {
           <div className="flex gap-5 items-strech w-full py-3 overflow-x-auto">
             <Button
               id="play-button"
-              handleClick={() => {}}
+              handleClick={() => {
+                handleAnimationController("play");
+              }}
               text="Play"
               className="bg-white text-black px-4"
             />
             <Button
               id="pause-button"
-              handleClick={() => {}}
+              handleClick={() => {
+                handleAnimationController("pause");
+              }}
               text="Pause"
               className="bg-white text-black px-4"
             />
             <Button
               id="reverse-button"
-              handleClick={() => {}}
+              handleClick={() => {
+                handleAnimationController("reverse");
+              }}
               text="Reverse"
               className="bg-white text-black px-4"
             />
             <Button
               id="auto-replay-button"
-              handleClick={() => {}}
+              handleClick={() => {
+                handleAnimationController("playback");
+              }}
               text="Auto Replay"
               className="bg-white text-black px-4"
             />
@@ -188,7 +245,8 @@ export default function Home() {
               selectedComponent={component}
               meshes={data.children}
               isControllerChange={isControllerChange}
-              isAnimation={true}
+              animationController={animationController}
+              setAnimationController={setAnimationController}
             />
           </div>
         </div>

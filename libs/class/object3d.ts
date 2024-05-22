@@ -210,6 +210,19 @@ class Object3D {
     return this;
   }
 
+  cloneOrientation(): Object3D {
+    const retval = new Object3D();
+    retval.name = this.name;
+    retval.position = this.position;
+    retval.rotation = this.rotation;
+    retval.scale = this.scale;
+    return retval;
+  }
+
+  getChild(name: string): Object3D[] {
+    return this.children.filter((child) => child.name == name);
+  }
+
   // TODO
   traverse(node: Object3D) {
     this.processElements(node);

@@ -16,6 +16,7 @@ export class AnimationRunner {
   private currentFrame: number = 0;
   private deltaFrame: number = 0;
   private currentAnimation?: AnimationClip;
+  private snapshot: Object3D = new Object3D();
 
   constructor(
     clip: AnimationClip,
@@ -35,6 +36,19 @@ export class AnimationRunner {
     this.easing = options.easing || AnimationEasingType.LINEAR;
     this.loop = options.loop || false;
     this.reverse = options.reverse || false;
+
+    // const snapshot = this.root;
+    // snapshot.name = "Snapshot";
+    // console.log(snapshot.name);
+    // console.log(this.root.name);
+  }
+
+  private createSnapshot() {
+    this.snapshot = this.root.cloneOrientation();
+    this.root.children.forEach((child) => {
+      const branch = child.cloneOrientation();
+      this.snapshot.add(branch);
+    });
   }
 
   get CurrentFrame() {
@@ -76,14 +90,17 @@ export class AnimationRunner {
     if (this.isPlaying) {
       const progress = (this.deltaFrame / this.fpkey) * this.fps;
       const modifier = AnimationEasingFunc[this.easing](progress);
+      console.log(modifier);
 
-      this.updateSceneGraph(this.root, this.nextFrame, modifier);
+      this.updateSceneGraph(this.root, this.snapshot, this.nextFrame, modifier);
 
       if (progress >= 1) {
+        this.createSnapshot();
+
+        console.log(progress);
         this.deltaFrame = 0;
 
         this.CurrentFrame += this.reverse ? -1 : 1;
-
         if (
           !this.loop &&
           ((this.currentFrame == this.currentAnimation!.frames.length - 1 &&
@@ -101,21 +118,30 @@ export class AnimationRunner {
   }
 
   public playAnimation() {
+    console.log("Animation: Playing");
     this.isPlaying = true;
     this.currentFrame = 0;
     this.initialize();
   }
 
-  public togglePause() {
-    this.isPlaying != this.isPlaying;
+  public Pause() {
+    console.log("Animation: Pausing");
+    this.isPlaying = false;
   }
 
-  public toggleReverse() {
-    this.reverse != this.reverse;
+  public Reverse() {
+    console.log("Animation: Reversing");
+    this.reverse = this.reverse;
+  }
+
+  public Loop() {
+    console.log("Animation: Looping");
+    this.loop = true;
   }
 
   private updateSceneGraph(
     node: Object3D,
+    snapshotNode: Object3D,
     path: AnimationPath,
     modifier: number
   ) {
@@ -124,7 +150,7 @@ export class AnimationRunner {
 
     // Translation
     if (path.keyframe?.translation) {
-      const start = node.position;
+      const start = snapshotNode.position;
       const end = new Vector3(path.keyframe?.translation);
 
       node.position = start.add(end.substract(start).multiplyScalar(modifier));
@@ -133,7 +159,7 @@ export class AnimationRunner {
     // Rotation
     if (path.keyframe?.rotation) {
       const initialRotation: Euler = new Euler();
-      initialRotation.setFromQuaternion(node.rotation as Quaternion);
+      initialRotation.setFromQuaternion(snapshotNode.rotation as Quaternion);
 
       const start = new Vector3(
         initialRotation.x,
@@ -148,23 +174,24 @@ export class AnimationRunner {
 
     // Scale
     if (path.keyframe?.scale) {
-      const start = node.position;
+      const start = snapshotNode.position;
       const end = new Vector3(path.keyframe?.scale);
 
-      node.position = start.add(end.substract(start).multiplyScalar(modifier));
+      node.scale = start.add(end.substract(start).multiplyScalar(modifier));
     }
 
     for (let animChild in path.children) {
-      for (let index = 0; index < node.children.length; index++) {
-        const element = node.children[index];
-        if (animChild == element.name) {
-          this.updateSceneGraph(
-            element,
-            path.children![animChild] as AnimationPath,
-            modifier
-          );
-          break;
-        }
+      const childNode = node.getChild(animChild);
+      const childSnapshot = snapshotNode.getChild(animChild);
+
+      for (let i = 0; i < childNode.length; i++) {
+        const element = childNode[i];
+        this.updateSceneGraph(
+          childNode[i],
+          childSnapshot[i],
+          path.children![animChild] as AnimationPath,
+          modifier
+        );
       }
     }
   }
@@ -203,6 +230,8 @@ export class AnimationRunner {
         }
       }
     }
+
+    this.createSnapshot();
   }
 
   private load(animFile: string): AnimationClip | undefined {

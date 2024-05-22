@@ -7,8 +7,6 @@ class PerspectiveCamera extends Camera {
   near: number;
   far: number;
 
-  private static instance: PerspectiveCamera;
-
   constructor(aspect: number, fovY: number, near: number, far: number) {
     super();
     this.fovY = fovY;
@@ -25,24 +23,6 @@ class PerspectiveCamera extends Camera {
       this.near,
       this.far
     );
-  }
-
-  public static getInstance(
-    fovY: number,
-    aspect: number,
-    near: number,
-    far: number
-  ): PerspectiveCamera {
-    if (!PerspectiveCamera.instance) {
-      PerspectiveCamera.instance = new PerspectiveCamera(
-        fovY,
-        aspect,
-        near,
-        far
-      );
-    }
-
-    return PerspectiveCamera.instance;
   }
 }
 
