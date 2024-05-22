@@ -21,6 +21,7 @@ import { GeometryType } from "../geometry/geometry-types";
 import { CubeGeometry } from "../geometry/cube-geometry";
 import { PlaneGeometry } from "../geometry/plane-geometry";
 import { HollowBlockGeometry } from "../geometry/hollow-block-geometry";
+import { HollowPlaneGeometry } from "../geometry/hollow-plane-geometry";
 
 const ArrayIndex = z.array(z.number().int());
 
@@ -587,6 +588,11 @@ export class Loader {
         geometryData.width,
         geometryData.height,
         geometryData.length
+      );
+    } else if (geometryData.type == 4) {
+      geometry = new HollowPlaneGeometry(
+        geometryData.width,
+        geometryData.height
       );
     } else {
       geometry = new BufferGeometry();
