@@ -1,28 +1,25 @@
-import { ProgramInfo } from "@/libs/base-types/webgl-program-info";
-import { Mesh } from "@/libs/class/mesh";
-import { Scene } from "@/libs/class/scene";
-import { WebGLRenderer } from "@/libs/class/webgl-renderer";
-import { BufferUniform } from "@/libs/class/webgl/uniform";
-import { WebGLUtil as WebGLUtils } from "@/libs/util/webgl-util";
-import fragmentShaderSource from "@/shaders/fragment-shader.frag?raw";
-import vertexShaderSource from "@/shaders/vertex-shader.vert?raw";
-import { Dispatch, SetStateAction } from "react";
 import { AnimationClip } from "@/libs/base-types/animation";
 import Vector3 from "@/libs/base-types/vector3";
+import { ProgramInfo } from "@/libs/base-types/webgl-program-info";
 import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
 import Camera from "@/libs/class/camera";
 import Object3D from "@/libs/class/object3d";
 import ObliqueCamera from "@/libs/class/oblique-camera";
 import OrthographicCamera from "@/libs/class/orthographic-camera";
 import PerspectiveCamera from "@/libs/class/perspective-camera";
-import { MathUtil } from "@/libs/util/math-util";
+import { WebGLRenderer } from "@/libs/class/webgl-renderer";
+import { BufferUniform } from "@/libs/class/webgl/uniform";
 import {
   AnimationControllerType,
   CameraControllerType,
   checkAnimationUpdate,
   checkCameraUpdate,
 } from "@/libs/controllers";
-import { useEffect, useRef } from "react";
+import { MathUtil } from "@/libs/util/math-util";
+import { WebGLUtil as WebGLUtils } from "@/libs/util/webgl-util";
+import fragmentShaderSource from "@/shaders/fragment-shader.frag?raw";
+import vertexShaderSource from "@/shaders/vertex-shader.vert?raw";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { AnimationRunner } from "../libs/class/animation/animation-runner";
 
 interface HooksRenderProps {
@@ -256,6 +253,7 @@ const useRender = ({
         !activeComponentRef.current ||
         activeComponentRef.current != activeComponent
       ) {
+        // rendererRef.current?.clean();
         activeComponentRef.current = activeComponent;
         setupAnimationRunner(testAnim, activeComponentRef.current!);
       }
@@ -295,9 +293,7 @@ const useRender = ({
       }
 
       // Apply animation controls
-      // console.log("animationController:", animationController);
       if (animationController && setAnimationController) {
-        // console.log("this is reverse", animationController.reverse)
         animationRunner.loop = animationController.playback;
         animationRunner.reverse = animationController.reverse;
         if (animationController.pause) {
@@ -305,13 +301,10 @@ const useRender = ({
           newAnimationControllerState.pause = false;
         }
         if (animationController.play) {
-          // console.log("Playing");
           animationRunner.playAnimation();
           newAnimationControllerState.play = false;
         }
       }
-
-      // console.log("This is animation scene", animationController);
 
       WebGLUtils.setUniforms(renderer.currentProgram, dummyUniformsData);
 
@@ -339,7 +332,7 @@ const useRender = ({
       }
       render();
 
-      console.log("Done");
+      // console.log("Done");
     };
 
     runWebGL();
@@ -347,8 +340,8 @@ const useRender = ({
       stop = true;
     };
   }, [
-    // activeComponent,
-    // isControllerChange,
+    activeComponent,
+    isControllerChange,
     cameraController.distance,
     cameraController.reset,
     cameraController.type,

@@ -31,19 +31,14 @@ const ComponentController: React.FC<ControllerProps> = ({
 }) => {
   // TODO: setFromQuaternion is a little off here for some reason on the y axis at 90 degrees
   // The quick fix is just to only load it whenever the components reset so uhh
-  const savedComponent123 = useRef<Object3D | null>(null)
+  const savedComponent = useRef<Object3D | null>(null)
   const rotation = useRef<Vector3>(Vector3.zero)
   const position = useRef<Vector3>(Vector3.zero)
   const scale = useRef<Vector3>(Vector3.one)
   const name = useRef<string>("")
 
-  console.log("Refreshing controllerr")
-
-  if(component && component != savedComponent123.current){
-    console.log("Reloading model in controller")
-    console.log(savedComponent123.current != component)
-
-    savedComponent123.current = component;
+  if(component && component != savedComponent.current){
+    savedComponent.current = component;
 
     const euler = new Euler()
     euler.setFromQuaternion(component.rotation as Quaternion);
@@ -81,7 +76,6 @@ const ComponentController: React.FC<ControllerProps> = ({
   const refresh = (e: React.ChangeEvent<HTMLInputElement>) => {
     formik.handleChange(e);
     formik.submitForm()
-    console.log("Value Changed")
   }
 
   return (

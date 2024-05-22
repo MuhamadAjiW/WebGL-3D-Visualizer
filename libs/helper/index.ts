@@ -1,5 +1,6 @@
 import { NodeSchema, SceneSchema } from "@/types/ui";
 import { TreeViewBaseItem } from "@mui/x-tree-view";
+import Object3D from "../class/object3d";
 
 export const convertGLTFToTreeView = (
   scheneSchema: any //change this later
@@ -15,7 +16,7 @@ export const convertGLTFToTreeView = (
 export const findMeshById = (
   nodeSchema: any, // change this later and return type
   id: string
-): any => {
+): Object3D | null => {
   for (let node of nodeSchema) {
     if (node.name === id) {
       return node;

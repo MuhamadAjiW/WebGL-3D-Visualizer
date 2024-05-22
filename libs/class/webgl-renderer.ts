@@ -31,9 +31,13 @@ export class WebGLRenderer {
     this.adjustCanvas();
     window.addEventListener("resize", this.adjustCanvas);
 
-    // TODO: Review for hollow objects
     this.gl.enable(WebGLRenderingContext.CULL_FACE);
     this.gl.enable(WebGLRenderingContext.DEPTH_TEST);
+  }
+
+  clean() {
+    this.gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
   }
 
   setViewport(x: number, y: number, width: number, height: number) {
@@ -105,6 +109,27 @@ export class WebGLRenderer {
       u_projection: M4.flatten(camera.projectionMatrix),
       u_view: M4.flatten(camera.computeViewMatrix()),
     });
+
+    if (scene instanceof Mesh) {
+      //TODO: Optimize this call
+      scene.computeWorldMatrix(false, false);
+
+      this.createOrGetMaterial(scene.material);
+
+      WebGLUtil.setAttributes(this.currentProgram, {
+        a_normal: scene.geometry.normal,
+        a_position: scene.geometry.position,
+        a_texCoord: scene.geometry.texCoords,
+      });
+      WebGLUtil.setUniforms(this.currentProgram, {
+        u_world: M4.flatten(scene.worldMatrix),
+        u_normalMat: M4.flatten(scene.worldMatrix.inverse().transpose()),
+      });
+      scene.material.loadUniform(this);
+
+      // TODO: Use indices when drawing
+      this.gl.drawArrays(this.gl.TRIANGLES, 0, scene.geometry.position!.length);
+    }
 
     scene.children.forEach((node) => {
       this.renderNodes(node);

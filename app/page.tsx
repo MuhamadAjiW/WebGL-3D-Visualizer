@@ -29,8 +29,6 @@ export default function Home() {
   const [isComponentExpanded, setIsComponentExpanded] = useState<boolean>(true);
   const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(true);
   const [activeComponent, setActiveComponent] = useState<Object3D | null>(null);
-  const [activeComponentAnim, setActiveComponentAnim] =
-    useState<Object3D | null>(null);
   const [isControllerChange, setIsControllerChange] = useState<boolean>(false);
 
   const [cameraController, setCameraController] =
@@ -59,7 +57,6 @@ export default function Home() {
     const loadedSceneCopy = loader.loadFromJson(JSON.stringify(loaded)).scene;
     setData(loadedScene);
     setActiveComponent(loadedScene);
-    setActiveComponentAnim(loadedSceneCopy);
   };
 
   useEffect(() => {
@@ -160,11 +157,12 @@ export default function Home() {
         setActiveComponent(data);
       } else {
         setActiveComponent(selectedComponent);
+        console.log(selectedComponent.name);
       }
     }
   };
 
-  if (!data || !activeComponent || !activeComponentAnim)
+  if (!data || !activeComponent)
     return <div>Loading...</div>;
 
   return (
@@ -277,7 +275,7 @@ export default function Home() {
           </div>
           <div className="bg-white flex-grow relative">
             <RenderComponent
-              activeComponent={activeComponentAnim}
+              activeComponent={activeComponent}
               isControllerChange={isControllerChange}
               cameraController={cameraController}
               setCameraController={setCameraController}
@@ -297,7 +295,7 @@ export default function Home() {
             isExpanded={isComponentExpanded}
             handleClick={handleComponentExpanded}
             title="Component Controller"
-            component={activeComponent!!}
+            component={activeComponent}
             handleSubmit={handleSubmitController}
             isControllerChange={isControllerChange}
           />
