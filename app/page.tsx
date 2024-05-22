@@ -284,7 +284,8 @@ export default function Home() {
               label="Auto Replay"
             ></FormControlLabel>
           </FormGroup>
-          <div className="pt-2">
+          <div className="flex gap-5 py-4 items-center justify-between">
+            <div>Frame</div>
             <CustomSlider
               aria-label="ios slider"
               value={frameSlider}
