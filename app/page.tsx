@@ -5,9 +5,14 @@ import RenderComponent from "@/components/render/RenderComponent";
 import TreeView from "@/components/ui/TreeView";
 import { TreeViewBaseItem } from "@mui/x-tree-view";
 import Controller from "@/components/ui/Controller";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CameraController from "@/components/camera/CameraController";
-import { SelectChangeEvent } from "@mui/material";
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  SelectChangeEvent,
+} from "@mui/material";
 import { convertGLTFToTreeView, findMeshById } from "@/libs/helper";
 import { Loader } from "@/libs/class/loader/loader";
 import { Scene } from "@/libs/class/scene";
@@ -55,29 +60,30 @@ export default function Home() {
       playback: false,
     });
 
-  const handleAnimationController = (controller: string) => {
+  const {reverse, playback} = animationController
+
+  const handleAnimationControllerButton = (controller: string) => {
     if (controller === "play") {
       setAnimationController((prevState) => ({
         ...prevState,
         play: !animationController.play,
+        pause: false
       }));
     } else if (controller === "pause") {
       setAnimationController((prevState) => ({
         ...prevState,
         pause: !animationController.pause,
-      }));
-    } else if (controller === "reverse") {
-      setAnimationController((prevState) => ({
-        ...prevState,
-        reverse: !animationController.reverse,
-      }));
-    } else if (controller === "playback") {
-      setAnimationController((prevState) => ({
-        ...prevState,
-        playback: !animationController.playback,
+        play: false
       }));
     }
     setIsControllerChange(!isControllerChange);
+  };
+
+  const handleAnimationControllerCheckbox = (event: React.ChangeEvent<HTMLInputElement>) =>{
+    setAnimationController(prevState => ({
+      ...prevState,
+      [event.target.name]: event.target.checked
+    }))
   }
 
   const handleSubmitController = (values: any) => {
@@ -167,8 +173,6 @@ export default function Home() {
             selectedComponent={component}
             meshes={data.children}
             isControllerChange={isControllerChange}
-            animationController={animationController}
-            setAnimationController={setAnimationController}
           />
         </div>
       </div>
@@ -206,7 +210,7 @@ export default function Home() {
             <Button
               id="play-button"
               handleClick={() => {
-                handleAnimationController("play");
+                handleAnimationControllerButton("play");
               }}
               text="Play"
               className="bg-white text-black px-4"
@@ -214,12 +218,12 @@ export default function Home() {
             <Button
               id="pause-button"
               handleClick={() => {
-                handleAnimationController("pause");
+                handleAnimationControllerButton("pause");
               }}
               text="Pause"
               className="bg-white text-black px-4"
             />
-            <Button
+            {/* <Button
               id="reverse-button"
               handleClick={() => {
                 handleAnimationController("reverse");
@@ -234,8 +238,42 @@ export default function Home() {
               }}
               text="Auto Replay"
               className="bg-white text-black px-4"
-            />
+            /> */}
           </div>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  sx={{
+                    color: "white",
+                    "&.Mui-checked": {
+                      color: "silver",
+                    },
+                  }}
+                  checked={reverse}
+                  onChange={handleAnimationControllerCheckbox}
+                  name="reverse"
+                />
+              }
+              label="Reverse"
+            ></FormControlLabel>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  sx={{
+                    color: "white",
+                    "&.Mui-checked": {
+                      color: "silver",
+                    },
+                  }}
+                  checked={playback}
+                  onChange={handleAnimationControllerCheckbox}
+                  name="playback"
+                />
+              }
+              label="Auto Replay"
+            ></FormControlLabel>
+          </FormGroup>
           <div className="bg-white flex-grow">
             <RenderComponent
               cameraType={camera}

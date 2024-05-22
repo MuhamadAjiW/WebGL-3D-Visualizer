@@ -43,8 +43,8 @@ interface HooksRenderProps {
   selectedComponent: any; // change this later
   meshes: any;
   isControllerChange: boolean;
-  animationController: AnimationController;
-  setAnimationController: Dispatch<SetStateAction<AnimationController>>;
+  animationController?: AnimationController;
+  setAnimationController?: Dispatch<SetStateAction<AnimationController>>;
 }
 
 // TODO: Delete
@@ -301,6 +301,7 @@ const useRender = ({
       if (animationController) {
         const newAnimationController = animationController;
 
+        console.log("this is reverse", animationController.reverse)
         animationRunner.loop = animationController.playback;
         animationRunner.reverse = animationController.reverse;
         if (animationController.pause) {
@@ -313,7 +314,7 @@ const useRender = ({
           newAnimationController.play = false;
         }
 
-        setAnimationController(newAnimationController);
+        if(setAnimationController) setAnimationController(newAnimationController);
       }
 
       console.log("This is animation scene", animationController);
@@ -350,10 +351,10 @@ const useRender = ({
     selectedComponent,
     meshes,
     isControllerChange,
-    animationController.play,
-    animationController.pause,
-    animationController.reverse,
-    animationController.playback,
+    animationController?.play,
+    animationController?.pause,
+    animationController?.reverse,
+    animationController?.playback,
   ]);
 
   return canvasRef;
