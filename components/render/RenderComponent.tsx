@@ -1,12 +1,10 @@
 import useRender from "@/hooks/useRender";
-import { Mesh } from "@/libs/class/mesh";
 import { Dispatch, SetStateAction } from "react";
-import CameraController from '@/components/camera/CameraController';
 import { AnimationControllerType, CameraControllerType } from "@/libs/controllers";
+import Object3D from "@/libs/class/object3d";
 
 interface RenderedComponentProps {
-  selectedComponent: Mesh | null; // change this later
-  meshes: any;
+  activeComponent: Object3D; // change this later
   isControllerChange: boolean;
   cameraController: CameraControllerType
   setCameraController: Dispatch<SetStateAction<CameraControllerType>>
@@ -16,8 +14,7 @@ interface RenderedComponentProps {
 }
 
 const RenderedComponent: React.FC<RenderedComponentProps> = ({
-  selectedComponent,
-  meshes,
+  activeComponent,
   isControllerChange,
   setCameraController,
   animationController,
@@ -26,8 +23,7 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({
   className
 }: RenderedComponentProps) => {
   const canvasRef = useRender({
-    selectedComponent,
-    meshes,
+    activeComponent,
     isControllerChange,
     cameraController,
     setCameraController,

@@ -26,8 +26,7 @@ import { useEffect, useRef } from "react";
 import { AnimationRunner } from "../libs/class/animation/animation-runner";
 
 interface HooksRenderProps {
-  selectedComponent: any; // change this later
-  meshes: any;
+  activeComponent: Object3D; // change this later
   isControllerChange: boolean;
   cameraController: CameraControllerType;
   setCameraController: Dispatch<SetStateAction<CameraControllerType>>;
@@ -94,8 +93,7 @@ const dummyUniformsData = {
 };
 
 const useRender = ({
-  selectedComponent,
-  meshes,
+  activeComponent,
   isControllerChange,
   cameraController,
   setCameraController,
@@ -107,7 +105,6 @@ const useRender = ({
   const activeCameraRef = useRef<Camera | null>(null);
   const activeCameraTypeRef = useRef<String | null>(null);
   const activeComponentRef = useRef<Object3D | null>(null);
-  const selectedComponentRef = useRef<any | null>(null);
   const animationRunnerRef = useRef<AnimationRunner | null>(null);
   const refreshRequest = useRef<number>(0);
   const refreshRequestDelay = 0.05;
@@ -228,37 +225,6 @@ const useRender = ({
     newAnimationControllerState.maxFrame = clip.frames.length;
   }
 
-  function setupComponent(selectedComponent: any) {
-    selectedComponentRef.current = selectedComponent;
-    activeComponentRef.current = new Scene();
-
-    const meshConverter = async (mesh: any) => {
-      // change the param type later
-      const geometry = mesh.geometry;
-      const material = await mesh.material;
-      const meshComp = new Mesh(geometry, material);
-
-      meshComp.name = mesh.name;
-      meshComp.position = mesh.position;
-      meshComp.rotation = mesh.rotation;
-      meshComp.scale = mesh.scale;
-
-      activeComponentRef.current!.add(meshComp);
-
-      for (let child of mesh.children) {
-        meshConverter(child);
-      }
-    };
-
-    if (selectedComponent) {
-      meshConverter(selectedComponent);
-    } else {
-      for (let mesh of meshes) {
-        meshConverter(mesh);
-      }
-    }
-  }
-
   useEffect(() => {
     // console.log("this is scene", meshes);
     // console.log("this is selected component", selectedComponent);
@@ -286,8 +252,11 @@ const useRender = ({
         setupCamera(cameraController.type);
       }
 
-      if (selectedComponent || !activeComponentRef.current) {
-        setupComponent(selectedComponent);
+      if (
+        !activeComponentRef.current ||
+        activeComponentRef.current != activeComponent
+      ) {
+        activeComponentRef.current = activeComponent;
         setupAnimationRunner(testAnim, activeComponentRef.current!);
       }
 
@@ -336,7 +305,7 @@ const useRender = ({
           newAnimationControllerState.pause = false;
         }
         if (animationController.play) {
-          console.log("Playing");
+          // console.log("Playing");
           animationRunner.playAnimation();
           newAnimationControllerState.play = false;
         }
@@ -378,9 +347,8 @@ const useRender = ({
       stop = true;
     };
   }, [
-    selectedComponent,
-    meshes,
-    isControllerChange,
+    // activeComponent,
+    // isControllerChange,
     cameraController.distance,
     cameraController.reset,
     cameraController.type,

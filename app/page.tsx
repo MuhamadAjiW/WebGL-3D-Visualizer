@@ -1,67 +1,44 @@
 "use client";
 
-import Button from "@/components/ui/Button";
-import RenderComponent from "@/components/render/RenderComponent";
-import TreeView from "@/components/ui/TreeView";
-import { TreeViewBaseItem } from "@mui/x-tree-view";
-import ComponentController from "@/components/ui/Controller";
-import React, { useEffect, useState } from "react";
 import CameraController from "@/components/camera/CameraController";
-import {
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  SelectChangeEvent,
-} from "@mui/material";
-import { convertGLTFToTreeView, findMeshById } from "@/libs/helper";
-import { Loader } from "@/libs/class/loader/loader";
-import { Scene } from "@/libs/class/scene";
-import { Mesh } from "@/libs/class/mesh";
-import Vector3 from "@/libs/base-types/vector3";
-import { Quaternion } from "@/libs/base-types/quaternion";
-import { Euler } from "@/libs/base-types/euler";
+import RenderComponent from "@/components/render/RenderComponent";
+import Button from "@/components/ui/Button";
+import ComponentController from "@/components/ui/Controller";
 import CustomSlider from "@/components/ui/slider";
-import { AnimationControllerType, CameraControllerType, ComponentControllerType } from "@/libs/controllers";
+import TreeView from "@/components/ui/TreeView";
+import { Euler } from "@/libs/base-types/euler";
+import { Quaternion } from "@/libs/base-types/quaternion";
+import Vector3 from "@/libs/base-types/vector3";
+import { Loader } from "@/libs/class/loader/loader";
+import { Mesh } from "@/libs/class/mesh";
+import Object3D from "@/libs/class/object3d";
+import { Scene } from "@/libs/class/scene";
+import {
+  AnimationControllerType,
+  CameraControllerType,
+} from "@/libs/controllers";
+import { convertGLTFToTreeView, findMeshById } from "@/libs/helper";
+import { MathUtil } from "@/libs/util/math-util";
+import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
+import { TreeViewBaseItem } from "@mui/x-tree-view";
+import React, { useEffect, useState } from "react";
 
 export default function Home() {
+  // States
   const [data, setData] = useState<Scene | null>(null);
-
-  const fetchData = async () => {
-    const response = await fetch("/scene.json");
-    const data = await response.json();
-
-    const loader: Loader = new Loader();
-    setData(loader.loadFromJson(JSON.stringify(data)).scene);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const GLTFTree = {
-    id: `scene-${data?.name}`,
-    name: data?.name,
-    children: data?.children,
-  };
-
-  const treeItems: TreeViewBaseItem[] = [convertGLTFToTreeView(GLTFTree)];
-
   const [isComponentExpanded, setIsComponentExpanded] = useState<boolean>(true);
   const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(true);
-  const [component, setComponent] = useState<Mesh | null>(null);
+  const [activeComponent, setActiveComponent] = useState<Object3D | null>(null);
+  const [activeComponentAnim, setActiveComponentAnim] =
+    useState<Object3D | null>(null);
   const [isControllerChange, setIsControllerChange] = useState<boolean>(false);
 
-  const [cameraController, setCameraController] = useState<CameraControllerType>({
-    type: "orthographicCamera",
-    distance: 3,
-    reset: false
-  }) 
-  const [componentController, setComponentController] = useState<ComponentControllerType>({
-    activeComponent: null,
-    position: new Vector3(),
-    rotation: new Euler(),
-    scale: new Vector3()
-  }) 
+  const [cameraController, setCameraController] =
+    useState<CameraControllerType>({
+      type: "orthographicCamera",
+      distance: 3,
+      reset: false,
+    });
   const [animationController, setAnimationController] =
     useState<AnimationControllerType>({
       play: false,
@@ -72,13 +49,37 @@ export default function Home() {
       maxFrame: 0,
     });
 
-  const { reverse, playback } = animationController;
+  // Fetch data with default to initialize
+  const fetchData = async () => {
+    const response = await fetch("/scene.json");
+    const loaded = await response.json();
 
+    const loader: Loader = new Loader();
+    const loadedScene = loader.loadFromJson(JSON.stringify(loaded)).scene;
+    const loadedSceneCopy = loader.loadFromJson(JSON.stringify(loaded)).scene;
+    setData(loadedScene);
+    setActiveComponent(loadedScene);
+    setActiveComponentAnim(loadedSceneCopy);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Generate tree from received file
+  const GLTFTree = {
+    id: `scene-${data?.name}`,
+    name: data?.name,
+    children: data?.children,
+  };
+  const treeItems: TreeViewBaseItem[] = [convertGLTFToTreeView(GLTFTree)];
+
+  // UI
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === "number") {
       setAnimationController((prevState) => ({
         ...prevState,
-        currentFrame: newValue
+        currentFrame: newValue,
       }));
       // console.log("Slider value: ", newValue)
     }
@@ -118,22 +119,22 @@ export default function Home() {
       values.position.y,
       values.position.z
     );
-    const rotation = new Quaternion(
-      values.rotation.w,
-      values.rotation.x,
-      values.rotation.y,
-      values.rotation.z
+
+    const rotation = Quaternion.Euler(
+      new Euler(
+        MathUtil.DegreesToRad(values.rotation.x),
+        MathUtil.DegreesToRad(values.rotation.y),
+        MathUtil.DegreesToRad(values.rotation.z)
+      )
     );
     const scale = new Vector3(values.scale.x, values.scale.y, values.scale.z);
 
-    if (component) {
-      component.position = position;
-      component.rotation = rotation;
-      component.scale = scale;
-      setComponent(component);
+    if (activeComponent) {
+      activeComponent.position = position;
+      activeComponent.rotation = rotation;
+      activeComponent.scale = scale;
+      setActiveComponent(activeComponent);
       setIsControllerChange(!isControllerChange);
-    } else {
-      setComponent(null);
     }
 
     // console.log("This is Current Component", component);
@@ -153,16 +154,18 @@ export default function Home() {
     isSelected: boolean
   ) => {
     if (isSelected) {
-      if (!GLTFTree.children) return;
+      // if (!GLTFTree.children) return;
       const selectedComponent = findMeshById(GLTFTree.children, itemId);
-      setComponent(selectedComponent);
-      // console.log(itemId, selectedComponent);
-    } else {
-      setComponent(null);
+      if (!selectedComponent) {
+        setActiveComponent(data);
+      } else {
+        setActiveComponent(selectedComponent);
+      }
     }
   };
 
-  if (!data) return <div>Loading...</div>;
+  if (!data || !activeComponent || !activeComponentAnim)
+    return <div>Loading...</div>;
 
   return (
     <div className="flex w-full h-screen bg-main-black text-white">
@@ -172,8 +175,7 @@ export default function Home() {
         </div>
         <div className="bg-white text-black flex-grow">
           <RenderComponent
-            selectedComponent={component}
-            meshes={data.children}
+            activeComponent={activeComponent}
             isControllerChange={isControllerChange}
             cameraController={cameraController}
             setCameraController={setCameraController}
@@ -238,7 +240,7 @@ export default function Home() {
                       color: "silver",
                     },
                   }}
-                  checked={reverse}
+                  checked={animationController.reverse}
                   onChange={handleAnimationControllerCheckbox}
                   name="reverse"
                 />
@@ -254,7 +256,7 @@ export default function Home() {
                       color: "silver",
                     },
                   }}
-                  checked={playback}
+                  checked={animationController.playback}
                   onChange={handleAnimationControllerCheckbox}
                   name="playback"
                 />
@@ -275,8 +277,7 @@ export default function Home() {
           </div>
           <div className="bg-white flex-grow relative">
             <RenderComponent
-              selectedComponent={component}
-              meshes={data.children}
+              activeComponent={activeComponentAnim}
               isControllerChange={isControllerChange}
               cameraController={cameraController}
               setCameraController={setCameraController}
@@ -296,8 +297,9 @@ export default function Home() {
             isExpanded={isComponentExpanded}
             handleClick={handleComponentExpanded}
             title="Component Controller"
-            component={component!!}
+            component={activeComponent!!}
             handleSubmit={handleSubmitController}
+            isControllerChange={isControllerChange}
           />
           <CameraController
             id="camera-controller"

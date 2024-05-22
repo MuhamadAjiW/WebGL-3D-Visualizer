@@ -11,13 +11,6 @@ export type AnimationControllerType = {
   maxFrame: number;
 };
 
-export type ComponentControllerType = {
-  activeComponent: Object3D | null;
-  position: Vector3;
-  rotation: Euler;
-  scale: Vector3;
-};
-
 export type CameraControllerType = {
   type: string;
   distance: number;
@@ -35,18 +28,6 @@ export function checkAnimationUpdate(
     newControllerState.play != animationController.play ||
     newControllerState.playback != animationController.playback ||
     newControllerState.reverse != animationController.reverse
-  );
-}
-
-export function checkComponentUpdate(
-  newControllerState: ComponentControllerType,
-  componentController: ComponentControllerType
-): boolean {
-  return (
-    newControllerState.activeComponent != componentController.activeComponent ||
-    !newControllerState.position.equals(componentController.position) ||
-    !newControllerState.rotation.equals(componentController.rotation) ||
-    !newControllerState.scale.equals(componentController.scale)
   );
 }
 

@@ -40,8 +40,10 @@ const CameraController: React.FC<ControllerProps> = ({
 
   let newCameraState: CameraControllerType = { ...cameraController }
   const handleDistanceChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    newCameraState.distance = +event.target.value;
-    setCameraController(newCameraState);
+    if(+event.target.value){
+      newCameraState.distance = +event.target.value;
+      setCameraController(newCameraState);
+    }
   }
 
   const handleCameraChange = (event: SelectChangeEvent) => {

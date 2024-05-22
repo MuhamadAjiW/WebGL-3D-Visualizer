@@ -1,3 +1,4 @@
+import { MathUtil } from "../util/math-util";
 import M4 from "./m4";
 import { Quaternion } from "./quaternion";
 import Vector3 from "./vector3";
@@ -140,6 +141,14 @@ export class Euler {
     this.z = vector.z;
     this.order = order ?? this.order;
     return this;
+  }
+
+  toVector3Degrees(): Vector3 {
+    const vector = new Vector3();
+    vector.x = MathUtil.RadToDegrees(this.x);
+    vector.y = MathUtil.RadToDegrees(this.y);
+    vector.z = MathUtil.RadToDegrees(this.z);
+    return vector;
   }
 
   toArray(

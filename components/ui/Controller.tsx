@@ -8,14 +8,16 @@ import Object3D from "@/libs/class/object3d";
 import { Quaternion } from "@/libs/base-types/quaternion";
 import { Euler } from "@/libs/base-types/euler";
 import Vector3 from "@/libs/base-types/vector3";
+import { useEffect, useRef } from "react";
 
 interface ControllerProps {
   id: string;
   isExpanded: boolean;
   handleClick: () => void;
   title: string;
-  component: Object3D; // this will be change later
-  handleSubmit: (values: any) => void; // this will be change later
+  component: Object3D;
+  handleSubmit: (values: any) => void;
+  isControllerChange: boolean;
 }
 
 const ComponentController: React.FC<ControllerProps> = ({
@@ -25,35 +27,49 @@ const ComponentController: React.FC<ControllerProps> = ({
   title,
   component,
   handleSubmit,
+  isControllerChange,
 }) => {
-  let rotation = new Euler();
-  let position = new Vector3();
-  let scale = new Vector3();
-  let name = "";
-  if(component){
-    rotation.setFromQuaternion(component.rotation as Quaternion);
-    position = component.position;
-    scale = component.scale;
-    name = component.name;
+  // TODO: setFromQuaternion is a little off here for some reason on the y axis at 90 degrees
+  // The quick fix is just to only load it whenever the components reset so uhh
+  const savedComponent123 = useRef<Object3D | null>(null)
+  const rotation = useRef<Vector3>(Vector3.zero)
+  const position = useRef<Vector3>(Vector3.zero)
+  const scale = useRef<Vector3>(Vector3.one)
+  const name = useRef<string>("")
+
+  console.log("Refreshing controllerr")
+
+  if(component && component != savedComponent123.current){
+    console.log("Reloading model in controller")
+    console.log(savedComponent123.current != component)
+
+    savedComponent123.current = component;
+
+    const euler = new Euler()
+    euler.setFromQuaternion(component.rotation as Quaternion);
+    rotation.current = euler.toVector3Degrees();
+    position.current = component.position;
+    scale.current = component.scale;
+    name.current = component.name;
   }
 
   const formik = useFormik({
     initialValues: {
-      name: name,
+      name: name.current,
       position: {
-        x: position.x,
-        y: position.y,
-        z: position.z,
+        x: position.current.x,
+        y: position.current.y,
+        z: position.current.z,
       },
       rotation: {
-        x: rotation.x,
-        y: rotation.y,
-        z: rotation.z,
+        x: rotation.current.x,
+        y: rotation.current.y,
+        z: rotation.current.z,
       },
       scale: {
-        x: scale.x,
-        y: scale.y,
-        z: scale.z,
+        x: scale.current.x,
+        y: scale.current.y,
+        z: scale.current.z,
       },
     },
     onSubmit: (values) => {
@@ -65,6 +81,7 @@ const ComponentController: React.FC<ControllerProps> = ({
   const refresh = (e: React.ChangeEvent<HTMLInputElement>) => {
     formik.handleChange(e);
     formik.submitForm()
+    console.log("Value Changed")
   }
 
   return (

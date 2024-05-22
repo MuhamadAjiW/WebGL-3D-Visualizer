@@ -1,10 +1,9 @@
 import { AnimationClip, AnimationPath } from "../../base-types/animation";
-import Object3D from "../object3d";
-import Vector3 from "../../base-types/vector3";
 import { Euler } from "../../base-types/euler";
 import { Quaternion } from "../../base-types/quaternion";
+import Vector3 from "../../base-types/vector3";
+import Object3D from "../object3d";
 import { AnimationEasingFunc, AnimationEasingType } from "./animation-easing";
-import { late } from "zod";
 
 export class AnimationRunner {
   isPlaying: boolean = false;
@@ -36,11 +35,6 @@ export class AnimationRunner {
     this.easing = options.easing || AnimationEasingType.LINEAR;
     this.loop = options.loop || false;
     this.reverse = options.reverse || false;
-
-    // const snapshot = this.root;
-    // snapshot.name = "Snapshot";
-    // console.log(snapshot.name);
-    // console.log(this.root.name);
   }
 
   private createSnapshot() {
@@ -87,8 +81,6 @@ export class AnimationRunner {
   }
 
   public setFrame(frameIndex: number) {
-    // console.log("Setting frame: ", frameIndex);
-    // console.log("Setting node: ", this.root);
     this.CurrentFrame = frameIndex;
     this.setKeyframe(this.root, this.currentAnimation!.frames[frameIndex]);
   }
@@ -98,7 +90,6 @@ export class AnimationRunner {
       const progress =
         ((new Date().getTime() - this.lastFrameTime) / 1000) * this.fps;
       const modifier = AnimationEasingFunc[this.easing](progress);
-      console.log(modifier);
 
       this.updateSceneGraph(
         this.root,
