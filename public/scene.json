@@ -675,9 +675,9 @@
                 1
             ],
             "name": "Scene",
-            "rotation": "[1,0,0,0]",
-            "scale": "[1,1,1]",
-            "translation": "[0,0,0]",
+            "rotation": [1,0,0,0],
+            "scale": [1,1,1],
+            "translation": [0,0,0],
             "visible": true
         },
         {
@@ -687,27 +687,27 @@
             ],
             "meshIndex": 0,
             "name": "Parent",
-            "rotation": "[1,0,0,0]",
-            "scale": "[1,1,1]",
-            "translation": "[0,0,0]",
+            "rotation": [1,0,0,0],
+            "scale": [1,1,1],
+            "translation": [0,0,0],
             "visible": true
         },
         {
             "children": [],
             "meshIndex": 1,
             "name": "Left",
-            "rotation": "[1,0,0,0]",
-            "scale": "[1,1,1]",
-            "translation": "[-0.25,0,0]",
+            "rotation": [1,0,0,0],
+            "scale": [1,1,1],
+            "translation": [-0.25,0,0],
             "visible": true
         },
         {
             "children": [],
             "meshIndex": 2,
             "name": "Right",
-            "rotation": "[1,0,0,0]",
-            "scale": "[1,1,1]",
-            "translation": "[0.25,0,0]",
+            "rotation": [1,0,0,0],
+            "scale": [1,1,1],
+            "translation": [0.25,0,0],
             "visible": true
         }
     ],
@@ -717,7 +717,7 @@
             "format": 6408,
             "generateMipmaps": false,
             "id": 1,
-            "image_path": "res/f-texture.png",
+            "image": "res/f-texture.png",
             "isActive": false,
             "magFilter": 9728,
             "minFilter": 9728,

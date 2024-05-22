@@ -31,7 +31,7 @@ export default function Home() {
     const data = await response.json();
 
     const loader: Loader = new Loader();
-    setData(loader.loadFromJson(JSON.stringify(data)));
+    setData(loader.loadFromJson(JSON.stringify(data)).scene);
   };
 
   useEffect(() => {

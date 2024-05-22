@@ -108,8 +108,8 @@ export class Vector3 {
     return new Vector3();
   }
 
-  toJSON(): string {
-    return [this.x, this.y, this.z].toString();
+  toJSON() {
+    return [this.x, this.y, this.z];
   }
 }
 

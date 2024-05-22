@@ -22,6 +22,11 @@ import { CubeGeometry } from "../geometry/cube-geometry";
 import { PlaneGeometry } from "../geometry/plane-geometry";
 import { HollowBlockGeometry } from "../geometry/hollow-block-geometry";
 import { HollowPlaneGeometry } from "../geometry/hollow-plane-geometry";
+import {
+  AnimationClip,
+  AnimationPath,
+  AnimationTRS,
+} from "@/libs/base-types/animation";
 
 const ArrayIndex = z.array(z.number().int());
 
@@ -29,27 +34,27 @@ const ArrayNumber = z.array(z.number());
 
 const Matrix = z.array(z.array(z.number()));
 
-const typedArraySchema = z.union([
-  z.instanceof(Float32Array),
-  z.instanceof(Uint8Array),
-  z.instanceof(Uint16Array),
-  z.instanceof(Uint32Array),
-  z.instanceof(Int8Array),
-  z.instanceof(Int16Array),
-  z.instanceof(Int32Array),
-]);
+// const typedArraySchema = z.union([
+//   z.instanceof(Float32Array),
+//   z.instanceof(Uint8Array),
+//   z.instanceof(Uint16Array),
+//   z.instanceof(Uint32Array),
+//   z.instanceof(Int8Array),
+//   z.instanceof(Int16Array),
+//   z.instanceof(Int32Array),
+// ]);
 
 const BufferAttributeSchema = z.object({
-  _data: typedArraySchema,
+  _data: z.record(z.string(), z.number()),
   _size: z.number(),
   _dtype: z.number(),
 });
 
-const BufferUniform = z.object({
-  data: z.union([typedArraySchema, z.number()]),
-  size: z.number(),
-  dtype: z.number(),
-});
+// const BufferUniform = z.object({
+//   data: z.union([typedArraySchema, z.number()]),
+//   size: z.number(),
+//   dtype: z.number(),
+// });
 
 // Convert enum values to a string array for Zod
 const CameraTypeSchema = z.enum([
@@ -65,21 +70,28 @@ const ColorSchema = z.object({
   a: z.number(),
 });
 
-const AnimationTRS = z.object({
+const AnimationTRSSchema = z.object({
   translation: z.array(z.number()).optional(),
   rotation: z.array(z.number()).optional(),
   scale: z.array(z.number()).optional(),
 });
 
-const AnimationPath: z.ZodSchema<any> = z.lazy(() =>
+const AnimationPathSchema: z.ZodSchema<any> = z.lazy(() =>
   z.object({
-    keyframe: AnimationTRS.optional(),
-    children: z.record(AnimationPath).optional(),
+    keyframe: AnimationTRSSchema.optional(),
+    children: z
+      .array(
+        z.object({
+          name: z.string(),
+          child: AnimationPathSchema,
+        })
+      )
+      .optional(),
   })
 );
 
 const GLTFSchema = z.object({
-  scene: ArrayIndex,
+  scene: z.number().int(),
   nodes: z.array(
     z.object({
       translation: ArrayNumber,
@@ -88,8 +100,8 @@ const GLTFSchema = z.object({
       children: ArrayIndex,
       visible: z.boolean(),
       name: z.string(),
-      cameraIndex: ArrayIndex.optional(), // cameras
-      meshIndex: ArrayIndex.optional(), // meshes
+      cameraIndex: z.number().int().optional(), // cameras
+      meshIndex: z.number().int().optional(), // meshes
     })
   ),
   cameras: z.array(
@@ -110,8 +122,8 @@ const GLTFSchema = z.object({
   meshes: z.array(
     z.object({
       // For mesh
-      meshGeometry: ArrayIndex.optional(), // geometries
-      meshMaterial: ArrayIndex.optional(), //materials
+      meshGeometry: z.number().int().optional(), // geometries
+      meshMaterial: z.number().int().optional(), //materials
     })
   ),
   geometries: z.array(
@@ -130,7 +142,7 @@ const GLTFSchema = z.object({
       id: z.string(),
       materialType: z.number(),
       // Shader material has textures? tapi disini kah?
-      texture: ArrayIndex, // textures
+      texture: z.number().int(), // textures
       ambient: ColorSchema.optional(),
       diffuse: ColorSchema.optional(),
       specular: ColorSchema.optional(),
@@ -159,10 +171,9 @@ const GLTFSchema = z.object({
     z.object({
       name: z.string(),
       // animation path
-      frames: z.array(ArrayIndex), // animationpaths
+      frames: z.array(AnimationPathSchema), // animationpaths
     })
   ),
-  animationpaths: z.array(AnimationPath),
 });
 
 export class Loader {
@@ -174,12 +185,14 @@ export class Loader {
   private geometryMap: Map<BufferGeometry, number>;
   private materialMap: Map<ShaderMaterial, number>;
   private textureMap: Map<Texture, number>;
+  private animationPathMap: Map<AnimationPath, number>;
   private loadNodeMap: Map<number, Object3D>;
   private loadCameraMap: Map<number, Camera>;
   private loadMeshMap: Map<number, Mesh>;
   private loadGeometryMap: Map<number, BufferGeometry>;
   private loadMaterialMap: Map<number, ShaderMaterial>;
   private loadTextureMap: Map<number, Texture>;
+  private loadAnimationPathMap: Map<number, AnimationPath>;
 
   constructor() {
     this.nodeMap = new Map();
@@ -188,15 +201,17 @@ export class Loader {
     this.geometryMap = new Map();
     this.materialMap = new Map();
     this.textureMap = new Map();
+    this.animationPathMap = new Map();
     this.loadNodeMap = new Map();
     this.loadCameraMap = new Map();
     this.loadMeshMap = new Map();
     this.loadGeometryMap = new Map();
     this.loadMaterialMap = new Map();
     this.loadTextureMap = new Map();
+    this.loadAnimationPathMap = new Map();
   }
 
-  public save(scene: Scene, filename: string) {
+  public save(scene: Scene, animationList: AnimationClip[] = []) {
     // traverse scene tree
     this.savedData = {
       scene: null,
@@ -212,8 +227,23 @@ export class Loader {
     };
 
     this.savedData.scene = this.traverseNode(scene);
+
+    // Save animation list
+    if (animationList.length > 0) {
+      for (let i = 0; i < animationList.length; i++) {
+        this.saveAnimationClip(animationList[i]);
+      }
+    }
+
+    const result = GLTFSchema.safeParse(this.savedData);
+    if (result.success) {
+      console.log("Validation successful:", result.data);
+    } else {
+      console.error("Validation failed:", result.error.errors);
+    }
+
     // Now savedData contains the serialized scene data
-    console.log(JSON.stringify(this.savedData));
+    console.log(JSON.stringify(this.savedData, null, 2));
   }
 
   // Recursive method to traverse and save a node
@@ -415,12 +445,85 @@ export class Loader {
     };
   }
 
-  public loadFromJson(jsonString: string): Scene {
-    this.savedData = JSON.parse(jsonString);
-    return this.load();
+  private saveAnimationClip(clip: AnimationClip) {
+    const animationData = {
+      name: clip.name,
+      frames: this.saveAnimationPathList(clip.frames),
+    };
+
+    this.savedData.animations.push(animationData);
   }
 
-  public load(): Scene {
+  private saveAnimationPathList(pathList: AnimationPath[]) {
+    // return a list of animation paths
+    let ret = [];
+    for (const path of pathList) {
+      ret.push(this.saveAnimationPath(path));
+    }
+    return ret;
+  }
+
+  private saveAnimationPath(path: AnimationPath): any {
+    const animationPathData: {
+      id: string;
+      keyframe?: {
+        translation?: [number, number, number];
+        rotation?: [number, number, number];
+        scale?: [number, number, number];
+      };
+      children?: { [childName: string]: any };
+    } = { id: this.generateUniqueId() };
+
+    if (path.keyframe) {
+      animationPathData.keyframe = this.saveTRS(path.keyframe);
+    }
+
+    if (path.children) {
+      const childrenData: { [childName: string]: any } = {};
+      for (const [childName, childPath] of Object.entries(path.children)) {
+        childrenData[childName] = this.saveAnimationPath(childPath);
+      }
+      animationPathData.children = childrenData;
+    }
+
+    return animationPathData;
+  }
+
+  private generateUniqueId(): string {
+    return "_" + Math.random().toString(36).substr(2, 9);
+  }
+
+  private saveTRS(keyframe: AnimationTRS) {
+    return {
+      ...(keyframe.translation && { translation: keyframe.translation }),
+      ...(keyframe.rotation && { rotation: keyframe.rotation }),
+      ...(keyframe.scale && { scale: keyframe.scale }),
+    };
+  }
+
+  public loadFromJson(jsonString: string): {
+    scene: Scene;
+    animations: AnimationClip[];
+  } {
+    this.savedData = JSON.parse(jsonString);
+
+    let scene = this.loadScene();
+    let animationClip = this.loadAnimationClip();
+
+    // check valid
+    const result = GLTFSchema.safeParse(this.savedData);
+    if (result.success) {
+      console.log("Validation successful:", result.data);
+    } else {
+      console.error("Validation failed:", result.error.errors);
+    }
+    return {
+      scene: scene,
+      animations: animationClip,
+    };
+  }
+
+  public loadScene(): Scene {
     let scene: Scene = new Scene();
     this.loadNodeMap = new Map();
     this.loadCameraMap = new Map();
@@ -448,13 +551,6 @@ export class Loader {
 
     scene.computeWorldMatrix();
 
-    // check valid
-    const result = GLTFSchema.safeParse(this.savedData);
-    if (result.success) {
-      console.log("Validation successful:", result.data);
-    } else {
-      console.error("Validation failed:", result.error.errors);
-    }
     return scene;
   }
 
@@ -471,9 +567,9 @@ export class Loader {
       node = new Object3D();
     }
 
-    node.position = new Vector3(...(JSON.parse(nodeData.translation) as []));
-    node.rotation = new Quaternion(...(JSON.parse(nodeData.rotation) as []));
-    node.scale = new Vector3(...(JSON.parse(nodeData.scale) as []));
+    node.position = new Vector3(nodeData.translation);
+    node.rotation = new Quaternion(nodeData.rotation);
+    node.scale = new Vector3(nodeData.scale);
     node.visible = nodeData.visible;
     node.name = nodeData.name;
 
@@ -668,7 +764,7 @@ export class Loader {
       magFilter: textureData.magFilter,
       minFilter: textureData.minFilter,
       format: textureData.format,
-      image_path: textureData.image_path,
+      image: textureData.image,
       repeatS: textureData.repeatS,
       repeatT: textureData.repeatT,
       generateMipmaps: textureData.generateMipmaps,
@@ -687,8 +783,8 @@ export class Loader {
     });
     texture.name = textureObject.name;
     texture.isActive = textureObject.isActive;
-    texture.image_path = textureObject.image_path;
-    texture.image.src = textureObject.image_path;
+    texture.image_path = textureObject.image;
+    texture.image.src = textureObject.image;
 
     this.loadTextureMap.set(textureIndex, texture);
     return texture;
@@ -696,6 +792,57 @@ export class Loader {
 
   private loadColor(color: any): Color {
     return new Color(color.r, color.g, color.b, color.a);
+  }
+
+  private loadAnimationClip(): AnimationClip[] {
+    let animationClipList: AnimationClip[] = [];
+
+    if (this.savedData.animations.length > 0) {
+      this.savedData.animations.forEach((animationData: any) => {
+        let animationClip: AnimationClip = {
+          name: animationData.name,
+          frames: this.loadAnimationPathList(animationData.frames),
+        };
+        animationClipList.push(animationClip);
+      });
+    }
+
+    return animationClipList;
+  }
+
+  private loadAnimationPathList(animationPathDataList: any[]): AnimationPath[] {
+    return animationPathDataList.map((pathData) =>
+      this.loadAnimationPath(pathData)
+    );
+  }
+
+  private loadAnimationPath(pathData: any): AnimationPath {
+    const animationPath: AnimationPath = { id: pathData.id };
+
+    if (pathData.keyframe) {
+      let animationTRS: AnimationTRS = {
+        ...(pathData.keyframe.translation && {
+          translation: pathData.keyframe.translation,
+        }),
+        ...(pathData.keyframe.rotation && {
+          rotation: pathData.keyframe.rotation,
+        }),
+        ...(pathData.keyframe.scale && { scale: pathData.keyframe.scale }),
+      };
+      animationPath.keyframe = animationTRS;
+    }
+
+    if (pathData.children) {
+      let children: { [childName: string]: AnimationPath } = {};
+      for (const [childName, childPathData] of Object.entries(
+        pathData.children
+      )) {
+        children[childName] = this.loadAnimationPath(childPathData);
+      }
+      animationPath.children = children;
+    }
+
+    return animationPath;
   }
 
   public validateSceneData(sceneData: any) {
