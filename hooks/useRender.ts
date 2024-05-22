@@ -150,14 +150,18 @@ const useRender = ({
 
       const scene = new Scene();
       const fetchData = async () => {
-        const response = await fetch("/articulated-ken.json");
+        const response = await fetch("/test.json");
         const data = await response.json();
         console.log(data);
 
         const loader: Loader = new Loader();
         return loader.loadFromJson(JSON.stringify(data));
       };
-      const scene1 = await fetchData();
+      const loaded = await fetchData();
+      const scene1 = loaded.scene;
+
+      let load = new Loader();
+      load.save(scene1);
 
       const meshConverter = async (mesh: any) => {
         // change the param type later
