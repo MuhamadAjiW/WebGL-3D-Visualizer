@@ -120,8 +120,8 @@ export class AnimationRunner {
   public playAnimation() {
     console.log("Animation: Playing");
     this.isPlaying = true;
-    this.currentFrame = 0;
-    this.initialize();
+    // this.currentFrame = 0;
+    this.createSnapshot()
   }
 
   public Pause() {
