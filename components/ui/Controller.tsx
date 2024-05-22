@@ -4,17 +4,21 @@ import { Collapse } from "react-collapse";
 import { TextField } from "@mui/material";
 import Button from "./Button";
 import { useFormik } from "formik";
+import Object3D from "@/libs/class/object3d";
+import { Quaternion } from "@/libs/base-types/quaternion";
+import { Euler } from "@/libs/base-types/euler";
+import Vector3 from "@/libs/base-types/vector3";
 
 interface ControllerProps {
   id: string;
   isExpanded: boolean;
   handleClick: () => void;
   title: string;
-  component: any; // this will be change later
+  component: Object3D; // this will be change later
   handleSubmit: (values: any) => void; // this will be change later
 }
 
-const Controller: React.FC<ControllerProps> = ({
+const ComponentController: React.FC<ControllerProps> = ({
   id,
   isExpanded,
   handleClick,
@@ -22,24 +26,34 @@ const Controller: React.FC<ControllerProps> = ({
   component,
   handleSubmit,
 }) => {
+  let rotation = new Euler();
+  let position = new Vector3();
+  let scale = new Vector3();
+  let name = "";
+  if(component){
+    rotation.setFromQuaternion(component.rotation as Quaternion);
+    position = component.position;
+    scale = component.scale;
+    name = component.name;
+  }
+
   const formik = useFormik({
     initialValues: {
-      name: component?.name || "",
+      name: name,
       position: {
-        x: component?.position.x || 0,
-        y: component?.position.y || 0,
-        z: component?.position.z || 0,
+        x: position.x,
+        y: position.y,
+        z: position.z,
       },
       rotation: {
-        w: component?.rotation.w || 0,
-        x: component?.rotation.x || 0,
-        y: component?.rotation.y || 0,
-        z: component?.rotation.z || 0,
+        x: rotation.x,
+        y: rotation.y,
+        z: rotation.z,
       },
       scale: {
-        x: component?.scale.x || 0,
-        y: component?.scale.y || 0,
-        z: component?.scale.z || 0,
+        x: scale.x,
+        y: scale.y,
+        z: scale.z,
       },
     },
     onSubmit: (values) => {
@@ -47,6 +61,11 @@ const Controller: React.FC<ControllerProps> = ({
     },
     enableReinitialize: true,
   });
+
+  const refresh = (e: React.ChangeEvent<HTMLInputElement>) => {
+    formik.handleChange(e);
+    formik.submitForm()
+  }
 
   return (
     <>
@@ -70,7 +89,7 @@ const Controller: React.FC<ControllerProps> = ({
                     fullWidth
                     className="bg-white"
                     size="small"
-                    onChange={formik.handleChange}
+                    onChange={refresh}
                     value={formik.values.name}
                   />
                 </div>
@@ -87,7 +106,7 @@ const Controller: React.FC<ControllerProps> = ({
                       fullWidth
                       className="bg-white"
                       size="small"
-                      onChange={formik.handleChange}
+                      onChange={refresh}
                       value={formik.values.position.x}
                     />
                   </div>
@@ -100,7 +119,7 @@ const Controller: React.FC<ControllerProps> = ({
                       type="number"
                       className="bg-white"
                       size="small"
-                      onChange={formik.handleChange}
+                      onChange={refresh}
                       value={formik.values.position.y}
                     />
                   </div>
@@ -113,7 +132,7 @@ const Controller: React.FC<ControllerProps> = ({
                       type="number"
                       className="bg-white"
                       size="small"
-                      onChange={formik.handleChange}
+                      onChange={refresh}
                       value={formik.values.position.z}
                     />
                   </div>
@@ -121,21 +140,8 @@ const Controller: React.FC<ControllerProps> = ({
               </div>
               <div className="flex flex-col gap-2">
                 <div>Rotation</div>
-                <div className="grid grid-cols-2 items-center gap-2">
-                  <div className="flex items-center justify-end">
-                    <div>W</div>
-                    <TextField
-                      id="rotation.w"
-                      name="rotation.w"
-                      type="number"
-                      fullWidth
-                      className="bg-white"
-                      size="small"
-                      onChange={formik.handleChange}
-                      value={formik.values.rotation.w}
-                    />
-                  </div>
-                  <div className="flex gap-1 items-center justify-end">
+                <div className="flex gap-2 items-center">
+                  <div className="flex gap-1 items-center">
                     <div>X</div>
                     <TextField
                       id="rotation.x"
@@ -144,11 +150,11 @@ const Controller: React.FC<ControllerProps> = ({
                       fullWidth
                       className="bg-white"
                       size="small"
-                      onChange={formik.handleChange}
+                      onChange={refresh}
                       value={formik.values.rotation.x}
                     />
                   </div>
-                  <div className="flex gap-1 items-center justify-end">
+                  <div className="flex gap-1 items-center">
                     <div>Y</div>
                     <TextField
                       id="rotation.y"
@@ -157,11 +163,11 @@ const Controller: React.FC<ControllerProps> = ({
                       type="number"
                       className="bg-white"
                       size="small"
-                      onChange={formik.handleChange}
+                      onChange={refresh}
                       value={formik.values.rotation.y}
                     />
                   </div>
-                  <div className="flex gap-1 items-center justify-end">
+                  <div className="flex gap-1 items-center">
                     <div>Z</div>
                     <TextField
                       id="rotation.z"
@@ -170,7 +176,7 @@ const Controller: React.FC<ControllerProps> = ({
                       type="number"
                       className="bg-white"
                       size="small"
-                      onChange={formik.handleChange}
+                      onChange={refresh}
                       value={formik.values.rotation.z}
                     />
                   </div>
@@ -188,7 +194,7 @@ const Controller: React.FC<ControllerProps> = ({
                       fullWidth
                       className="bg-white"
                       size="small"
-                      onChange={formik.handleChange}
+                      onChange={refresh}
                       value={formik.values.scale.x}
                     />
                   </div>
@@ -201,7 +207,7 @@ const Controller: React.FC<ControllerProps> = ({
                       type="number"
                       className="bg-white"
                       size="small"
-                      onChange={formik.handleChange}
+                      onChange={refresh}
                       value={formik.values.scale.y}
                     />
                   </div>
@@ -214,20 +220,11 @@ const Controller: React.FC<ControllerProps> = ({
                       type="number"
                       className="bg-white"
                       size="small"
-                      onChange={formik.handleChange}
+                      onChange={refresh}
                       value={formik.values.scale.z}
                     />
                   </div>
                 </div>
-              </div>
-              <div className="flex justify-end items-center">
-                <Button
-                  id="apply-button"
-                  text="Apply"
-                  type="submit"
-                  handleClick={formik.handleSubmit}
-                  className="bg-white text-black px-4 py-1"
-                />
               </div>
             </div>
           </Collapse>
@@ -237,4 +234,4 @@ const Controller: React.FC<ControllerProps> = ({
   );
 };
 
-export default Controller;
+export default ComponentController;

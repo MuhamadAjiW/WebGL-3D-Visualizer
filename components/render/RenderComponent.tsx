@@ -1,6 +1,6 @@
 import useRender from "@/hooks/useRender";
 import { Mesh } from "@/libs/class/mesh";
-import { AnimationController } from "@/types/ui";
+import { AnimationControllerType } from "@/types/ui";
 import { Dispatch, SetStateAction } from "react";
 
 interface RenderedComponentProps {
@@ -11,8 +11,8 @@ interface RenderedComponentProps {
   selectedComponent: Mesh | null; // change this later
   meshes: any;
   isControllerChange: boolean;
-  animationController?: AnimationController;
-  setAnimationController?: Dispatch<SetStateAction<AnimationController>>;
+  animationController?: AnimationControllerType;
+  setAnimationController?: Dispatch<SetStateAction<AnimationControllerType>>;
   className?: string
 }
 

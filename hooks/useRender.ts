@@ -32,7 +32,7 @@ import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
 import { Loader } from "@/libs/class/loader/loader";
 import { Euler } from "@/libs/base-types/euler";
 import { Quaternion } from "@/libs/base-types/quaternion";
-import { AnimationController } from "@/types/ui";
+import { AnimationControllerType } from "@/types/ui";
 import Object3D from "@/libs/class/object3d";
 
 interface HooksRenderProps {
@@ -43,8 +43,8 @@ interface HooksRenderProps {
   selectedComponent: any; // change this later
   meshes: any;
   isControllerChange: boolean;
-  animationController?: AnimationController;
-  setAnimationController?: Dispatch<SetStateAction<AnimationController>>;
+  animationController?: AnimationControllerType;
+  setAnimationController?: Dispatch<SetStateAction<AnimationControllerType>>;
 }
 
 // TODO: Delete
@@ -125,10 +125,10 @@ const useRender = ({
   const animationRunnerRef = useRef<AnimationRunner | null>(null);
   const refreshRequest = useRef<number>(0);
   const refreshRequestDelay = 0.05;
-  let newAnimationControllerState: AnimationController;
+  let newAnimationControllerState: AnimationControllerType;
 
   function checkAnimationUpdate(
-    newControllerState: AnimationController
+    newControllerState: AnimationControllerType
   ): boolean {
     if (!animationController || !setAnimationController) return false;
 
@@ -142,7 +142,9 @@ const useRender = ({
     );
   }
 
-  function updateAnimationController(newControllerState: AnimationController) {
+  function updateAnimationController(
+    newControllerState: AnimationControllerType
+  ) {
     if (
       !checkAnimationUpdate(newControllerState) ||
       new Date().getTime() - (refreshRequest.current + refreshRequestDelay) < 0

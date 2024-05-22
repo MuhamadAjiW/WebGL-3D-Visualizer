@@ -4,7 +4,7 @@ import Button from "@/components/ui/Button";
 import RenderComponent from "@/components/render/RenderComponent";
 import TreeView from "@/components/ui/TreeView";
 import { TreeViewBaseItem } from "@mui/x-tree-view";
-import Controller from "@/components/ui/Controller";
+import ComponentController from "@/components/ui/Controller";
 import React, { useEffect, useState } from "react";
 import CameraController from "@/components/camera/CameraController";
 import {
@@ -20,7 +20,7 @@ import { Mesh } from "@/libs/class/mesh";
 import Vector3 from "@/libs/base-types/vector3";
 import { Quaternion } from "@/libs/base-types/quaternion";
 import { Euler } from "@/libs/base-types/euler";
-import { AnimationController } from "@/types/ui";
+import { AnimationControllerType, CameraControllerType, ComponentControllerType } from "@/types/ui";
 import CustomSlider from "@/components/ui/slider";
 
 export default function Home() {
@@ -53,8 +53,18 @@ export default function Home() {
   const [isReset, setIsReset] = useState<boolean>(false);
   const [component, setComponent] = useState<Mesh | null>(null);
   const [isControllerChange, setIsControllerChange] = useState<boolean>(false);
+
+  const [cameraController, setCameraController] = useState<CameraControllerType>({
+    type: "orthographicCamera",
+    distance: 1
+  }) 
+  const [componentController, setComponentController] = useState<ComponentControllerType>({
+    position: new Vector3(),
+    rotation: new Euler(),
+    scale: new Vector3()
+  }) 
   const [animationController, setAnimationController] =
-    useState<AnimationController>({
+    useState<AnimationControllerType>({
       play: false,
       pause: false,
       reverse: false,
@@ -79,17 +89,16 @@ export default function Home() {
     if (controller === "play") {
       setAnimationController((prevState) => ({
         ...prevState,
-        play: !animationController.play,
+        play: true,
         pause: false,
       }));
     } else if (controller === "pause") {
       setAnimationController((prevState) => ({
         ...prevState,
-        pause: !animationController.pause,
+        pause: true,
         play: false,
       }));
     }
-    setIsControllerChange(!isControllerChange);
   };
 
   const handleAnimationControllerCheckbox = (
@@ -302,7 +311,7 @@ export default function Home() {
           <div className="text-2xl font-bold bg-gray-900">Inspector</div>
         </div>
         <div className="bg-gray-900 flex-grow p-5">
-          <Controller
+          <ComponentController
             id="component-controller"
             isExpanded={isComponentExpanded}
             handleClick={handleComponentExpanded}
