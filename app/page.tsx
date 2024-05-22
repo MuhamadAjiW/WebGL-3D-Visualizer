@@ -113,8 +113,6 @@ export default function Home() {
     );
     const scale = new Vector3(values.scale.x, values.scale.y, values.scale.z);
 
-    console.log(position, rotation, scale);
-
     if (component) {
       component.position = position;
       component.rotation = rotation;
@@ -125,7 +123,7 @@ export default function Home() {
       setComponent(null);
     }
 
-    console.log(component);
+    console.log("This is Current Component", component);
   };
 
   const handleComponentExpanded = () => {
