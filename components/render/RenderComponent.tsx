@@ -2,7 +2,7 @@ import useRender from "@/hooks/useRender";
 import { Mesh } from "@/libs/class/mesh";
 import { Dispatch, SetStateAction } from "react";
 import CameraController from '@/components/camera/CameraController';
-import { AnimationControllerType, CameraControllerType } from "@/types/controllers/controllers";
+import { AnimationControllerType, CameraControllerType } from "@/libs/controllers";
 
 interface RenderedComponentProps {
   selectedComponent: Mesh | null; // change this later

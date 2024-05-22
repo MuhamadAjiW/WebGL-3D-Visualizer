@@ -21,7 +21,7 @@ import Vector3 from "@/libs/base-types/vector3";
 import { Quaternion } from "@/libs/base-types/quaternion";
 import { Euler } from "@/libs/base-types/euler";
 import CustomSlider from "@/components/ui/slider";
-import { AnimationControllerType, CameraControllerType, ComponentControllerType } from "@/types/controllers/controllers";
+import { AnimationControllerType, CameraControllerType, ComponentControllerType } from "@/libs/controllers";
 
 export default function Home() {
   const [data, setData] = useState<Scene | null>(null);
@@ -57,6 +57,7 @@ export default function Home() {
     reset: false
   }) 
   const [componentController, setComponentController] = useState<ComponentControllerType>({
+    activeComponent: null,
     position: new Vector3(),
     rotation: new Euler(),
     scale: new Vector3()

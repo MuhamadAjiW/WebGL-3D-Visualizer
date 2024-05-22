@@ -21,7 +21,7 @@ import {
   CameraControllerType,
   checkAnimationUpdate,
   checkCameraUpdate,
-} from "@/types/controllers/controllers";
+} from "@/libs/controllers";
 import { useEffect, useRef } from "react";
 import { AnimationRunner } from "../libs/class/animation/animation-runner";
 
@@ -322,6 +322,7 @@ const useRender = ({
         dx = 0;
         dy = 0;
         newCameraControllerState.reset = false;
+        updateCameraController(newCameraControllerState);
       }
 
       // Apply animation controls

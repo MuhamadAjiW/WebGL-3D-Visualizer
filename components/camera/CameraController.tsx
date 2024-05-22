@@ -4,7 +4,7 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import Button from "../ui/Button";
 import { GoChevronDown, GoChevronRight } from "react-icons/go";
 import { Collapse } from "react-collapse";
-import { CameraControllerType } from "@/types/controllers/controllers";
+import { CameraControllerType } from "@/libs/controllers";
 
 interface ControllerProps {
   id: string;
