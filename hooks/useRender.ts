@@ -283,8 +283,8 @@ const useRender = ({
       const scene = activeComponentRef.current as Object3D;
 
       const testScene = new Scene();
-      const fTexture = await TextureLoader.load("res/f-texture.png");
-      const brickTexture = await TextureLoader.load("res/brick.jpg");
+      const fTexture = await TextureLoader.load("res/woodbox.png");
+      const brickTexture = await TextureLoader.load("res/woodboxSpec.png");
       const geometry = new BlockGeometry(0.5, 0.5, 0.5);
       // geometry.smoothShade = true;
       // geometry.calculateNormals();
@@ -292,10 +292,10 @@ const useRender = ({
       const material = new PhongMaterial({
         diffuseTexture: fTexture,
         specularTexture: brickTexture,
-        ambient: new Color(0x818181ff),
+        ambient: new Color(0x414141ff),
         diffuse: new Color(0xffffffff),
         specular: new Color(0xffffffff),
-        shinyness: 0.5,
+        shinyness: 1,
       });
       const mesh = new Mesh(geometry, material);
       testScene.add(mesh);

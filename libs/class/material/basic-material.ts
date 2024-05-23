@@ -9,7 +9,7 @@ export class BasicMaterial extends ShaderMaterial {
   private static idAutoIncrement: number = 0;
 
   public diffuse: Color = Color.WHITE;
-  public diffuseTexture?: Texture;
+  public diffuseTexture: Texture;
 
   constructor(options?: {
     texture?: Texture;

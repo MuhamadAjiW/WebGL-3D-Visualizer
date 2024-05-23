@@ -12,8 +12,8 @@ export class PhongMaterial extends ShaderMaterial {
   public diffuse: Color = Color.WHITE;
   public specular: Color = Color.WHITE;
   public shininess: number = 1.0;
-  public diffuseTexture?: Texture;
-  public specularTexture?: Texture;
+  public diffuseTexture: Texture;
+  public specularTexture: Texture;
 
   constructor(options?: {
     diffuseTexture?: Texture;
@@ -41,6 +41,7 @@ export class PhongMaterial extends ShaderMaterial {
 
   public loadTexture(renderer: WebGLRenderer): void {
     this.diffuseTexture?.load(renderer, 0);
+    this.specularTexture.format = WebGLRenderingContext.LUMINANCE;
     this.specularTexture?.load(renderer, 1);
   }
 
