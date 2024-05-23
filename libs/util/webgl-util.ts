@@ -8,6 +8,7 @@ export type UniformSingleDataType =
   | GLfloat
   | GLTexture
   | Float32Array
+  | Boolean
   | number[];
 export type UniformDataType = [UniformSingleDataType] | number[];
 export type UniformSetters = (...v: UniformDataType) => void;
@@ -33,6 +34,7 @@ export type ShaderUniforms = {
   u_shininess?: UniformSingleDataType;
   u_materialType?: UniformSingleDataType;
   u_lightPos?: UniformSingleDataType;
+  u_useNormalTex?: UniformSingleDataType;
 };
 export type ShaderAttributes = {
   a_position?: AttributeSingleDataType;

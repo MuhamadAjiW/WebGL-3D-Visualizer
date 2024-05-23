@@ -17,25 +17,31 @@ uniform vec4 u_diffuse;
 uniform vec4 u_specular;
 uniform float u_shininess;      // Shininess
 uniform int u_materialType;
+uniform bool u_useNormalTex;
 
 uniform vec3 u_lightPos;        // Light position
 
 void main() {
     vec4 textureDiffuse = texture2D(u_textureDiffuse, v_texCoord);
     vec4 textureSpecular = texture2D(u_textureSpecular, v_texCoord);
-    vec3 textureNormal = texture2D(u_textureNormal, v_texCoord).rgb;
+
+    vec3 N;
+    if(u_useNormalTex){
+        N = texture2D(u_textureNormal, v_texCoord).rgb;
+        N = N * 2.0 - 1.0;
+        N = normalize(v_TBN * N);
+    }
+    else{
+        N = normalize(v_normal);
+    }
     vec4 textureParallax = texture2D(u_textureParallax, v_texCoord);
 
-    textureNormal = textureNormal * 2.0 - 1.0;
 
     vec4 outColor;
     if(u_materialType == 0){
         outColor = u_diffuse * textureDiffuse;
         
     } else if (u_materialType == 1){
-        vec3 N;
-        N = normalize(v_TBN * textureNormal);
-        // N = normalize(v_normal);
         vec3 L = normalize(u_lightPos - v_position);
 
         // Lambert's cosine law

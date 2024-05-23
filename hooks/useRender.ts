@@ -297,6 +297,7 @@ const useRender = ({
         ambient: new Color(0x414141ff),
         diffuse: new Color(0xffffffff),
         specular: new Color(0xffffffff),
+        useNormalTex: true,
         shinyness: 1,
       });
       const mesh = new Mesh(geometry, material);
