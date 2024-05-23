@@ -27,56 +27,14 @@ export class BasicMaterial extends ShaderMaterial {
   }
 
   public loadTexture(renderer: WebGLRenderer): void {
-    let loadedTexture = renderer.gl.createTexture();
-    renderer.gl.bindTexture(renderer.gl.TEXTURE_2D, loadedTexture);
-
-    if (this.diffuseTexture?.image != null) {
-      renderer.gl.texParameteri(
-        renderer.gl.TEXTURE_2D,
-        renderer.gl.TEXTURE_WRAP_S,
-        this.diffuseTexture.wrapS
-      );
-      renderer.gl.texParameteri(
-        renderer.gl.TEXTURE_2D,
-        renderer.gl.TEXTURE_WRAP_T,
-        this.diffuseTexture.wrapT
-      );
-      renderer.gl.texParameteri(
-        renderer.gl.TEXTURE_2D,
-        renderer.gl.TEXTURE_MIN_FILTER,
-        this.diffuseTexture.minFilter
-      );
-      renderer.gl.texParameteri(
-        renderer.gl.TEXTURE_2D,
-        renderer.gl.TEXTURE_MAG_FILTER,
-        this.diffuseTexture.magFilter
-      );
-
-      renderer.gl.texImage2D(
-        renderer.gl.TEXTURE_2D,
-        0,
-        renderer.gl.RGBA,
-        renderer.gl.RGBA,
-        renderer.gl.UNSIGNED_BYTE,
-        this.diffuseTexture?.image
-      );
-    } else {
-      renderer.gl.texImage2D(
-        renderer.gl.TEXTURE_2D,
-        0,
-        renderer.gl.RGBA,
-        1,
-        1,
-        0,
-        renderer.gl.RGBA,
-        renderer.gl.UNSIGNED_BYTE,
-        new Uint8Array(Color.WHITE.get())
-      );
-    }
+    this.normalTexture.load(renderer, 0);
+    this.parallaxTexture.load(renderer, 1);
+    this.diffuseTexture.load(renderer, 2);
   }
 
   public loadUniform(renderer: WebGLRenderer): void {
     WebGLUtil.setUniforms(renderer.currentProgram, {
+      u_textureDiffuse: this.diffuseTexture.glTexture,
       u_diffuse: this.diffuse.getNormalized(),
       u_materialType: this.materialType,
     });

@@ -4,7 +4,8 @@ precision mediump float;
 
 varying vec3 v_normal;          // Surface normal
 varying vec3 v_position;        // Vertex position
-varying vec2 v_texCoord;        // Vertex position
+varying vec2 v_texCoord;        // Texture mapping
+varying mat3 v_TBN;        // TBN Matrix
 
 // Material color
 uniform sampler2D u_textureDiffuse;
@@ -22,15 +23,19 @@ uniform vec3 u_lightPos;        // Light position
 void main() {
     vec4 textureDiffuse = texture2D(u_textureDiffuse, v_texCoord);
     vec4 textureSpecular = texture2D(u_textureSpecular, v_texCoord);
-    vec4 textureNormal = texture2D(u_textureNormal, v_texCoord);
+    vec3 textureNormal = texture2D(u_textureNormal, v_texCoord).rgb;
     vec4 textureParallax = texture2D(u_textureParallax, v_texCoord);
+
+    textureNormal = textureNormal * 2.0 - 1.0;
 
     vec4 outColor;
     if(u_materialType == 0){
         outColor = u_diffuse * textureDiffuse;
         
     } else if (u_materialType == 1){
-        vec3 N = normalize(v_normal);
+        vec3 N;
+        N = normalize(v_TBN * textureNormal);
+        // N = normalize(v_normal);
         vec3 L = normalize(u_lightPos - v_position);
 
         // Lambert's cosine law

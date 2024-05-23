@@ -283,15 +283,17 @@ const useRender = ({
       const scene = activeComponentRef.current as Object3D;
 
       const testScene = new Scene();
-      const fTexture = await TextureLoader.load("res/woodbox.png");
-      const brickTexture = await TextureLoader.load("res/woodboxSpec.png");
+      const diffuseTexture = await TextureLoader.load("res/woodbox.png");
+      const specularTexture = await TextureLoader.load("res/woodboxSpec.png");
+      const normalTexture = await TextureLoader.load("res/woodboxNorm2.png");
       const geometry = new BlockGeometry(0.5, 0.5, 0.5);
       // geometry.smoothShade = true;
       // geometry.calculateNormals();
 
       const material = new PhongMaterial({
-        diffuseTexture: fTexture,
-        specularTexture: brickTexture,
+        diffuseTexture: diffuseTexture,
+        specularTexture: specularTexture,
+        normalTexture: normalTexture,
         ambient: new Color(0x414141ff),
         diffuse: new Color(0xffffffff),
         specular: new Color(0xffffffff),
@@ -368,8 +370,8 @@ const useRender = ({
 
         activeCamera.setOrbitControl(dy, dx);
 
-        mesh.rotateOnWorldAxis(Vector3.right, 0.01);
-        mesh.rotateOnWorldAxis(Vector3.up, 0.01);
+        mesh.rotateOnWorldAxis(Vector3.right, 0.001);
+        mesh.rotateOnWorldAxis(Vector3.up, 0.001);
 
         renderer.render(testScene, activeCamera);
         if (!stop) {

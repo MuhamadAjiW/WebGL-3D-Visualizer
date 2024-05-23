@@ -120,5 +120,6 @@ export class BlockGeometry extends BufferGeometry {
     this.position = new BufferAttribute(vertices, 3);
     this.texCoords = new BufferAttribute(textureCoordinates, 2);
     this.calculateNormals();
+    this.calculateTangents();
   }
 }

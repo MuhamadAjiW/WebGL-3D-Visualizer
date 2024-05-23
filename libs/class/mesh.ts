@@ -28,6 +28,8 @@ export class Mesh extends Object3D {
       a_normal: this.geometry.normal,
       a_position: this.geometry.position,
       a_texCoord: this.geometry.texCoords,
+      a_tangent: this.geometry.tangent,
+      a_bitangent: this.geometry.bitangent,
     });
     WebGLUtil.setUniforms(renderer.currentProgram, {
       u_world: M4.flatten(this.worldMatrix),

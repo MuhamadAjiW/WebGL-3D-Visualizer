@@ -8,8 +8,8 @@ export abstract class ShaderMaterial {
   // This is internal and really should not be changed outside of texture or texture loader
   public id: string;
   public materialType: number = 0;
-  public normalTexture?: Texture;
-  public parallaxTexture?: Texture;
+  public normalTexture: Texture;
+  public parallaxTexture: Texture;
 
   constructor(
     materialType: number,
@@ -17,8 +17,8 @@ export abstract class ShaderMaterial {
   ) {
     this.id = this.generateId();
     this.materialType = materialType;
-    this.normalTexture = this.normalTexture;
-    this.parallaxTexture = this.parallaxTexture;
+    this.normalTexture = options?.normalTexture || new Texture();
+    this.parallaxTexture = options?.parallaxTexture || new Texture();
   }
   protected abstract generateId(): string;
   public abstract loadTexture(renderer: WebGLRenderer): void;

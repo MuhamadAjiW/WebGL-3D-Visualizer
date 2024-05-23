@@ -237,13 +237,13 @@ export class Loader {
 
     const result = GLTFSchema.safeParse(this.savedData);
     if (result.success) {
-      console.log("Validation successful:", result.data);
+      // console.log("Validation successful:", result.data);
     } else {
       console.error("Validation failed:", result.error.errors);
     }
 
     // Now savedData contains the serialized scene data
-    console.log(JSON.stringify(this.savedData, null, 2));
+    // console.log(JSON.stringify(this.savedData, null, 2));
   }
 
   // Recursive method to traverse and save a node
@@ -513,7 +513,7 @@ export class Loader {
     // check valid
     const result = GLTFSchema.safeParse(this.savedData);
     if (result.success) {
-      console.log("Validation successful:", result.data);
+      // console.log("Validation successful:", result.data);
     } else {
       console.error("Validation failed:", result.error.errors);
     }
@@ -547,7 +547,7 @@ export class Loader {
 
     scene = this.loadNodeMap.get(this.savedData.scene)!;
 
-    this.loadNodeMap.forEach((object: Object3D) => console.log(object));
+    // this.loadNodeMap.forEach((object: Object3D) => console.log(object));
 
     scene.computeWorldMatrix();
 

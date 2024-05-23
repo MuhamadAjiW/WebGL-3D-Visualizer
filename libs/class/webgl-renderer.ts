@@ -80,6 +80,8 @@ export class WebGLRenderer {
 
     if (node instanceof Mesh) {
       //TODO: Optimize this call
+      console.log("Bitangent: ", node.geometry.bitangent);
+
       node.computeWorldMatrix(false, false);
 
       this.createOrGetMaterial(node.material);
@@ -108,15 +110,7 @@ export class WebGLRenderer {
 
       this.createOrGetMaterial(scene.material);
 
-      WebGLUtil.setAttributes(this.currentProgram, {
-        a_normal: scene.geometry.normal,
-        a_position: scene.geometry.position,
-        a_texCoord: scene.geometry.texCoords,
-      });
-      WebGLUtil.setUniforms(this.currentProgram, {
-        u_world: M4.flatten(scene.worldMatrix),
-        u_normalMat: M4.flatten(scene.worldMatrix.inverse().transpose()),
-      });
+      scene.load(this);
       scene.material.loadUniform(this);
 
       // TODO: Use indices when drawing
