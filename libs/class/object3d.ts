@@ -1,10 +1,7 @@
-import Vector3 from "../base-types/vector3";
+import { Euler } from "../base-types/euler";
 import M4 from "../base-types/m4";
 import { Quaternion } from "../base-types/quaternion";
-import { Euler } from "../base-types/euler";
-import { assert } from "console";
-import { WebGLRenderer } from "./webgl-renderer";
-import { WebGLUtil } from "../util/webgl-util";
+import Vector3 from "../base-types/vector3";
 
 class Object3D {
   private _position: Vector3 = new Vector3();
@@ -14,6 +11,7 @@ class Object3D {
   private _worldMatrix: M4 = M4.identity();
   private _parent?: Object3D;
   private _children: Object3D[] = [];
+
   visible = true;
   private _isDirty = false;
   public name: string = "";
@@ -23,25 +21,25 @@ class Object3D {
     this.name = name;
   }
 
-  get position() {
+  get position(): Vector3 {
     return this._position;
   }
-  get rotation() {
+  get rotation(): Quaternion {
     return this._rotation;
   }
-  get scale() {
+  get scale(): Vector3 {
     return this._scale;
   }
-  get parent() {
+  get parent(): Object3D | undefined {
     return this._parent;
   }
-  get localMatrix() {
+  get localMatrix(): M4 {
     return this._localMatrix;
   }
-  get worldMatrix() {
+  get worldMatrix(): M4 {
     return this._worldMatrix;
   }
-  get children() {
+  get children(): Object3D[] {
     return this._children;
   }
 
@@ -146,7 +144,7 @@ class Object3D {
     const lookAtMatrix = M4.lookAt(this.position, targetPosition, up);
 
     // Extract rotation as a quaternion from the matrix
-    this._rotation = lookAtMatrix.toQuaternion();
+    this.rotation = lookAtMatrix.toQuaternion();
 
     // update the world matrix to reflect this new local matrix
     this.computeWorldMatrix(false, true);
@@ -197,11 +195,7 @@ class Object3D {
     );
 
     // Apply the rotation quaternion to the node's current rotation
-    let rotation = this._rotation;
-    if (rotation instanceof Euler) {
-      rotation = Quaternion.Euler(rotation);
-    }
-    this._rotation = rotationQuat.multiply(rotation).normalized();
+    this.rotation = rotationQuat.multiply(this.rotation).normalized();
 
     // Mark the node as dirty to recalculate the transformation matrix
     this._isDirty = true;
@@ -211,6 +205,17 @@ class Object3D {
   }
 
   cloneOrientation(): Object3D {
+    const retval = this.cloneOrientationNonRecursive();
+
+    this.children.forEach((child) => {
+      const clonedChild = child.cloneOrientation();
+      retval.add(clonedChild);
+    });
+
+    return retval;
+  }
+
+  cloneOrientationNonRecursive(): Object3D {
     const retval = new Object3D();
     retval.name = this.name;
     retval.position = this.position;

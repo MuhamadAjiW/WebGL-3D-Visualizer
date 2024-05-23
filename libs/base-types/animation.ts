@@ -5,6 +5,7 @@ type AnimationTRS = {
 };
 
 type AnimationPath = {
+  id?: string;
   keyframe?: AnimationTRS;
   children?: {
     [childName: string]: AnimationPath;
@@ -16,4 +17,4 @@ type AnimationClip = {
   frames: AnimationPath[];
 };
 
-export type { AnimationTRS, AnimationPath, AnimationClip }
+export type { AnimationTRS, AnimationPath, AnimationClip };

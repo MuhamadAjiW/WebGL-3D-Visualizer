@@ -1,80 +1,99 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
-import vertexShaderSource from "@/shaders/vertex-shader.vert?raw";
-import fragmentShaderSource from "@/shaders/fragment-shader.frag?raw";
-import { ProgramInfo } from "@/libs/base-types/webgl-program-info";
-import { WebGLUtil as WebGLUtils } from "@/libs/util/webgl-util";
-import { BufferAttribute } from "@/libs/class/webgl/attribute";
-import { BufferUniform } from "@/libs/class/webgl/uniform";
-import { PlaneGeometry } from "@/libs/class/geometry/plane-geometry";
-import { Color } from "@/libs/base-types/color";
-import { Scene } from "@/libs/class/scene";
-import { Mesh } from "@/libs/class/mesh";
-import { TextureLoader } from "@/libs/class/texture/texture-loader";
-import { WebGLRenderer } from "@/libs/class/webgl-renderer";
-import { PhongMaterial } from "@/libs/class/material/phong-material";
-// import { BasicMaterial } from "./class/material/basic-material";
-// Import kelas Camera
-import Camera from "@/libs/class/camera";
+import { AnimationClip } from "@/libs/base-types/animation";
 import Vector3 from "@/libs/base-types/vector3";
-import M4 from "@/libs/base-types/m4";
-import { MathUtil } from "@/libs/util/math-util";
-import { useEffect, useRef } from "react";
-import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
+import { ProgramInfo } from "@/libs/base-types/webgl-program-info";
+import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
+import Camera from "@/libs/class/camera";
+import Object3D from "@/libs/class/object3d";
 import ObliqueCamera from "@/libs/class/oblique-camera";
 import OrthographicCamera from "@/libs/class/orthographic-camera";
-import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
-import { BasicMaterial } from "@/libs/class/material/basic-material";
-import { HollowBlockGeometry } from "@/libs/class/geometry/hollow-block-geometry";
 import PerspectiveCamera from "@/libs/class/perspective-camera";
-import { AnimationClip } from "@/libs/base-types/animation";
+import { WebGLRenderer } from "@/libs/class/webgl-renderer";
+import { BufferUniform } from "@/libs/class/webgl/uniform";
+import {
+  AnimationControllerType,
+  CameraControllerType,
+  checkAnimationUpdate,
+  checkCameraUpdate,
+} from "@/libs/controllers";
+import { MathUtil } from "@/libs/util/math-util";
+import { WebGLUtil as WebGLUtils } from "@/libs/util/webgl-util";
+import fragmentShaderSource from "@/shaders/fragment-shader.frag?raw";
+import vertexShaderSource from "@/shaders/vertex-shader.vert?raw";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { AnimationRunner } from "../libs/class/animation/animation-runner";
-import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
-import { Loader } from "@/libs/class/loader/loader";
-import { Euler } from "@/libs/base-types/euler";
-import { Quaternion } from "@/libs/base-types/quaternion";
-import { AnimationController } from "@/types/ui";
-import Object3D from "@/libs/class/object3d";
+import { Mesh } from "@/libs/class/mesh";
+import { Color } from "@/libs/base-types/color";
+import { PhongMaterial } from "@/libs/class/material/phong-material";
+import { Scene } from "@/libs/class/scene";
+import { TextureLoader } from "@/libs/class/texture/texture-loader";
+import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
 
 interface HooksRenderProps {
-  cameraType: string;
-  distance: number;
-  isReset: boolean;
-  handleReset: Dispatch<SetStateAction<boolean>>;
-  selectedComponent: any; // change this later
-  meshes: any;
+  activeComponent: Object3D; // change this later
   isControllerChange: boolean;
-  animationController: AnimationController;
-  setAnimationController: Dispatch<SetStateAction<AnimationController>>;
+  cameraController: CameraControllerType;
+  setCameraController: Dispatch<SetStateAction<CameraControllerType>>;
+  animationController?: AnimationControllerType;
+  setAnimationController?: Dispatch<SetStateAction<AnimationControllerType>>;
 }
 
 // TODO: Delete
 const testAnim: AnimationClip = {
-  name: "Fox Walking",
+  name: "Test",
   frames: [
     // 0
     {
-      keyframe: {
-        translation: [0, 0, 0],
-        rotation: [0, 0, 0],
-      },
+      keyframe: {},
       children: {
-        Left: {
+        Parent: {
           keyframe: {
+            translation: [0, 0, 0],
             rotation: [0, 0, 0],
+          },
+          children: {
+            Left: {
+              keyframe: {
+                rotation: [0, 0, 0],
+              },
+            },
           },
         },
       },
     },
     // 1
     {
-      keyframe: {
-        translation: [-0.5, 0, 0],
-        rotation: [0, 0.5, 0],
-      },
+      keyframe: {},
       children: {
-        Left: {
+        Parent: {
           keyframe: {
-            rotation: [2, 0, 0],
+            translation: [-0.5, 0, 0],
+            rotation: [0, 0.5, 0],
+          },
+          children: {
+            Left: {
+              keyframe: {
+                rotation: [2, 0, 0],
+              },
+            },
+          },
+        },
+      },
+    },
+    // 2
+    {
+      keyframe: {},
+      children: {
+        Parent: {
+          keyframe: {
+            translation: [0.5, 0, 0],
+            rotation: [0, 0.25, 0],
+          },
+          children: {
+            Left: {
+              keyframe: {
+                rotation: [0, 1, 0],
+              },
+            },
           },
         },
       },
@@ -92,13 +111,10 @@ const dummyUniformsData = {
 };
 
 const useRender = ({
-  cameraType,
-  distance,
-  isReset,
-  handleReset,
-  selectedComponent,
-  meshes,
+  activeComponent,
   isControllerChange,
+  cameraController,
+  setCameraController,
   animationController,
   setAnimationController,
 }: HooksRenderProps) => {
@@ -107,11 +123,40 @@ const useRender = ({
   const activeCameraRef = useRef<Camera | null>(null);
   const activeCameraTypeRef = useRef<String | null>(null);
   const activeComponentRef = useRef<Object3D | null>(null);
-  const selectedComponentRef = useRef<any | null>(null);
   const animationRunnerRef = useRef<AnimationRunner | null>(null);
+  const refreshRequest = useRef<number>(0);
+  const refreshRequestDelay = 0.0;
+  let newAnimationControllerState: AnimationControllerType;
+  let newCameraControllerState: CameraControllerType;
+
+  function updateAnimationController(
+    newControllerState: AnimationControllerType
+  ) {
+    if (!animationController) return;
+
+    if (
+      !checkAnimationUpdate(newControllerState, animationController) ||
+      new Date().getTime() - (refreshRequest.current + refreshRequestDelay) < 0
+    )
+      return;
+
+    refreshRequest.current = new Date().getTime();
+    setAnimationController!(newControllerState);
+  }
+
+  function updateCameraController(newControllerState: CameraControllerType) {
+    if (
+      !checkCameraUpdate(newControllerState, cameraController) ||
+      new Date().getTime() - (refreshRequest.current + refreshRequestDelay) < 0
+    )
+      return;
+
+    refreshRequest.current = new Date().getTime();
+    setCameraController!(newControllerState);
+  }
 
   function setupRenderer() {
-    console.log("Setting up renderer");
+    // console.log("Setting up renderer");
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -178,88 +223,56 @@ const useRender = ({
         );
         break;
       default:
-        console.error(`Unknown camera type: ${cameraType}`);
+        console.error(`Unknown camera type: ${type}`);
         break;
     }
 
     if (activeCameraRef == null) return;
-    if (oldCopy != null) {
-      console.log("Copying old camera values");
-      activeCameraRef.current!.angleX = oldCopy.angleX;
-      activeCameraRef.current!.angleY = oldCopy.angleY;
-      activeCameraRef.current!.cameraMatrix = oldCopy.cameraMatrix;
-      activeCameraRef.current!.distance = oldCopy.distance;
-    } else {
-      activeCameraRef.current!.position = new Vector3(0, 0, 0);
-    }
+    activeCameraRef.current!.position = new Vector3(0, 0, 0);
   }
 
   function setupAnimationRunner(clip: AnimationClip, scene: Object3D) {
-    console.log("Setting up Animation Runner");
-    animationRunnerRef.current = new AnimationRunner(clip, scene, {
-      fps: 1,
-      fpkey: 144,
-      easing: AnimationEasingType.EASE_IN_OUT_BOUNCE,
-    });
-  }
-
-  function setupComponent(selectedComponent: any) {
-    selectedComponentRef.current = selectedComponent;
-    activeComponentRef.current = new Scene();
-
-    const meshConverter = async (mesh: any) => {
-      // change the param type later
-      const geometry = mesh.geometry;
-      const material = await mesh.material;
-      const meshComp = new Mesh(geometry, material);
-
-      meshComp.name = mesh.name;
-      meshComp.position = mesh.position;
-      meshComp.rotation = mesh.rotation;
-      meshComp.scale = mesh.scale;
-
-      activeComponentRef.current!.add(meshComp);
-
-      for (let child of mesh.children) {
-        meshConverter(child);
-      }
-    };
-
-    if (selectedComponent) {
-      console.log("Component selected");
-      meshConverter(selectedComponent);
-    } else {
-      for (let mesh of meshes) {
-        meshConverter(mesh);
-      }
+    if (!animationController || !setAnimationController) {
+      return;
     }
+    // console.log("Setting up Animation Runner");
+    animationRunnerRef.current = new AnimationRunner(clip, scene);
+    newAnimationControllerState.maxFrame = clip.frames.length;
   }
 
   useEffect(() => {
-    console.log("this is scene", meshes);
-    console.log("this is selected component", selectedComponent);
+    // console.log("this is scene", meshes);
+    // console.log("this is selected component", selectedComponent);
     let isMouseClick = false;
     let stop = false;
+
+    if (animationController) {
+      newAnimationControllerState = { ...animationController };
+    }
+    newCameraControllerState = { ...cameraController };
 
     const runWebGL = async () => {
       // Setup refs if not already
       if (!canvasRef.current) {
         return;
       }
+
       if (!rendererRef.current) {
         setupRenderer();
       }
       if (
-        cameraType != activeCameraTypeRef.current ||
+        cameraController.type != activeCameraTypeRef.current ||
         !activeCameraRef.current
       ) {
-        setupCamera(cameraType);
+        setupCamera(cameraController.type);
       }
+
       if (
-        selectedComponent != selectedComponentRef.current ||
-        !activeComponentRef.current
+        !activeComponentRef.current ||
+        activeComponentRef.current != activeComponent
       ) {
-        setupComponent(selectedComponent);
+        // rendererRef.current?.clean();
+        activeComponentRef.current = activeComponent;
         setupAnimationRunner(testAnim, activeComponentRef.current!);
       }
 
@@ -286,9 +299,13 @@ const useRender = ({
       });
       const mesh = new Mesh(geometry, material);
       testScene.add(mesh);
+      if (animationController) {
+        animationRunner.fps = animationController.fps;
+        animationRunner.easing = animationController.easing;
+      }
 
       // Apply camera controls
-      activeCamera.setDistance(distance);
+      activeCamera.setDistance(cameraController.distance);
       let dx = 0;
       let dy = 0;
 
@@ -308,39 +325,46 @@ const useRender = ({
         dy = event.clientY - rect.top;
       });
 
-      if (isReset) {
+      if (cameraController.reset) {
         dx = 0;
         dy = 0;
-        handleReset(false);
+        newCameraControllerState.reset = false;
+        updateCameraController(newCameraControllerState);
       }
 
       // Apply animation controls
-      console.log("animationController:", animationController);
-      if (animationController) {
-        const newAnimationController = animationController;
-
+      if (animationController && setAnimationController) {
         animationRunner.loop = animationController.playback;
         animationRunner.reverse = animationController.reverse;
         if (animationController.pause) {
-          animationRunner.Pause();
-          animationController.play = false;
+          animationRunner.pause();
+          newAnimationControllerState.pause = false;
         }
         if (animationController.play) {
-          console.log("Playing");
           animationRunner.playAnimation();
-          newAnimationController.play = false;
+          newAnimationControllerState.play = false;
         }
-
-        setAnimationController(newAnimationController);
+        if (animationController.manualUpdate) {
+          animationRunner.setFrame(animationController.currentFrame - 1);
+          newAnimationControllerState.manualUpdate = false;
+        }
       }
 
-      console.log("This is animation scene", animationController);
-
       WebGLUtils.setUniforms(renderer.currentProgram, dummyUniformsData);
+
       function render() {
         if (!renderer) return;
         if (activeCameraRef.current == null) return;
-        if (animationRunnerRef.current) animationRunner.update();
+        if (animationRunnerRef.current) {
+          animationRunner.update();
+          if (animationController && setAnimationController) {
+            if (!animationController.manualUpdate) {
+              newAnimationControllerState.currentFrame =
+                animationRunner.CurrentFrame + 1;
+            }
+            updateAnimationController(newAnimationControllerState);
+          }
+        }
 
         activeCamera.setOrbitControl(dy, dx);
 
@@ -355,7 +379,7 @@ const useRender = ({
       render();
       // renderer.render(scene, cameraInstance);
 
-      //   console.log("Done");
+      // console.log("Done");
     };
 
     runWebGL();
@@ -363,16 +387,17 @@ const useRender = ({
       stop = true;
     };
   }, [
-    cameraType,
-    distance,
-    isReset,
-    selectedComponent,
-    meshes,
+    activeComponent,
     isControllerChange,
-    animationController.play,
-    animationController.pause,
-    animationController.reverse,
-    animationController.playback,
+    cameraController.distance,
+    cameraController.reset,
+    cameraController.type,
+    animationController?.currentFrame,
+    animationController?.maxFrame,
+    animationController?.pause,
+    animationController?.play,
+    animationController?.playback,
+    animationController?.reverse,
   ]);
 
   return canvasRef;

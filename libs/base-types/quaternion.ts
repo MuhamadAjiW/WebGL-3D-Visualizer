@@ -1,5 +1,4 @@
 import { MathUtil } from "../util/math-util";
-import { Vector3 } from "./vector3";
 import { Euler } from "./euler";
 
 export class Quaternion {
@@ -223,7 +222,7 @@ export class Quaternion {
     return new Quaternion(data[0], data[1], data[2], data[3]);
   }
 
-  toJSON(): string {
-    return JSON.stringify([this.w, this.x, this.y, this.z]);
+  toJSON() {
+    return [this.w, this.x, this.y, this.z];
   }
 }

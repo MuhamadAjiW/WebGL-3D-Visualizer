@@ -17,10 +17,3 @@ export type NodeSchema = {
   scale: { x: number; y: number; z: number };
   children?: NodeSchema[];
 };
-
-export type AnimationController = {
-  play: boolean;
-  pause: boolean;
-  reverse: boolean;
-  playback: boolean;
-};
