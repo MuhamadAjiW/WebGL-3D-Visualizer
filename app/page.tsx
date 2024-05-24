@@ -126,6 +126,7 @@ const testAnim: AnimationClip = {
 export default function Home() {
   // States
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const animationFileInputRef = useRef<HTMLInputElement>(null);
   const [data, setData] = useState<Scene | null>(null);
   const [isComponentExpanded, setIsComponentExpanded] = useState<boolean>(true);
   const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(true);
@@ -136,6 +137,7 @@ export default function Home() {
   const [activeAnimationClipIdx, setActiveAnimationClipIdx] =
     useState<number>(0);
   const [selectedFile, setSelectedFile] = useState<File>();
+  const [animationSelectedFile, setAnimationSelectedFile] = useState<File>();
 
   const [cameraController, setCameraController] =
     useState<CameraControllerType>({
@@ -159,7 +161,9 @@ export default function Home() {
   // Fetch data with default to initialize
   const fetchData = async () => {
     let loaded: any;
+    let loadedAnim: any;
     console.log("This is selected file", selectedFile);
+    console.log("This is animation selected file", animationSelectedFile);
     if (selectedFile) {
       loaded = await new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -183,8 +187,28 @@ export default function Home() {
       loaded = await response.json();
     }
 
-    const responseAnim = await fetch("/animation-awe.json")
-    const loadedAnim = await responseAnim.json()
+    if (animationSelectedFile) {
+      loadedAnim = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const text = e.target?.result as string;
+          try {
+            const result = JSON.parse(text);
+            console.log(result);
+            resolve(result);
+          } catch (error) {
+            reject(error);
+          }
+        };
+        reader.onerror = (e) => {
+          reject(new Error("File reading failed"));
+        };
+        reader.readAsText(animationSelectedFile);
+      });
+    } else {
+      const responseAnim = await fetch("/animation-awe.json");
+      loadedAnim = await responseAnim.json();
+    }
 
     console.log("This is loaded file", loaded);
 
@@ -202,7 +226,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchData();
-  }, [selectedFile]);
+  }, [selectedFile, animationSelectedFile]);
 
   // Generate tree from received file
   const GLTFTree = {
@@ -274,15 +298,22 @@ export default function Home() {
     }
   };
 
-  const handleLoadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLoadFile = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    fileType: string
+  ) => {
     if (event.target.files) {
-      setSelectedFile(event.target.files[0]);
+      if (fileType === "model") setSelectedFile(event.target.files[0]);
+      if (fileType === "animation")
+        setAnimationSelectedFile(event.target.files[0]);
     }
   };
 
-  const toogleFileInput = () => {
-    if (fileInputRef.current) {
+  const toogleFileInput = (fileType: string) => {
+    if (fileType === "model" && fileInputRef.current) {
       fileInputRef.current.click();
+    } else if (fileType === "animation" && animationFileInputRef.current) {
+      animationFileInputRef.current.click();
     }
   };
 
@@ -386,7 +417,9 @@ export default function Home() {
             <div className="flex items-center justify-center gap-3">
               <Button
                 id="load-button"
-                handleClick={toogleFileInput}
+                handleClick={() => {
+                  toogleFileInput("model");
+                }}
                 text="Load"
                 className="bg-white text-black px-4 rounded-sm"
               />
@@ -396,8 +429,11 @@ export default function Home() {
                   name="file-input"
                   id="file-input"
                   className="hidden"
-                  onChange={handleLoadFile}
+                  onChange={(event) => {
+                    handleLoadFile(event, "model");
+                  }}
                   ref={fileInputRef}
+                  accept=".json"
                 />
               </div>
               <Button
@@ -416,8 +452,37 @@ export default function Home() {
           </div>
         </div>
         <div className="py-5 px-7 flex flex-col h-2/3">
-          <div className="">
+          <div className="pb-6 flex items-center justify-between">
             <div className="text-2xl font-bold bg-gray-900">Animation</div>
+            <div className="flex items-center justify-center gap-3">
+              <Button
+                id="load-button"
+                handleClick={() => {
+                  toogleFileInput("animation");
+                }}
+                text="Load"
+                className="bg-white text-black px-4 rounded-sm"
+              />
+              <div>
+                <input
+                  type="file"
+                  name="file-input"
+                  id="file-input"
+                  className="hidden"
+                  onChange={(event) => {
+                    handleLoadFile(event, "animation");
+                  }}
+                  ref={animationFileInputRef}
+                  accept=".json"
+                />
+              </div>
+              <Button
+                id="save-button"
+                handleClick={() => {}}
+                text="Save"
+                className="bg-white text-black px-4 rounded-sm"
+              />
+            </div>
           </div>
           <div className="flex gap-5 items-strech w-full py-3 overflow-x-auto">
             <Button
