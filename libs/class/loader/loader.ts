@@ -241,6 +241,19 @@ export class Loader {
   }
 
   public saveAnimation(animationList: AnimationClip[]) {
+    this.savedData = {
+      scene: null,
+      nodes: [],
+      cameras: [],
+      meshes: [],
+      geometries: [],
+      materials: [],
+      textures: [],
+      colors: [],
+      animations: [],
+      animationpaths: [],
+    };
+
     if (animationList.length > 0) {
       for (let i = 0; i < animationList.length; i++) {
         this.saveAnimationClip(animationList[i]);

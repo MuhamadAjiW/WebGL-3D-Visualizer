@@ -21,7 +21,15 @@ import {
 import { convertGLTFToTreeView, findMeshById } from "@/libs/helper";
 import { MathUtil } from "@/libs/util/math-util";
 import { InputOptions } from "@/types/ui";
-import { Checkbox, FormControlLabel, FormGroup, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
 import { TreeViewBaseItem } from "@mui/x-tree-view";
 import React, { useEffect, useState } from "react";
 
@@ -122,8 +130,10 @@ export default function Home() {
   const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(true);
   const [activeComponent, setActiveComponent] = useState<Object3D | null>(null);
   const [isControllerChange, setIsControllerChange] = useState<boolean>(false);
-  const [activeAnimationClip, setActiveAnimationClip] = useState<AnimationClip | null>(null);
-  const [activeAnimationClipIdx, setActiveAnimationClipIdx] = useState<number>(0);
+  const [activeAnimationClip, setActiveAnimationClip] =
+    useState<AnimationClip | null>(null);
+  const [activeAnimationClipIdx, setActiveAnimationClipIdx] =
+    useState<number>(0);
 
   const [cameraController, setCameraController] =
     useState<CameraControllerType>({
@@ -141,20 +151,26 @@ export default function Home() {
       maxFrame: 0,
       fps: 1,
       easing: AnimationEasingType.LINEAR,
-      manualUpdate: false
+      manualUpdate: false,
     });
 
   // Fetch data with default to initialize
   const fetchData = async () => {
     const response = await fetch("/articulated-awe.json");
+    const responseAnim = await fetch("/animation-awe.json");
     const loaded = await response.json();
+    const loadedAnim = await responseAnim.json();
 
     const loader: Loader = new Loader();
     const loadedFile = await loader.loadFromJson(JSON.stringify(loaded));
+    const loadedAnimation = await loader.loadAnimation(
+      JSON.stringify(loadedAnim)
+    );
     setData(loadedFile.scene);
     setActiveComponent(loadedFile.scene);
-    // setActiveAnimationClip(loadedFile.animations[activeAnimationClipIdx]);
-    setActiveAnimationClip(testAnim);
+    setActiveAnimationClip(loadedAnimation[activeAnimationClipIdx]);
+    loader.saveAnimation(loadedAnimation);
+    // setActiveAnimationClip(testAnim);
   };
 
   useEffect(() => {
@@ -255,23 +271,25 @@ export default function Home() {
     }
   };
 
-  const handleFPSChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    if(+event.target.value){
+  const handleFPSChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    if (+event.target.value) {
       setAnimationController((prev) => ({
         ...prev,
-        fps: +event.target.value
-      }))
+        fps: +event.target.value,
+      }));
       setIsControllerChange(!isControllerChange);
     }
-  }
+  };
 
   const handleEasingChange = (event: SelectChangeEvent) => {
     setAnimationController((prev) => ({
       ...prev,
-      easing: +event.target.value
-    }))
+      easing: +event.target.value,
+    }));
     setIsControllerChange(!isControllerChange);
-  }
+  };
 
   // Dropdown values
   const easeType: InputOptions[] = [
@@ -305,8 +323,7 @@ export default function Home() {
     },
   ];
 
-  if (!data || !activeComponent)
-    return <div>Loading...</div>;
+  if (!data || !activeComponent) return <div>Loading...</div>;
 
   return (
     <div className="flex w-full h-screen bg-main-black text-white">
