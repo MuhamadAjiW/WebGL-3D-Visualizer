@@ -530,7 +530,7 @@
           "a": 255
         },
         "shininess": 1,
-        "useNormalTex": false
+        "useNormalTex": true
       }
     ],
     "textures": [

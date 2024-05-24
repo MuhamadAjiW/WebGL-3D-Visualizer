@@ -130,10 +130,8 @@ export default function Home() {
   const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(true);
   const [activeComponent, setActiveComponent] = useState<Object3D | null>(null);
   const [isControllerChange, setIsControllerChange] = useState<boolean>(false);
-  const [activeAnimationClip, setActiveAnimationClip] =
-    useState<AnimationClip | null>(null);
-  const [activeAnimationClipIdx, setActiveAnimationClipIdx] =
-    useState<number>(0);
+  const [activeAnimationClip, setActiveAnimationClip] = useState<AnimationClip>();
+  const [activeAnimationClipIdx, setActiveAnimationClipIdx] = useState<number>(0);
 
   const [cameraController, setCameraController] =
     useState<CameraControllerType>({
