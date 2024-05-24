@@ -81,10 +81,10 @@ const AnimationPathSchema: z.ZodSchema<any> = z.lazy(() =>
   z.object({
     keyframe: AnimationTRSSchema.optional(),
     children: z
-      .array(
+      .record(
         z.object({
-          name: z.string(),
-          child: AnimationPathSchema,
+          id: z.string(),
+          children: AnimationPathSchema,
         })
       )
       .optional(),
@@ -212,7 +212,7 @@ export class Loader {
     this.loadAnimationPathMap = new Map();
   }
 
-  public save(scene: Scene, animationList: AnimationClip[] = []) {
+  public save(scene: Scene) {
     // traverse scene tree
     this.savedData = {
       scene: null,
@@ -229,13 +229,23 @@ export class Loader {
 
     this.savedData.scene = this.traverseNode(scene);
 
-    // Save animation list
+    const result = GLTFSchema.safeParse(this.savedData);
+    if (result.success) {
+      // console.log("Validation successful:", result.data);
+    } else {
+      console.error("Validation failed:", result.error.errors);
+    }
+
+    // Now savedData contains the serialized scene data
+    console.log(JSON.stringify(this.savedData, null, 2));
+  }
+
+  public saveAnimation(animationList: AnimationClip[]) {
     if (animationList.length > 0) {
       for (let i = 0; i < animationList.length; i++) {
         this.saveAnimationClip(animationList[i]);
       }
     }
-
     const result = GLTFSchema.safeParse(this.savedData);
     if (result.success) {
       // console.log("Validation successful:", result.data);
@@ -511,12 +521,10 @@ export class Loader {
 
   public async loadFromJson(jsonString: string): Promise<{
     scene: Scene;
-    animations: AnimationClip[];
   }> {
     this.savedData = JSON.parse(jsonString);
 
     let scene = await this.loadScene();
-    let animationClip = this.loadAnimationClip();
 
     // check valid
     const result = GLTFSchema.safeParse(this.savedData);
@@ -527,8 +535,19 @@ export class Loader {
     }
     return {
       scene: scene,
-      animations: animationClip,
     };
+  }
+
+  public loadAnimation(jsonString: string): AnimationClip[] {
+    this.savedData = JSON.parse(jsonString);
+    let animationClip = this.loadAnimationClip();
+    const result = GLTFSchema.safeParse(this.savedData);
+    if (result.success) {
+      console.log("Validation successful:", result.data);
+    } else {
+      console.error("Validation failed:", result.error.errors);
+    }
+    return animationClip;
   }
 
   public async loadScene(): Promise<Scene> {
@@ -759,6 +778,7 @@ export class Loader {
     }
 
     const textureData = this.savedData.textures[textureIndex];
+    console.log(textureData);
     const textureObject = {
       id: textureData.id,
       isActive: textureData.isActive,
@@ -778,7 +798,6 @@ export class Loader {
 
     texture = await TextureLoader.load(textureObject.image);
     texture.wrapS = textureObject.wrapS;
-    texture.name = textureObject.name;
     texture.name = textureObject.name;
     texture.wrapS = textureObject.wrapS;
     texture.wrapT = textureObject.wrapT;
