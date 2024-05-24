@@ -183,6 +183,9 @@ export default function Home() {
       loaded = await response.json();
     }
 
+    const responseAnim = await fetch("/animation-awe.json")
+    const loadedAnim = await responseAnim.json()
+
     console.log("This is loaded file", loaded);
 
     const loader: Loader = new Loader();
@@ -509,7 +512,7 @@ export default function Home() {
             <RenderComponent
               activeComponent={activeComponent}
               isControllerChange={isControllerChange}
-              activeAnimationClip={activeAnimationClip}
+              activeAnimationClip={activeAnimationClip!!}
               cameraController={cameraController}
               setCameraController={setCameraController}
               animationController={animationController}
