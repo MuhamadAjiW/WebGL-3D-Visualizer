@@ -53,14 +53,13 @@ export default function Home() {
 
   // Fetch data with default to initialize
   const fetchData = async () => {
-    const response = await fetch("/scene.json");
+    const response = await fetch("/box.json");
     const loaded = await response.json();
 
     const loader: Loader = new Loader();
-    const loadedScene = loader.loadFromJson(JSON.stringify(loaded)).scene;
-    const loadedSceneCopy = loader.loadFromJson(JSON.stringify(loaded)).scene;
-    setData(loadedScene);
-    setActiveComponent(loadedScene);
+    const loadedFile = await loader.loadFromJson(JSON.stringify(loaded));
+    setData(loadedFile.scene);
+    setActiveComponent(loadedFile.scene);
   };
 
   useEffect(() => {

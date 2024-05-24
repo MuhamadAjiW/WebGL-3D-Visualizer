@@ -12,8 +12,8 @@ export class BasicMaterial extends ShaderMaterial {
   public diffuseTexture: Texture;
 
   constructor(options?: {
-    texture?: Texture;
-    color?: Color;
+    diffuseColor?: Color;
+    diffuseTexture?: Texture;
     normalTexture?: Texture;
     parallaxTexture?: Texture;
     useNormalTex?: boolean;
@@ -24,8 +24,8 @@ export class BasicMaterial extends ShaderMaterial {
       useNormalTex: options?.useNormalTex,
     });
 
-    this.diffuse = options?.color || new Color(0xffffffff);
-    this.diffuseTexture = options?.texture || new Texture();
+    this.diffuse = options?.diffuseColor || new Color(0xffffffff);
+    this.diffuseTexture = options?.diffuseTexture || new Texture();
   }
 
   public loadTexture(renderer: WebGLRenderer): void {
@@ -54,7 +54,7 @@ export class BasicMaterial extends ShaderMaterial {
   public static fromJson(json: string): BasicMaterial {
     const material = JSON.parse(json);
     return new BasicMaterial({
-      color: material.color,
+      diffuseColor: material.color,
     });
   }
 }

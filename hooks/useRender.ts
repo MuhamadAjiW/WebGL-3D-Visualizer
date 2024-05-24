@@ -27,6 +27,7 @@ import { PhongMaterial } from "@/libs/class/material/phong-material";
 import { Scene } from "@/libs/class/scene";
 import { TextureLoader } from "@/libs/class/texture/texture-loader";
 import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
+import { Loader } from "@/libs/class/loader/loader";
 
 interface HooksRenderProps {
   activeComponent: Object3D; // change this later
@@ -38,65 +39,91 @@ interface HooksRenderProps {
 }
 
 // TODO: Delete
+// const testAnim: AnimationClip = {
+//   name: "Test",
+//   frames: [
+//     // 0
+//     {
+//       keyframe: {},
+//       children: {
+//         Parent: {
+//           keyframe: {
+//             translation: [0, 0, 0],
+//             rotation: [0, 0, 0],
+//           },
+//           children: {
+//             Left: {
+//               keyframe: {
+//                 rotation: [0, 0, 0],
+//               },
+//             },
+//           },
+//         },
+//       },
+//     },
+//     // 1
+//     {
+//       keyframe: {},
+//       children: {
+//         Parent: {
+//           keyframe: {
+//             translation: [-0.5, 0, 0],
+//             rotation: [0, 0.5, 0],
+//           },
+//           children: {
+//             Left: {
+//               keyframe: {
+//                 rotation: [2, 0, 0],
+//               },
+//             },
+//           },
+//         },
+//       },
+//     },
+//     // 2
+//     {
+//       keyframe: {},
+//       children: {
+//         Parent: {
+//           keyframe: {
+//             translation: [0.5, 0, 0],
+//             rotation: [0, 0.25, 0],
+//           },
+//           children: {
+//             Left: {
+//               keyframe: {
+//                 rotation: [0, 1, 0],
+//               },
+//             },
+//           },
+//         },
+//       },
+//     },
+//   ],
+// };
 const testAnim: AnimationClip = {
-  name: "Test",
+  name: "Test2",
   frames: [
     // 0
     {
-      keyframe: {},
-      children: {
-        Parent: {
-          keyframe: {
-            translation: [0, 0, 0],
-            rotation: [0, 0, 0],
-          },
-          children: {
-            Left: {
-              keyframe: {
-                rotation: [0, 0, 0],
-              },
-            },
-          },
-        },
+      keyframe: {
+        rotation: [0, 0, 0],
       },
+      children: {},
     },
     // 1
     {
-      keyframe: {},
-      children: {
-        Parent: {
-          keyframe: {
-            translation: [-0.5, 0, 0],
-            rotation: [0, 0.5, 0],
-          },
-          children: {
-            Left: {
-              keyframe: {
-                rotation: [2, 0, 0],
-              },
-            },
-          },
-        },
+      keyframe: {
+        rotation: [0, 1, 0],
       },
+      children: {},
     },
     // 2
     {
-      keyframe: {},
-      children: {
-        Parent: {
-          keyframe: {
-            translation: [0.5, 0, 0],
-            rotation: [0, 0.25, 0],
-          },
-          children: {
-            Left: {
-              keyframe: {
-                rotation: [0, 1, 0],
-              },
-            },
-          },
-        },
+      keyframe: {
+        rotation: [0, 2, 0],
       },
+      children: {},
     },
   ],
 };
@@ -282,26 +309,6 @@ const useRender = ({
       const animationRunner = animationRunnerRef.current as AnimationRunner;
       const scene = activeComponentRef.current as Object3D;
 
-      const testScene = new Scene();
-      const diffuseTexture = await TextureLoader.load("res/woodbox.png");
-      const specularTexture = await TextureLoader.load("res/woodboxSpec.png");
-      const normalTexture = await TextureLoader.load("res/woodboxNorm2.png");
-      const geometry = new BlockGeometry(0.5, 0.5, 0.5);
-      // geometry.smoothShade = true;
-      // geometry.calculateNormals();
-
-      const material = new PhongMaterial({
-        diffuseTexture: diffuseTexture,
-        specularTexture: specularTexture,
-        normalTexture: normalTexture,
-        ambient: new Color(0x414141ff),
-        diffuse: new Color(0xffffffff),
-        specular: new Color(0xffffffff),
-        useNormalTex: true,
-        shinyness: 1,
-      });
-      const mesh = new Mesh(geometry, material);
-      testScene.add(mesh);
       if (animationController) {
         animationRunner.fps = animationController.fps;
         animationRunner.easing = animationController.easing;
@@ -371,10 +378,10 @@ const useRender = ({
 
         activeCamera.setOrbitControl(dy, dx);
 
-        mesh.rotateOnWorldAxis(Vector3.right, 0.001);
-        mesh.rotateOnWorldAxis(Vector3.up, 0.001);
+        activeComponentRef.current!.rotateOnWorldAxis(Vector3.right, 0.001);
+        activeComponentRef.current!.rotateOnWorldAxis(Vector3.up, 0.001);
 
-        renderer.render(testScene, activeCamera);
+        renderer.render(activeComponentRef.current!, activeCamera);
         if (!stop) {
           requestAnimationFrame(render);
         }

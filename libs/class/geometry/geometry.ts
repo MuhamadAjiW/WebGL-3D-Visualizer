@@ -8,9 +8,6 @@ class BufferGeometry {
   public texCoords: BufferAttribute | undefined;
   public tangent: BufferAttribute | undefined;
   public bitangent: BufferAttribute | undefined;
-  public width: number = 0;
-  public height: number = 0;
-  public length: number = 0;
   public smoothShade: boolean = false;
 
   calculateNormals(forceNewAttribute = false) {

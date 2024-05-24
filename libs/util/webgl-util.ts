@@ -214,14 +214,10 @@ export class WebGLUtil {
         gl.bindBuffer(gl.ARRAY_BUFFER, buf);
         const v = values[0];
 
-        console.log(info.name);
-
         if (v instanceof BufferAttribute) {
           // Data Changed Time (note that buffer is already binded)
           // v.consume();
           gl.bufferData(gl.ARRAY_BUFFER, v.data, gl.STATIC_DRAW);
-
-          console.log(v.data);
 
           gl.enableVertexAttribArray(loc);
           gl.vertexAttribPointer(

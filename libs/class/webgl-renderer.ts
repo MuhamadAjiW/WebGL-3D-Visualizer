@@ -80,7 +80,6 @@ export class WebGLRenderer {
 
     if (node instanceof Mesh) {
       //TODO: Optimize this call
-      console.log("Bitangent: ", node.geometry.bitangent);
 
       node.computeWorldMatrix(false, false);
 
