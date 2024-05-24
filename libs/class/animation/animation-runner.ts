@@ -12,9 +12,9 @@ export class AnimationRunner {
   reverse: boolean = false;
   fps: number = 1;
   easing: AnimationEasingType = AnimationEasingType.LINEAR;
+  currentAnimation?: AnimationClip;
   private root: Object3D;
   private currentFrame: number = 0;
-  private currentAnimation?: AnimationClip;
   private snapshot: Object3D = new Object3D();
   private lastFrameTime: number = 0;
   private pauseTimeOffset: number = 0;

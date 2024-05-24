@@ -36,98 +36,10 @@ interface HooksRenderProps {
   setCameraController: Dispatch<SetStateAction<CameraControllerType>>;
   animationController?: AnimationControllerType;
   setAnimationController?: Dispatch<SetStateAction<AnimationControllerType>>;
+  activeAnimationClip?: AnimationClip;
 }
 
 // TODO: Delete
-// const testAnim: AnimationClip = {
-//   name: "Test",
-//   frames: [
-//     // 0
-//     {
-//       keyframe: {},
-//       children: {
-//         Parent: {
-//           keyframe: {
-//             translation: [0, 0, 0],
-//             rotation: [0, 0, 0],
-//           },
-//           children: {
-//             Left: {
-//               keyframe: {
-//                 rotation: [0, 0, 0],
-//               },
-//             },
-//           },
-//         },
-//       },
-//     },
-//     // 1
-//     {
-//       keyframe: {},
-//       children: {
-//         Parent: {
-//           keyframe: {
-//             translation: [-0.5, 0, 0],
-//             rotation: [0, 0.5, 0],
-//           },
-//           children: {
-//             Left: {
-//               keyframe: {
-//                 rotation: [2, 0, 0],
-//               },
-//             },
-//           },
-//         },
-//       },
-//     },
-//     // 2
-//     {
-//       keyframe: {},
-//       children: {
-//         Parent: {
-//           keyframe: {
-//             translation: [0.5, 0, 0],
-//             rotation: [0, 0.25, 0],
-//           },
-//           children: {
-//             Left: {
-//               keyframe: {
-//                 rotation: [0, 1, 0],
-//               },
-//             },
-//           },
-//         },
-//       },
-//     },
-//   ],
-// };
-const testAnim: AnimationClip = {
-  name: "Test2",
-  frames: [
-    // 0
-    {
-      keyframe: {
-        rotation: [0, 0, 0],
-      },
-      children: {},
-    },
-    // 1
-    {
-      keyframe: {
-        rotation: [0, 1, 0],
-      },
-      children: {},
-    },
-    // 2
-    {
-      keyframe: {
-        rotation: [0, 2, 0],
-      },
-      children: {},
-    },
-  ],
-};
-//
 const dummyUniformsData = {
   // Light
   u_lightPos: new BufferUniform(
@@ -144,6 +56,7 @@ const useRender = ({
   setCameraController,
   animationController,
   setAnimationController,
+  activeAnimationClip,
 }: HooksRenderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<WebGLRenderer | null>(null);
@@ -296,12 +209,24 @@ const useRender = ({
 
       if (
         !activeComponentRef.current ||
-        activeComponentRef.current != activeComponent
+        activeComponentRef.current != activeComponent ||
+        animationRunnerRef.current?.currentAnimation != activeAnimationClip
       ) {
         // rendererRef.current?.clean();
         activeComponentRef.current = activeComponent;
-        setupAnimationRunner(testAnim, activeComponentRef.current!);
+        // setupAnimationRunner(testAnim, activeComponentRef.current!);
+
+        if (activeAnimationClip) {
+          console.log("Setting up animation");
+          setupAnimationRunner(
+            activeAnimationClip,
+            activeComponentRef.current!
+          );
+        }
       }
+
+      // const loader = new Loader();
+      // loader.save(activeComponentRef.current, [testAnim]);
 
       const canvas = canvasRef.current;
       const renderer = rendererRef.current as WebGLRenderer;
@@ -309,7 +234,7 @@ const useRender = ({
       const animationRunner = animationRunnerRef.current as AnimationRunner;
       const scene = activeComponentRef.current as Object3D;
 
-      if (animationController) {
+      if (animationRunner && animationController) {
         animationRunner.fps = animationController.fps;
         animationRunner.easing = animationController.easing;
       }
@@ -343,7 +268,7 @@ const useRender = ({
       }
 
       // Apply animation controls
-      if (animationController && setAnimationController) {
+      if (animationController && setAnimationController && animationRunner) {
         animationRunner.loop = animationController.playback;
         animationRunner.reverse = animationController.reverse;
         if (animationController.pause) {
@@ -399,6 +324,7 @@ const useRender = ({
   }, [
     activeComponent,
     isControllerChange,
+    activeAnimationClip,
     cameraController.distance,
     cameraController.reset,
     cameraController.type,

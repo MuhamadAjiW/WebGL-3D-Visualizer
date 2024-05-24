@@ -6,6 +6,7 @@ import Button from "@/components/ui/Button";
 import ComponentController from "@/components/ui/Controller";
 import CustomSlider from "@/components/ui/slider";
 import TreeView from "@/components/ui/TreeView";
+import { AnimationClip } from "@/libs/base-types/animation";
 import { Euler } from "@/libs/base-types/euler";
 import { Quaternion } from "@/libs/base-types/quaternion";
 import Vector3 from "@/libs/base-types/vector3";
@@ -24,6 +25,96 @@ import { Checkbox, FormControlLabel, FormGroup, MenuItem, Select, SelectChangeEv
 import { TreeViewBaseItem } from "@mui/x-tree-view";
 import React, { useEffect, useState } from "react";
 
+const testAnim: AnimationClip = {
+  name: "Test",
+  frames: [
+    // 0
+    {
+      keyframe: {},
+      children: {
+        Parent: {
+          keyframe: {
+            translation: [0, 0, 0],
+            rotation: [0, 0, 0],
+          },
+          children: {
+            Left: {
+              keyframe: {
+                rotation: [0, 0, 0],
+              },
+            },
+          },
+        },
+      },
+    },
+    // 1
+    {
+      keyframe: {},
+      children: {
+        Parent: {
+          keyframe: {
+            translation: [-0.5, 0, 0],
+            rotation: [0, 0.5, 0],
+          },
+          children: {
+            Left: {
+              keyframe: {
+                rotation: [2, 0, 0],
+              },
+            },
+          },
+        },
+      },
+    },
+    // 2
+    {
+      keyframe: {},
+      children: {
+        Parent: {
+          keyframe: {
+            translation: [0.5, 0, 0],
+            rotation: [0, 0.25, 0],
+          },
+          children: {
+            Left: {
+              keyframe: {
+                rotation: [0, 1, 0],
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+};
+// const testAnim: AnimationClip = {
+//   name: "Test2",
+//   frames: [
+//     // 0
+//     {
+//       keyframe: {
+//         rotation: [0, 0, 0],
+//       },
+//       children: {},
+//     },
+//     // 1
+//     {
+//       keyframe: {
+//         rotation: [0, 1, 0],
+//       },
+//       children: {},
+//     },
+//     // 2
+//     {
+//       keyframe: {
+//         rotation: [0, 2, 0],
+//       },
+//       children: {},
+//     },
+//   ],
+// };
+//
+
 export default function Home() {
   // States
   const [data, setData] = useState<Scene | null>(null);
@@ -31,6 +122,8 @@ export default function Home() {
   const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(true);
   const [activeComponent, setActiveComponent] = useState<Object3D | null>(null);
   const [isControllerChange, setIsControllerChange] = useState<boolean>(false);
+  const [activeAnimationClip, setActiveAnimationClip] = useState<AnimationClip | null>(null);
+  const [activeAnimationClipIdx, setActiveAnimationClipIdx] = useState<number>(0);
 
   const [cameraController, setCameraController] =
     useState<CameraControllerType>({
@@ -60,6 +153,8 @@ export default function Home() {
     const loadedFile = await loader.loadFromJson(JSON.stringify(loaded));
     setData(loadedFile.scene);
     setActiveComponent(loadedFile.scene);
+    // setActiveAnimationClip(loadedFile.animations[activeAnimationClipIdx]);
+    setActiveAnimationClip(testAnim);
   };
 
   useEffect(() => {
@@ -351,6 +446,7 @@ export default function Home() {
             <RenderComponent
               activeComponent={activeComponent}
               isControllerChange={isControllerChange}
+              activeAnimationClip={activeAnimationClip}
               cameraController={cameraController}
               setCameraController={setCameraController}
               animationController={animationController}
