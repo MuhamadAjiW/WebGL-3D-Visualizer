@@ -28,34 +28,18 @@ class ObliqueCamera extends Camera {
   }
 
   computeProjectionMatrix() {
-    var st = M4.ortho(
-      this.left,
-      this.right,
-      this.bottom,
-      this.top,
-      this.near,
-      this.far
-    );
+    const phi = 30;
+    const theta = 30;
 
-    var morth = new M4([
-      [1, 0, 0, 0],
-      [0, 1, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 1],
-    ]);
+    const ortho = M4.ortho(this.left, this.right, this.bottom, this.top, this.near, this.far);
+    const shearMatrix = new M4([
+      [1,0,0,0],
+      [0,1,0,0],
+      [-1/Math.tan(phi), -1/Math.tan(theta), 1, 0],
+      [0,0,0,1]
+    ])
 
-    var theta = Math.atan2(this.left, this.near);
-    var phi = Math.atan2(this.bottom, this.near);
-
-    var h = new M4();
-    h.matrix[0][0] = 1;
-    h.matrix[1][1] = 1;
-    h.matrix[2][2] = 1;
-    h.matrix[3][3] = 1;
-    h.matrix[0][2] = 1 / Math.tan(theta);
-    h.matrix[1][2] = 1 / Math.tan(phi);
-
-    this._projectionMatrix = M4.multiply(morth, M4.multiply(st, h));
+    this._projectionMatrix = M4.multiply(ortho, shearMatrix);
   }
 
   setDistance(distance: number) {
