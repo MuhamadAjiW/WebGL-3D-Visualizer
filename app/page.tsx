@@ -31,7 +31,7 @@ import {
   TextField,
 } from "@mui/material";
 import { TreeViewBaseItem } from "@mui/x-tree-view";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const testAnim: AnimationClip = {
   name: "Test",
@@ -125,6 +125,7 @@ const testAnim: AnimationClip = {
 
 export default function Home() {
   // States
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [data, setData] = useState<Scene | null>(null);
   const [isComponentExpanded, setIsComponentExpanded] = useState<boolean>(true);
   const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(true);
@@ -134,6 +135,7 @@ export default function Home() {
     useState<AnimationClip | null>(null);
   const [activeAnimationClipIdx, setActiveAnimationClipIdx] =
     useState<number>(0);
+  const [selectedFile, setSelectedFile] = useState<File>();
 
   const [cameraController, setCameraController] =
     useState<CameraControllerType>({
@@ -156,10 +158,32 @@ export default function Home() {
 
   // Fetch data with default to initialize
   const fetchData = async () => {
-    const response = await fetch("/articulated-awe.json");
-    const responseAnim = await fetch("/animation-awe.json");
-    const loaded = await response.json();
-    const loadedAnim = await responseAnim.json();
+    let loaded: any;
+    console.log("This is selected file", selectedFile);
+    if (selectedFile) {
+      loaded = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const text = e.target?.result as string;
+          try {
+            const result = JSON.parse(text);
+            console.log(result);
+            resolve(result);
+          } catch (error) {
+            reject(error);
+          }
+        };
+        reader.onerror = (e) => {
+          reject(new Error("File reading failed"));
+        };
+        reader.readAsText(selectedFile);
+      });
+    } else {
+      const response = await fetch("/articulated-awe.json");
+      loaded = await response.json();
+    }
+
+    console.log("This is loaded file", loaded);
 
     const loader: Loader = new Loader();
     const loadedFile = await loader.loadFromJson(JSON.stringify(loaded));
@@ -175,7 +199,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [selectedFile]);
 
   // Generate tree from received file
   const GLTFTree = {
@@ -244,6 +268,18 @@ export default function Home() {
       activeComponent.scale = scale;
       setActiveComponent(activeComponent);
       setIsControllerChange(!isControllerChange);
+    }
+  };
+
+  const handleLoadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const toogleFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
@@ -347,10 +383,20 @@ export default function Home() {
             <div className="flex items-center justify-center gap-3">
               <Button
                 id="load-button"
-                handleClick={() => {}}
+                handleClick={toogleFileInput}
                 text="Load"
                 className="bg-white text-black px-4 rounded-sm"
               />
+              <div>
+                <input
+                  type="file"
+                  name="file-input"
+                  id="file-input"
+                  className="hidden"
+                  onChange={handleLoadFile}
+                  ref={fileInputRef}
+                />
+              </div>
               <Button
                 id="save-button"
                 handleClick={() => {}}
@@ -436,7 +482,7 @@ export default function Home() {
           <div className="flex items-center justify-between gap-3">
             <div>Easing</div>
             <Select
-              value={animationController.easing}
+              value={animationController.easing.toString()}
               onChange={handleEasingChange}
               className="bg-white"
               size="small"
