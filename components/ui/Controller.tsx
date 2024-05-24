@@ -1,10 +1,14 @@
 import { Euler } from "@/libs/base-types/euler";
 import { Quaternion } from "@/libs/base-types/quaternion";
 import Vector3 from "@/libs/base-types/vector3";
+import { BasicMaterial } from "@/libs/class/material/basic-material";
+import { PhongMaterial } from "@/libs/class/material/phong-material";
+import { Mesh } from "@/libs/class/mesh";
 import Object3D from "@/libs/class/object3d";
-import { TextField } from "@mui/material";
+import { Texture } from "@/libs/class/texture/texture";
+import { Button, TextField } from "@mui/material";
 import { useFormik } from "formik";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Collapse } from "react-collapse";
 import { GoChevronDown, GoChevronRight } from "react-icons/go";
 
@@ -35,7 +39,15 @@ const ComponentController: React.FC<ControllerProps> = ({
   const scale = useRef<Vector3>(Vector3.one)
   const name = useRef<string>("")
 
+
+  // Texture
+  const normalTexture = useRef<Texture | null>(null)
+  const parallaxTexture = useRef<Texture | null>(null)
+  const diffuseTexture = useRef<Texture | null>(null)
+  const specularTexture = useRef<Texture | null>(null)
+
   if(component && component != savedComponent.current){
+    console.log(component)
     savedComponent.current = component;
 
     const euler = new Euler()
@@ -44,6 +56,18 @@ const ComponentController: React.FC<ControllerProps> = ({
     position.current = component.position;
     scale.current = component.scale;
     name.current = component.name;
+
+    if (component instanceof Mesh) {
+      if (component.material instanceof BasicMaterial) {
+        normalTexture.current = component.material.normalTexture;
+        parallaxTexture.current = component.material.parallaxTexture;
+      } else if (component.material instanceof PhongMaterial) {
+        normalTexture.current = component.material.normalTexture;
+        parallaxTexture.current = component.material.parallaxTexture;
+        diffuseTexture.current = component.material.diffuseTexture;
+        specularTexture.current = component.material.specularTexture;
+      }
+    }
   }
 
   const formik = useFormik({
@@ -64,6 +88,10 @@ const ComponentController: React.FC<ControllerProps> = ({
         y: scale.current.y,
         z: scale.current.z,
       },
+      normalTexture: normalTexture.current,
+      parallaxTexture: parallaxTexture.current,
+      diffuseTexture: diffuseTexture.current,
+      specularTexture: specularTexture.current,
     },
     onSubmit: (values) => {
       handleSubmit(values);
@@ -75,6 +103,86 @@ const ComponentController: React.FC<ControllerProps> = ({
     formik.handleChange(e);
     formik.submitForm()
   }
+
+  const handleNormalTextureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const image = new Image();
+        image.src = event.target?.result as string;
+        const image_path = "res/" + file.name
+
+        if (component instanceof Mesh) {
+          component.material.normalTexture.image = image;
+          component.material.normalTexture.image_path = image_path;
+
+          normalTexture.current = component.material.normalTexture
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleParallaxTextureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const image = new Image();
+        image.src = event.target?.result as string;
+        const image_path = "res/" + file.name
+
+        if (component instanceof Mesh) {
+          component.material.parallaxTexture.image = image;
+          component.material.parallaxTexture.image_path = image_path;
+
+          parallaxTexture.current = component.material.parallaxTexture
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDiffuseTextureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const image = new Image();
+        image.src = event.target?.result as string;
+        const image_path = "res/" + file.name
+
+        if (component instanceof Mesh && component.material instanceof PhongMaterial) {
+          component.material.diffuseTexture.image = image;
+          component.material.diffuseTexture.image_path = image_path;
+
+          diffuseTexture.current = component.material.diffuseTexture
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSpecularTextureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const image = new Image();
+        image.src = event.target?.result as string;
+        const image_path = "res/" + file.name
+
+        if (component instanceof Mesh && component.material instanceof PhongMaterial) {
+          component.material.specularTexture.image = image;
+          component.material.specularTexture.image_path = image_path;
+
+          specularTexture.current = component.material.specularTexture
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <>
@@ -235,6 +343,107 @@ const ComponentController: React.FC<ControllerProps> = ({
                   </div>
                 </div>
               </div>
+
+              // Normal Texture
+              <div className="flex flex-col gap-2">
+                <div>Normal Texture</div>
+                {component instanceof Mesh && (
+                  <div className="flex justify-center mb-2">
+                    <img
+                      src={component.material.normalTexture.image_path}
+                      alt="Current Texture"
+                      className="max-w-full max-h-32"
+                    />
+                  </div>
+                )}
+                {component instanceof Mesh && (
+                  <Button variant="contained" component="label">
+                    Normal Texture
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={handleNormalTextureChange}
+                    />
+                  </Button>
+                )}
+              </div>
+
+              // Parallax Texture
+              <div className="flex flex-col gap-2">
+                <div>Parallax Texture</div>
+                {component instanceof Mesh && (
+                  <div className="flex justify-center mb-2">
+                    <img
+                      src={component.material.parallaxTexture.image_path}
+                      alt="Current Texture"
+                      className="max-w-full max-h-32"
+                    />
+                  </div>
+                )}
+                {component instanceof Mesh && (
+                  <Button variant="contained" component="label">
+                    Parallax Texture
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={handleParallaxTextureChange}
+                    />
+                  </Button>
+                )}
+              </div>
+
+              // Diffuse Texture
+              <div className="flex flex-col gap-2">
+                <div>Diffuse Texture</div>
+                {component instanceof Mesh && component.material instanceof BasicMaterial && (
+                  <div className="flex justify-center mb-2">
+                    <img
+                      src={component.material.diffuseTexture.image_path}
+                      alt="Current Texture"
+                      className="max-w-full max-h-32"
+                    />
+                  </div>
+                )}
+                {component instanceof Mesh && component.material instanceof BasicMaterial && (
+                  <Button variant="contained" component="label">
+                    Diffuse Texture
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={handleDiffuseTextureChange}
+                    />
+                  </Button>
+                )}
+              </div>
+
+              // Specular Texture
+              <div className="flex flex-col gap-2">
+                <div>Specular Texture</div>
+                {component instanceof Mesh && component.material instanceof PhongMaterial && (
+                  <div className="flex justify-center mb-2">
+                    <img
+                      src={component.material.specularTexture.image_path}
+                      alt="Current Texture"
+                      className="max-w-full max-h-32"
+                    />
+                  </div>
+                )}
+                {component instanceof Mesh && component.material instanceof PhongMaterial && (
+                  <Button variant="contained" component="label">
+                    Specular Texture
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={handleSpecularTextureChange}
+                    />
+                  </Button>
+                )}
+              </div>
+
             </div>
           </Collapse>
         </div>
