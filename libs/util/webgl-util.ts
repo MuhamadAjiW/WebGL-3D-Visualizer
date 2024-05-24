@@ -1,12 +1,14 @@
 import { ProgramInfo } from "../base-types/webgl-program-info";
 import { BufferUniform } from "../class/webgl/uniform";
 import { BufferAttribute } from "../class/webgl/attribute";
-import { UniformSetterWebGLType } from "../base-types/webgl-types";
+import { GLTexture, UniformSetterWebGLType } from "../base-types/webgl-types";
 
 export type UniformSingleDataType =
   | BufferUniform
   | GLfloat
+  | GLTexture
   | Float32Array
+  | Boolean
   | number[];
 export type UniformDataType = [UniformSingleDataType] | number[];
 export type UniformSetters = (...v: UniformDataType) => void;
@@ -22,18 +24,24 @@ export type ShaderUniforms = {
   u_view?: UniformSingleDataType;
   u_world?: UniformSingleDataType;
   u_normalMat?: UniformSingleDataType;
-  u_texture?: UniformSingleDataType;
+  u_textureDiffuse?: UniformSingleDataType;
+  u_textureSpecular?: UniformSingleDataType;
+  u_textureNormal?: UniformSingleDataType;
+  u_textureParallax?: UniformSingleDataType;
   u_ambient?: UniformSingleDataType;
   u_diffuse?: UniformSingleDataType;
   u_specular?: UniformSingleDataType;
   u_shininess?: UniformSingleDataType;
   u_materialType?: UniformSingleDataType;
   u_lightPos?: UniformSingleDataType;
+  u_useNormalTex?: UniformSingleDataType;
 };
 export type ShaderAttributes = {
   a_position?: AttributeSingleDataType;
   a_normal?: AttributeSingleDataType;
   a_texCoord?: AttributeSingleDataType;
+  a_tangent?: AttributeSingleDataType;
+  a_bitangent?: AttributeSingleDataType;
 };
 
 export class WebGLUtil {
@@ -94,47 +102,65 @@ export class WebGLUtil {
         // console.log(`uniform${UniformSetterWebGLType[type]}`);
 
         if (v instanceof BufferUniform) {
-          if (typeof v === "number") {
-            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
-          } else {
-            if (type >= WebGLRenderingContext.FLOAT_MAT2) {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
-                loc,
-                false,
-                v.data
-              );
-            } else {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
-                loc,
-                v.data
-              );
-            }
+          if (v.data instanceof GLTexture) {
+            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
+              loc,
+              v.data.unit
+            );
+            gl.activeTexture(gl.TEXTURE0 + v.data.unit);
+            gl.bindTexture(gl.TEXTURE_2D, v.data.webGLTexture);
+            return;
           }
-        } else {
-          if (v instanceof Float32Array) {
-            if (type >= WebGLRenderingContext.FLOAT_MAT2) {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
-                loc,
-                false,
-                v
-              );
-            } else {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
-            }
-          } else if (typeof v === "number") {
-            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
-          } else {
-            if (type >= WebGLRenderingContext.FLOAT_MAT2) {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
-                loc,
-                false,
-                v
-              );
-            } else {
-              (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
-            }
+
+          if (typeof v.data === "number") {
+            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v.data);
+            return;
           }
+
+          if (type >= WebGLRenderingContext.FLOAT_MAT2) {
+            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
+              loc,
+              false,
+              v.data
+            );
+            return;
+          }
+
+          (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v.data);
+          return;
         }
+
+        if (v instanceof GLTexture) {
+          (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v.unit);
+          gl.activeTexture(gl.TEXTURE0 + v.unit);
+          gl.bindTexture(gl.TEXTURE_2D, v.webGLTexture);
+          return;
+        }
+
+        if (v instanceof Float32Array) {
+          if (type >= WebGLRenderingContext.FLOAT_MAT2) {
+            (gl as any)[`uniform${UniformSetterWebGLType[type]}`](
+              loc,
+              false,
+              v
+            );
+            return;
+          }
+          (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
+          return;
+        }
+
+        if (typeof v === "number") {
+          (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
+          return;
+        }
+
+        if (type >= WebGLRenderingContext.FLOAT_MAT2) {
+          (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, false, v);
+          return;
+        }
+        (gl as any)[`uniform${UniformSetterWebGLType[type]}`](loc, v);
+        return;
       };
     }
 
@@ -178,6 +204,8 @@ export class WebGLUtil {
     program: WebGLProgram
   ): AttributeMapSetters {
     function createAttributeSetter(info: WebGLActiveInfo): AttributeSetters {
+      // console.log(info.name);
+
       // Initialization Time
       const loc = gl.getAttribLocation(program, info.name);
       const buf = gl.createBuffer();
@@ -185,6 +213,7 @@ export class WebGLUtil {
         // Render Time (saat memanggil setAttributes() pada render loop)
         gl.bindBuffer(gl.ARRAY_BUFFER, buf);
         const v = values[0];
+
         if (v instanceof BufferAttribute) {
           // Data Changed Time (note that buffer is already binded)
           // v.consume();

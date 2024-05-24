@@ -21,7 +21,7 @@ export const WebGLType = {
   BOOL_VEC4: "BOOL_VEC4",
   SAMPLER_2D: "SAMPLER_2D",
   SAMPLER_CUBE: "SAMPLER_CUBE",
-}
+};
 
 export const UniformSetterWebGLType = {
   [WebGLRenderingContext.FLOAT]: "1f",
@@ -40,6 +40,22 @@ export const UniformSetterWebGLType = {
   [WebGLRenderingContext.FLOAT_MAT3]: "Matrix3fv",
   [WebGLRenderingContext.FLOAT_MAT4]: "Matrix4fv",
   [WebGLRenderingContext.SAMPLER_2D]: "1i",
-}
+};
 
-export type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
+export type TypedArray =
+  | Float32Array
+  | Uint8Array
+  | Uint16Array
+  | Uint32Array
+  | Int8Array
+  | Int16Array
+  | Int32Array;
+export class GLTexture {
+  unit: number;
+  webGLTexture: WebGLTexture;
+
+  constructor(unit: number, webGLTexture: WebGLTexture) {
+    this.unit = unit;
+    this.webGLTexture = webGLTexture;
+  }
+}

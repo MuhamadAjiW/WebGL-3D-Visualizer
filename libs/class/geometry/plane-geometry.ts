@@ -35,5 +35,6 @@ export class PlaneGeometry extends BufferGeometry {
     ]);
     this.position = new BufferAttribute(vertices, 3);
     this.calculateNormals();
+    this.calculateTangents();
   }
 }

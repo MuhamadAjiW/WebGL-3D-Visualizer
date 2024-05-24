@@ -9,65 +9,37 @@ export class BasicMaterial extends ShaderMaterial {
   private static idAutoIncrement: number = 0;
 
   public diffuse: Color = Color.WHITE;
+  public diffuseTexture: Texture;
 
-  constructor(options?: { texture?: Texture; color?: Color }) {
-    super(BasicMaterial.materialType, options?.texture);
-    this.diffuse = options?.color || new Color(0xffffffff);
+  constructor(options?: {
+    diffuseColor?: Color;
+    diffuseTexture?: Texture;
+    normalTexture?: Texture;
+    parallaxTexture?: Texture;
+    useNormalTex?: boolean;
+  }) {
+    super(BasicMaterial.materialType, {
+      normalTexture: options?.normalTexture,
+      parallaxTexture: options?.parallaxTexture,
+      useNormalTex: options?.useNormalTex,
+    });
+
+    this.diffuse = options?.diffuseColor || new Color(0xffffffff);
+    this.diffuseTexture = options?.diffuseTexture || new Texture();
   }
 
   public loadTexture(renderer: WebGLRenderer): void {
-    let loadedTexture = renderer.gl.createTexture();
-    renderer.gl.bindTexture(renderer.gl.TEXTURE_2D, loadedTexture);
-
-    if (this.texture?.image != null) {
-      renderer.gl.texParameteri(
-        renderer.gl.TEXTURE_2D,
-        renderer.gl.TEXTURE_WRAP_S,
-        this.texture.wrapS
-      );
-      renderer.gl.texParameteri(
-        renderer.gl.TEXTURE_2D,
-        renderer.gl.TEXTURE_WRAP_T,
-        this.texture.wrapT
-      );
-      renderer.gl.texParameteri(
-        renderer.gl.TEXTURE_2D,
-        renderer.gl.TEXTURE_MIN_FILTER,
-        this.texture.minFilter
-      );
-      renderer.gl.texParameteri(
-        renderer.gl.TEXTURE_2D,
-        renderer.gl.TEXTURE_MAG_FILTER,
-        this.texture.magFilter
-      );
-
-      renderer.gl.texImage2D(
-        renderer.gl.TEXTURE_2D,
-        0,
-        renderer.gl.RGBA,
-        renderer.gl.RGBA,
-        renderer.gl.UNSIGNED_BYTE,
-        this.texture?.image
-      );
-    } else {
-      renderer.gl.texImage2D(
-        renderer.gl.TEXTURE_2D,
-        0,
-        renderer.gl.RGBA,
-        1,
-        1,
-        0,
-        renderer.gl.RGBA,
-        renderer.gl.UNSIGNED_BYTE,
-        new Uint8Array(Color.BLACK.get())
-      );
-    }
+    this.normalTexture.load(renderer, 0);
+    this.parallaxTexture.load(renderer, 1);
+    this.diffuseTexture.load(renderer, 2);
   }
 
   public loadUniform(renderer: WebGLRenderer): void {
     WebGLUtil.setUniforms(renderer.currentProgram, {
+      u_textureDiffuse: this.diffuseTexture.glTexture,
       u_diffuse: this.diffuse.getNormalized(),
       u_materialType: this.materialType,
+      u_useNormalTex: this.useNormalTex,
     });
   }
 
@@ -82,7 +54,7 @@ export class BasicMaterial extends ShaderMaterial {
   public static fromJson(json: string): BasicMaterial {
     const material = JSON.parse(json);
     return new BasicMaterial({
-      color: material.color,
+      diffuseColor: material.color,
     });
   }
 }

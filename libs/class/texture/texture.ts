@@ -1,3 +1,8 @@
+import { Color } from "@/libs/base-types/color";
+import { WebGLRenderer } from "../webgl-renderer";
+import { GLTexture } from "@/libs/base-types/webgl-types";
+import { BufferUniform } from "../webgl/uniform";
+
 export class Texture {
   // TODO: Review this note, might be a better way to improve it
   // Note: After the initial use of a texture, its dimensions, format, and type cannot be changed.
@@ -7,23 +12,23 @@ export class Texture {
   public readonly id: number;
 
   // TODO: Review whether this is necessary or not
-  public glTexture: WebGLTexture | null = null;
+  public glTexture: BufferUniform | undefined;
   public isActive: boolean;
 
+  public image?: HTMLImageElement;
   public name: string = "";
   public wrapS: GLenum = WebGLRenderingContext.CLAMP_TO_EDGE;
   public wrapT: GLenum = WebGLRenderingContext.CLAMP_TO_EDGE;
   public magFilter: GLenum = WebGLRenderingContext.LINEAR;
   public minFilter: GLenum = WebGLRenderingContext.LINEAR_MIPMAP_LINEAR;
   public format: GLenum = WebGLRenderingContext.RGBA;
-  public image: HTMLImageElement;
   public image_path: string = "";
   public repeatS: number = 1;
   public repeatT: number = 1;
   public generateMipmaps: boolean = false;
 
-  constructor(options: {
-    image: HTMLImageElement;
+  constructor(options?: {
+    image?: HTMLImageElement;
     wrapS?: GLenum;
     wrapT?: GLenum;
     magFilter?: GLenum;
@@ -43,7 +48,7 @@ export class Texture {
     this.format = options?.format || WebGLRenderingContext.RGBA;
     this.repeatS = options?.repeatS || 1;
     this.repeatT = options?.repeatT || 1;
-    this.image = options.image;
+    this.image = options?.image;
     this.generateMipmaps = options?.generateMipmaps || false;
   }
 
@@ -91,6 +96,65 @@ export class Texture {
     this.minFilter = options.minFilter || this.minFilter;
     this.image = options.image || this.image;
     return this;
+  }
+
+  public load(renderer: WebGLRenderer, unit: number) {
+    if (this.glTexture != null)
+      renderer.gl.deleteTexture(
+        (this.glTexture.data as GLTexture).webGLTexture
+      );
+
+    const glTexture = new GLTexture(unit, renderer.gl.createTexture()!);
+    this.glTexture = new BufferUniform(glTexture, 1);
+
+    renderer.gl.bindTexture(
+      renderer.gl.TEXTURE_2D,
+      (this.glTexture.data as GLTexture).webGLTexture
+    );
+
+    if (this.image != null) {
+      renderer.gl.texParameteri(
+        renderer.gl.TEXTURE_2D,
+        renderer.gl.TEXTURE_WRAP_S,
+        this.wrapS
+      );
+      renderer.gl.texParameteri(
+        renderer.gl.TEXTURE_2D,
+        renderer.gl.TEXTURE_WRAP_T,
+        this.wrapT
+      );
+      renderer.gl.texParameteri(
+        renderer.gl.TEXTURE_2D,
+        renderer.gl.TEXTURE_MIN_FILTER,
+        this.minFilter
+      );
+      renderer.gl.texParameteri(
+        renderer.gl.TEXTURE_2D,
+        renderer.gl.TEXTURE_MAG_FILTER,
+        this.magFilter
+      );
+
+      renderer.gl.texImage2D(
+        renderer.gl.TEXTURE_2D,
+        0,
+        renderer.gl.RGBA,
+        renderer.gl.RGBA,
+        renderer.gl.UNSIGNED_BYTE,
+        this?.image
+      );
+    } else {
+      renderer.gl.texImage2D(
+        renderer.gl.TEXTURE_2D,
+        0,
+        renderer.gl.RGBA,
+        1,
+        1,
+        0,
+        renderer.gl.RGBA,
+        renderer.gl.UNSIGNED_BYTE,
+        new Uint8Array(Color.WHITE.get())
+      );
+    }
   }
 
   //TODO: Implement

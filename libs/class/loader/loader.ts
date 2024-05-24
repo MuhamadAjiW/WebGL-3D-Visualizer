@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { boolean, z } from "zod";
 import { CameraType } from "../camera-types";
 import { Scene } from "@/libs/class/scene";
 import Object3D from "@/libs/class/object3d";
@@ -27,6 +27,7 @@ import {
   AnimationPath,
   AnimationTRS,
 } from "@/libs/base-types/animation";
+import { TextureLoader } from "../texture/texture-loader";
 
 const ArrayIndex = z.array(z.number().int());
 
@@ -128,25 +129,25 @@ const GLTFSchema = z.object({
   ),
   geometries: z.array(
     z.object({
-      position: BufferAttributeSchema.optional(),
-      normal: BufferAttributeSchema.optional(),
+      position: BufferAttributeSchema,
       texCoords: BufferAttributeSchema.optional(),
+      smoothShade: z.boolean(),
       type: z.number().int(),
-      width: z.number().optional(),
-      height: z.number().optional(),
-      length: z.number().optional(),
     })
   ),
   materials: z.array(
     z.object({
       id: z.string(),
       materialType: z.number(),
-      // Shader material has textures? tapi disini kah?
-      texture: z.number().int(), // textures
+      normalTexture: z.number().int(), // textures
+      parallaxTexture: z.number().int(), // textures
+      diffuseTexture: z.number().int(), // textures
+      specularTexture: z.number().int(), // textures
       ambient: ColorSchema.optional(),
       diffuse: ColorSchema.optional(),
       specular: ColorSchema.optional(),
       shininess: z.number(),
+      useNormalTex: z.boolean(),
     })
   ),
   textures: z.array(
@@ -237,7 +238,7 @@ export class Loader {
 
     const result = GLTFSchema.safeParse(this.savedData);
     if (result.success) {
-      console.log("Validation successful:", result.data);
+      // console.log("Validation successful:", result.data);
     } else {
       console.error("Validation failed:", result.error.errors);
     }
@@ -359,14 +360,11 @@ export class Loader {
 
     const geometryData = {
       position: this.saveBufferAttribute(geometry.position as BufferAttribute),
-      normal: this.saveBufferAttribute(geometry.normal as BufferAttribute),
       texCoords: this.saveBufferAttribute(
         geometry.texCoords as BufferAttribute
       ),
+      smoothShade: geometry.smoothShade,
       type: geometry.type,
-      width: geometry.width,
-      height: geometry.height,
-      length: geometry.length,
     };
 
     const geometryIndex = this.savedData.geometries.length;
@@ -392,13 +390,23 @@ export class Loader {
     const materialData = {
       id: material.id,
       materialType: material.materialType,
-      texture: material.texture
-        ? this.saveTexture(material.texture)
+      normalTexture: material.normalTexture
+        ? this.saveTexture(material.normalTexture)
+        : undefined,
+      parallaxTexture: material.parallaxTexture
+        ? this.saveTexture(material.parallaxTexture)
+        : undefined,
+      diffuseTexture: material.diffuseTexture
+        ? this.saveTexture(material.diffuseTexture)
+        : undefined,
+      specularTexture: material.specularTexture
+        ? this.saveTexture(material.specularTexture)
         : undefined,
       ambient: this.saveColor(material.ambient),
       diffuse: this.saveColor(material.diffuse),
       specular: this.saveColor(material.specular),
       shininess: material.shininess,
+      useNormalTex: material.useNormalTex,
     };
 
     // Save the material data
@@ -501,19 +509,19 @@ export class Loader {
     };
   }
 
-  public loadFromJson(jsonString: string): {
+  public async loadFromJson(jsonString: string): Promise<{
     scene: Scene;
     animations: AnimationClip[];
-  } {
+  }> {
     this.savedData = JSON.parse(jsonString);
 
-    let scene = this.loadScene();
+    let scene = await this.loadScene();
     let animationClip = this.loadAnimationClip();
 
     // check valid
     const result = GLTFSchema.safeParse(this.savedData);
     if (result.success) {
-      console.log("Validation successful:", result.data);
+      // console.log("Validation successful:", result.data);
     } else {
       console.error("Validation failed:", result.error.errors);
     }
@@ -523,7 +531,7 @@ export class Loader {
     };
   }
 
-  public loadScene(): Scene {
+  public async loadScene(): Promise<Scene> {
     let scene: Scene = new Scene();
     this.loadNodeMap = new Map();
     this.loadCameraMap = new Map();
@@ -533,34 +541,39 @@ export class Loader {
     this.loadTextureMap = new Map();
 
     // Reconstruct nodes
-    this.savedData.nodes.forEach((nodeData: any, index: number) => {
-      this.loadNodeMap.set(
-        index,
-        this.loadNode(nodeData, index == 0 ? true : false)
+    for (const [index, nodeData] of this.savedData.nodes.entries()) {
+      const node: Object3D = await this.loadNode(
+        nodeData,
+        index == 0 ? true : false
       );
-    });
+      this.loadNodeMap.set(index, node);
+    }
 
     this.savedData.nodes.forEach((nodeData: any, index: number) => {
       let node: Object3D = this.loadNodeMap.get(index)!;
-      this.loadChildren(this.loadNodeMap.get(index)!, nodeData.children);
+      this.loadChildren(node, nodeData.children);
     });
 
     scene = this.loadNodeMap.get(this.savedData.scene)!;
 
-    this.loadNodeMap.forEach((object: Object3D) => console.log(object));
+    // this.loadNodeMap.forEach((object: Object3D) => console.log(object));
 
     scene.computeWorldMatrix();
 
     return scene;
   }
 
-  private loadNode(nodeData: any, isScene: boolean = false): Object3D {
+  private async loadNode(
+    nodeData: any,
+    isScene: boolean = false
+  ): Promise<Object3D> {
     let node;
+
     // Load cameras and meshes
     if ("cameraIndex" in nodeData) {
       node = this.loadCamera(nodeData.cameraIndex);
     } else if ("meshIndex" in nodeData) {
-      node = this.loadMesh(nodeData.meshIndex);
+      node = await this.loadMesh(nodeData.meshIndex);
     } else if (isScene) {
       node = new Scene();
     } else {
@@ -641,7 +654,7 @@ export class Loader {
     return camera;
   }
 
-  private loadMesh(meshIndex: number): Mesh {
+  private async loadMesh(meshIndex: number): Promise<Mesh> {
     if (this.loadMeshMap.has(meshIndex)) {
       return this.loadMeshMap.get(meshIndex)!;
     }
@@ -649,7 +662,7 @@ export class Loader {
     const meshData = this.savedData.meshes[meshIndex];
     const meshObject = {
       meshGeometry: this.loadGeometry(meshData.meshGeometry),
-      meshMaterial: this.loadMaterial(meshData.meshMaterial),
+      meshMaterial: await this.loadMaterial(meshData.meshMaterial),
     };
 
     let mesh = new Mesh(
@@ -669,34 +682,14 @@ export class Loader {
     const geometryData = this.savedData.geometries[geometryIndex];
     let geometry;
 
-    if (geometryData.type == 0) {
-      geometry = new BlockGeometry(
-        geometryData.width,
-        geometryData.height,
-        geometryData.length
-      );
-    } else if (geometryData.type == 1) {
-      geometry = new CubeGeometry(geometryData.width);
-    } else if (geometryData.type == 2) {
-      geometry = new PlaneGeometry(geometryData.width, geometryData.height);
-    } else if (geometryData.type == 3) {
-      geometry = new HollowBlockGeometry(
-        geometryData.width,
-        geometryData.height,
-        geometryData.length
-      );
-    } else if (geometryData.type == 4) {
-      geometry = new HollowPlaneGeometry(
-        geometryData.width,
-        geometryData.height
-      );
-    } else {
-      geometry = new BufferGeometry();
-    }
+    geometry = new BufferGeometry();
 
     geometry.position = this.loadBufferAttribute(geometryData.position);
-    geometry.normal = this.loadBufferAttribute(geometryData.normal);
     geometry.texCoords = this.loadBufferAttribute(geometryData.texCoords);
+    geometry.smoothShade = geometryData.smoothShade;
+
+    geometry.calculateNormals();
+    geometry.calculateTangents();
 
     this.loadGeometryMap.set(geometryIndex, geometry);
     return geometry;
@@ -712,7 +705,7 @@ export class Loader {
     );
   }
 
-  private loadMaterial(materialIndex: number): ShaderMaterial {
+  private async loadMaterial(materialIndex: number): Promise<ShaderMaterial> {
     if (this.loadMaterialMap.has(materialIndex)) {
       return this.loadMaterialMap.get(materialIndex)!;
     }
@@ -721,27 +714,38 @@ export class Loader {
     const materialObject = {
       id: materialData.id,
       materialType: materialData.materialType,
-      texture: this.loadTexture(materialData.texture),
+      normalTexture: await this.loadTexture(materialData.normalTexture),
+      parallaxTexture: await this.loadTexture(materialData.parallaxTexture),
+      diffuseTexture: await this.loadTexture(materialData.diffuseTexture),
+      specularTexture: await this.loadTexture(materialData.specularTexture),
       ambient: this.loadColor(materialData.ambient),
       diffuse: this.loadColor(materialData.diffuse),
       specular: this.loadColor(materialData.specular),
       shininess: materialData.shininess,
+      useNormalTex: materialData.useNormalTex,
     };
 
     let material: ShaderMaterial;
 
     if (materialObject.materialType == 0) {
       material = new BasicMaterial({
-        texture: materialObject.texture,
-        color: materialObject.diffuse,
+        normalTexture: materialObject.normalTexture,
+        parallaxTexture: materialObject.parallaxTexture,
+        diffuseTexture: materialObject.diffuseTexture,
+        diffuseColor: materialObject.diffuse,
+        useNormalTex: materialObject.useNormalTex,
       });
     } else {
       material = new PhongMaterial({
-        texture: materialObject.texture,
+        normalTexture: materialObject.normalTexture,
+        parallaxTexture: materialObject.parallaxTexture,
+        diffuseTexture: materialObject.diffuseTexture,
+        specularTexture: materialObject.specularTexture,
         ambient: materialObject.ambient,
         diffuse: materialObject.diffuse,
         specular: materialObject.specular,
         shinyness: materialObject.shininess,
+        useNormalTex: materialObject.useNormalTex,
       });
     }
 
@@ -749,7 +753,7 @@ export class Loader {
     return material;
   }
 
-  private loadTexture(textureIndex: number): Texture {
+  private async loadTexture(textureIndex: number): Promise<Texture> {
     if (this.loadTextureMap.has(textureIndex)) {
       return this.loadTextureMap.get(textureIndex)!;
     }
@@ -770,21 +774,20 @@ export class Loader {
       generateMipmaps: textureData.generateMipmaps,
     };
 
-    const texture = new Texture({
-      image: new Image(),
-      wrapS: textureObject.wrapS,
-      wrapT: textureObject.wrapT,
-      magFilter: textureObject.magFilter,
-      minFilter: textureObject.minFilter,
-      format: textureObject.format,
-      repeatS: textureObject.repeatS,
-      repeatT: textureObject.repeatT,
-      generateMipmaps: textureObject.generateMipmaps,
-    });
+    let texture: Texture;
+
+    texture = await TextureLoader.load(textureObject.image);
+    texture.wrapS = textureObject.wrapS;
     texture.name = textureObject.name;
-    texture.isActive = textureObject.isActive;
-    texture.image_path = textureObject.image;
-    texture.image.src = textureObject.image;
+    texture.name = textureObject.name;
+    texture.wrapS = textureObject.wrapS;
+    texture.wrapT = textureObject.wrapT;
+    texture.magFilter = textureObject.magFilter;
+    texture.minFilter = textureObject.minFilter;
+    texture.format = textureObject.format;
+    texture.repeatS = textureObject.repeatS;
+    texture.repeatT = textureObject.repeatT;
+    texture.generateMipmaps = textureObject.generateMipmaps;
 
     this.loadTextureMap.set(textureIndex, texture);
     return texture;
