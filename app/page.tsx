@@ -53,7 +53,7 @@ export default function Home() {
 
   // Fetch data with default to initialize
   const fetchData = async () => {
-    const response = await fetch("/box.json");
+    const response = await fetch("/articulated-awe.json");
     const loaded = await response.json();
 
     const loader: Loader = new Loader();
