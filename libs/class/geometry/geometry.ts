@@ -9,6 +9,7 @@ class BufferGeometry {
   public tangent: BufferAttribute | undefined;
   public bitangent: BufferAttribute | undefined;
   public smoothShade: boolean = false;
+  public vertexToIndex: Map<any, number[]> = new Map();
 
   calculateNormals(forceNewAttribute = false) {
     if (!this.smoothShade) {
@@ -74,50 +75,7 @@ class BufferGeometry {
 
     this.calculateNormalsFlat();
 
-    const vertices: Map<number, number[]> = new Map<number, number[]>();
-    const vertexList: Vector3[] = [];
-    const getIdx = (vector: Vector3) => {
-      for (let i = 0; i < vertexList.length; i++) {
-        const element = vertexList[i];
-        if (element.equals(vector)) {
-          return i;
-        }
-      }
-      return -1;
-    };
-
-    for (let index = 0; index < position.count; index += 1) {
-      const vertex = new Vector3(position.get(index));
-      let idx = getIdx(vertex);
-      if (idx == -1) {
-        idx = vertexList.length;
-        vertexList.push(vertex);
-      }
-
-      if (!vertices.has(idx)) {
-        vertices.set(idx, []);
-      }
-
-      // console.log(idx);
-      // console.log(vertices);
-      // console.log(vertices.get(idx));
-
-      vertices.get(idx)!.push(index);
-    }
-
-    vertices.forEach((val, key) => {
-      let sum = new Vector3();
-
-      val.forEach((vertNormal) => {
-        sum.add(new Vector3(this.normal!.get(vertNormal)));
-      });
-
-      sum = sum.multiplyScalar(1 / sum.length());
-
-      val.forEach((vertNormal) => {
-        this.normal!.set(vertNormal, sum.getVector());
-      });
-    });
+    this.calculateSmoothShading();
   }
 
   // Note: Calculate normal before calculate tangent
@@ -179,6 +137,40 @@ class BufferGeometry {
 
     this.tangent = tangent;
     this.bitangent = bitangent;
+  }
+
+  calculateVertexIndex() {
+    if (this.position) {
+      let i = 0;
+      let array = this.position.data;
+      array.forEach((element: any) => {
+        if (this.vertexToIndex.has(element)) {
+          let addElement = this.vertexToIndex.get(element)!;
+          addElement.push(i);
+          this.vertexToIndex.set(element, addElement);
+        } else {
+          this.vertexToIndex.set(element, [i]);
+        }
+        i += 1;
+      });
+    }
+    console.log(this.vertexToIndex);
+  }
+
+  calculateSmoothShading() {
+    this.calculateVertexIndex();
+
+    for (const key of this.vertexToIndex.keys()) {
+      const arrayIndex = this.vertexToIndex.get(key);
+      let normalArray = this.normal!.data;
+      let sum = 0;
+      arrayIndex?.forEach((index: number) => {
+        sum += normalArray[index];
+      });
+      arrayIndex?.forEach((index: number) => {
+        normalArray[index] = sum;
+      });
+    }
   }
 }
 
