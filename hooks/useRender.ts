@@ -28,6 +28,7 @@ import { Scene } from "@/libs/class/scene";
 import { TextureLoader } from "@/libs/class/texture/texture-loader";
 import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
 import { Loader } from "@/libs/class/loader/loader";
+import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
 
 interface HooksRenderProps {
   activeComponent: Object3D; // change this later
@@ -287,6 +288,28 @@ const useRender = ({
 
       WebGLUtils.setUniforms(renderer.currentProgram, dummyUniformsData);
 
+      // TODO: Delete, this is testing
+      const geometry = new CubeGeometry(0.5);
+      const diffuseTexture = await TextureLoader.load("res/woodbox.png");
+      const specularTexture = await TextureLoader.load("res/woodboxSpec.png");
+      const normalTexture = await TextureLoader.load("res/woodboxNorm2.png");
+      const parallaxTexture = await TextureLoader.load(
+        "res/woodboxParallax.png"
+      );
+      const material = new PhongMaterial({
+        diffuseTexture: diffuseTexture,
+        specularTexture: specularTexture,
+        normalTexture: normalTexture,
+        parallaxTexture: parallaxTexture,
+        ambient: new Color(0x818181ff),
+        diffuse: new Color(0xffffffff),
+        specular: new Color(0xffffffff),
+        shinyness: 0.05,
+      });
+      const testScene = new Scene();
+      const mesh = new Mesh(geometry, material);
+      testScene.add(mesh);
+
       function render() {
         if (!renderer) return;
         if (activeCameraRef.current == null) return;
@@ -305,8 +328,11 @@ const useRender = ({
 
         // activeComponentRef.current!.rotateOnWorldAxis(Vector3.right, 0.001);
         // activeComponentRef.current!.rotateOnWorldAxis(Vector3.up, 0.001);
+        mesh.rotateOnWorldAxis(Vector3.right, 0.001);
+        mesh.rotateOnWorldAxis(Vector3.up, 0.001);
 
-        renderer.render(activeComponentRef.current!, activeCamera);
+        // renderer.render(activeComponentRef.current!, activeCamera);
+        renderer.render(testScene, activeCamera);
         if (!stop) {
           requestAnimationFrame(render);
         }
