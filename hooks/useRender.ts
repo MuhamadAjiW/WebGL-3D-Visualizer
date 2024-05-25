@@ -288,35 +288,6 @@ const useRender = ({
       }
 
       WebGLUtils.setUniforms(renderer.currentProgram, dummyUniformsData);
-
-      // TODO: Delete, this is testing
-      const geometry = new CubeGeometry(1);
-      const diffuseTexture = await TextureLoader.load("res/woodbox.png");
-      const specularTexture = await TextureLoader.load("res/woodboxSpec.png");
-      const normalTexture = await TextureLoader.load("res/bump_normal.png");
-      const parallaxTexture = await TextureLoader.load("res/bump_depth.png");
-      const material = new PhongMaterial({
-        diffuseTexture: diffuseTexture,
-        specularTexture: specularTexture,
-        normalTexture: normalTexture,
-        parallaxTexture: parallaxTexture,
-        ambient: new Color(0x818181ff),
-        diffuse: new Color(0xffffffff),
-        specular: new Color(0xffffffff),
-        shinyness: 1,
-        useNormalTex: true,
-      });
-      // const material = new BasicMaterial({
-      //   // diffuseTexture: diffuseTexture,
-      //   normalTexture: normalTexture,
-      //   parallaxTexture: parallaxTexture,
-      //   diffuseColor: new Color(0x00ffffff),
-      //   useNormalTex: true,
-      // });
-      const testScene = new Scene();
-      const mesh = new Mesh(geometry, material);
-      testScene.add(mesh);
-
       function render() {
         if (!renderer) return;
         if (activeCameraRef.current == null) return;
@@ -332,28 +303,11 @@ const useRender = ({
         }
         // dx += 0.1;
         activeCamera.setOrbitControl(dy, dx);
-        // activeCamera.setOrbitControl(180, 0);
 
-        // const uniformloc = renderer.gl.getUniformLocation(
-        //   renderer.currentProgram.program,
-        //   "u_view"
-        // );
-        // const value = renderer.gl.getUniform(
-        //   renderer.currentProgram.program,
-        //   uniformloc!
-        // );
-        // console.log(value[0], value[1], value[2], value[3]);
-        // console.log(value[4], value[5], value[6], value[7]);
-        // console.log(value[8], value[9], value[10], value[11]);
-        // console.log(value[12], value[13], value[14], value[15]);
+        activeComponentRef.current!.rotateOnWorldAxis(Vector3.right, 0.001);
+        activeComponentRef.current!.rotateOnWorldAxis(Vector3.up, 0.001);
 
-        // activeComponentRef.current!.rotateOnWorldAxis(Vector3.right, 0.001);
-        // activeComponentRef.current!.rotateOnWorldAxis(Vector3.up, 0.001);
-        // mesh.rotateOnWorldAxis(Vector3.right, 0.005);
-        // mesh.rotateOnWorldAxis(Vector3.up, 0.005);
-
-        // renderer.render(activeComponentRef.current!, activeCamera);
-        renderer.render(testScene, activeCamera);
+        renderer.render(activeComponentRef.current!, activeCamera);
         if (!stop) {
           requestAnimationFrame(render);
         }

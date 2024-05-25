@@ -1,3 +1,35 @@
+// Snippet for testing material or shaders
+// const geometry = new CubeGeometry(1);
+// const diffuseTexture = await TextureLoader.load("res/woodbox.png");
+// const specularTexture = await TextureLoader.load("res/woodboxSpec.png");
+// const normalTexture = await TextureLoader.load("res/bump_normal.png");
+// const parallaxTexture = await TextureLoader.load("res/bump_depth.png");
+// const material = new PhongMaterial({
+//   diffuseTexture: diffuseTexture,
+//   specularTexture: specularTexture,
+//   normalTexture: normalTexture,
+//   parallaxTexture: parallaxTexture,
+//   ambient: new Color(0x818181ff),
+//   diffuse: new Color(0xffffffff),
+//   specular: new Color(0xffffffff),
+//   shinyness: 1,
+//   useNormalTex: true,
+// });
+// const testScene = new Scene();
+// const mesh = new Mesh(geometry, material);
+// testScene.add(mesh);
+
+// Debug uniform actual values
+// const uniformloc = renderer.gl.getUniformLocation(
+//   renderer.currentProgram.program,
+//   "u_view"
+// );
+// const value = renderer.gl.getUniform(
+//   renderer.currentProgram.program,
+//   uniformloc!
+// );
+
+
 // const testAnim: AnimationClip = {
 //   name: "Test2",
 //   frames: [

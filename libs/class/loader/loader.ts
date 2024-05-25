@@ -148,6 +148,8 @@ const GLTFSchema = z.object({
       specular: ColorSchema.optional(),
       shininess: z.number(),
       useNormalTex: z.boolean(),
+      useParallaxTex: z.boolean(),
+      parallaxScale: z.number(),
     })
   ),
   textures: z.array(
@@ -430,6 +432,8 @@ export class Loader {
       specular: this.saveColor(material.specular),
       shininess: material.shininess,
       useNormalTex: material.useNormalTex,
+      useParallaxTex: material.useParallaxTex,
+      parallaxScale: material.parallaxScale,
     };
 
     // Save the material data
@@ -755,6 +759,8 @@ export class Loader {
       specular: this.loadColor(materialData.specular),
       shininess: materialData.shininess,
       useNormalTex: materialData.useNormalTex,
+      useParallaxTex: materialData.useParallaxTex,
+      parallaxScale: materialData.parallaxScale,
     };
 
     let material: ShaderMaterial;
@@ -766,6 +772,8 @@ export class Loader {
         diffuseTexture: materialObject.diffuseTexture,
         diffuseColor: materialObject.diffuse,
         useNormalTex: materialObject.useNormalTex,
+        useParallaxTex: materialObject.useParallaxTex,
+        parallaxScale: materialObject.parallaxScale,
       });
     } else {
       material = new PhongMaterial({
@@ -778,6 +786,8 @@ export class Loader {
         specular: materialObject.specular,
         shinyness: materialObject.shininess,
         useNormalTex: materialObject.useNormalTex,
+        useParallaxTex: materialObject.useParallaxTex,
+        parallaxScale: materialObject.parallaxScale,
       });
     }
 

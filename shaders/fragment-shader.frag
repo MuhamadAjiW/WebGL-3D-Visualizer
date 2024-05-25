@@ -27,7 +27,7 @@ uniform float u_parallaxScale;
 
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir) {
     float height = texture2D(u_textureParallax, texCoords).r;
-    vec2 p = viewDir.xy / viewDir.z * (height * 0.1);
+    vec2 p = viewDir.xy / viewDir.z * (height * u_parallaxScale);
     return texCoords - p;
 }
 
@@ -37,9 +37,9 @@ void main() {
 
     vec2 uv = v_texCoord;
 
-    // if(true){
+    if(u_useParallaxTex){
         uv = ParallaxMapping(v_texCoord, viewDir);
-    // }
+    }
 
     vec3 N;
     if(u_useNormalTex){

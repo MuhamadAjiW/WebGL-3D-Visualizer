@@ -17,11 +17,15 @@ export class BasicMaterial extends ShaderMaterial {
     normalTexture?: Texture;
     parallaxTexture?: Texture;
     useNormalTex?: boolean;
+    useParallaxTex?: boolean;
+    parallaxScale?: number;
   }) {
     super(BasicMaterial.materialType, {
       normalTexture: options?.normalTexture,
       parallaxTexture: options?.parallaxTexture,
       useNormalTex: options?.useNormalTex,
+      useParallaxTex: options?.useParallaxTex,
+      parallaxScale: options?.parallaxScale,
     });
 
     this.diffuse = options?.diffuseColor || new Color(0xffffffff);
@@ -43,6 +47,8 @@ export class BasicMaterial extends ShaderMaterial {
       u_diffuse: this.diffuse.getNormalized(),
       u_materialType: this.materialType,
       u_useNormalTex: this.useNormalTex,
+      u_useParallaxTex: this.useParallaxTex,
+      u_parallaxScale: this.parallaxScale,
     });
   }
 

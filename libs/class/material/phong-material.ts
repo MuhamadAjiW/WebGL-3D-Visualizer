@@ -25,11 +25,15 @@ export class PhongMaterial extends ShaderMaterial {
     normalTexture?: Texture;
     parallaxTexture?: Texture;
     useNormalTex?: boolean;
+    useParallaxTex?: boolean;
+    parallaxScale?: number;
   }) {
     super(PhongMaterial.materialType, {
       normalTexture: options?.normalTexture,
       parallaxTexture: options?.parallaxTexture,
       useNormalTex: options?.useNormalTex,
+      useParallaxTex: options?.useParallaxTex,
+      parallaxScale: options?.parallaxScale,
     });
 
     this.ambient = options?.ambient || new Color(0xffffffff);
@@ -62,6 +66,8 @@ export class PhongMaterial extends ShaderMaterial {
       u_shininess: this.shininess,
       u_materialType: this.materialType,
       u_useNormalTex: this.useNormalTex,
+      u_useParallaxTex: this.useParallaxTex,
+      u_parallaxScale: this.parallaxScale,
     });
   }
 
