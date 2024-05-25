@@ -813,7 +813,7 @@ const ComponentController: React.FC<ControllerProps> = ({
               </div>
               )}
 
-              {component instanceof Mesh && component.material.displacementActive && (
+              {component instanceof Mesh && (
               <div className="flex flex-col gap-2">
                 <div>Displacement Texture</div>
 
@@ -853,7 +853,7 @@ const ComponentController: React.FC<ControllerProps> = ({
               </div>
               )}
 
-              {component instanceof Mesh && component.material instanceof PhongMaterial && component.material.normalActive && (
+              {component instanceof Mesh && component.material instanceof PhongMaterial && (
               <div className="flex flex-col gap-2">
                 <div>Normal Texture</div>
                   {(component.material.normalTexture.image && (
@@ -893,7 +893,7 @@ const ComponentController: React.FC<ControllerProps> = ({
               )}
 
 
-              {component instanceof Mesh && component.material instanceof PhongMaterial && component.material.parallaxActive && (
+              {component instanceof Mesh && component.material instanceof PhongMaterial && (
               <div className="flex flex-col gap-2">
                 <div>Parallax Texture</div>
                   {(component.material.parallaxTexture.image && (

@@ -69,7 +69,7 @@ export class Color {
         (this.a & 0xff)) >>>
       0;
 
-    return number.toString(16).padStart(8, "0");
+    return "#" + number.toString(16).padStart(8, "0");
   }
 
   public set(w: number, x: number, y: number, z: number): void {

@@ -91,7 +91,8 @@ export const convertHexToRGBA = (hex: string) => {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
-  return { r, g, b, a: 1 };
+  const a = parseInt(hex.slice(7, 9), 16);
+  return { r, g, b, a };
 };
 
 export const rgbaToHex = (color: Color) => {
@@ -100,5 +101,5 @@ export const rgbaToHex = (color: Color) => {
   g = Math.floor(g * a);
   b = Math.floor(b * a);
   const hex = (r << 16) | (g << 8) | b;
-  return '#' + hex.toString(16).padStart(6, '0');
-}
+  return "#" + hex.toString(16).padStart(6, "0");
+};

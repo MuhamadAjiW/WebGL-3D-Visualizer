@@ -73,7 +73,6 @@ class BufferGeometry {
     }
 
     this.calculateNormalsFlat();
-
     this.calculateSmoothShading();
   }
 

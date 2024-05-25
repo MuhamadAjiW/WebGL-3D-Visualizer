@@ -23,6 +23,7 @@ import {
 import {
   convertGLTFToLoad,
   convertGLTFToTreeView,
+  convertHexToRGBA,
   findMeshById
 } from "@/libs/helper";
 import { MathUtil } from "@/libs/util/math-util";
@@ -40,6 +41,9 @@ import { TreeViewBaseItem } from "@mui/x-tree-view";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { light } from '@mui/material/styles/createPalette';
+import { BasicMaterial } from "@/libs/class/material/basic-material";
+import { PhongMaterial } from "@/libs/class/material/phong-material";
+import { Color } from "@/libs/base-types/color";
 
 export default function Home() {
   // States
@@ -256,13 +260,25 @@ export default function Home() {
       activeComponent.material.parallaxHeight = values.parallaxHeight;
       activeComponent.material.displacementActive = values.displacementActive;
       activeComponent.material.displacementHeight = values.displacementHeight;
-      activeComponent.geometry.smoothShade = values.smoothShade;
-      
-      console.log(values.ambientColors);
-      console.log(typeof values.ambientColors == "string");
-      
-      // const { r, g, b, a } = convertHexToRGBA(values.ambientColors);
-      // const color = new Color(r, g, b, a);
+
+      if(values.smoothShade != activeComponent.geometry.smoothShade){
+        activeComponent.geometry.smoothShade = values.smoothShade;
+        activeComponent.geometry.calculateNormals();
+        activeComponent.geometry.calculateTangents();
+      }
+
+      if(activeComponent.material instanceof BasicMaterial){
+        const { r, g, b, a } = convertHexToRGBA(values.diffuseColor);
+        activeComponent.material.diffuseColor = new Color(r, g, b, a);
+      }
+      else if(activeComponent.material instanceof PhongMaterial){
+        const{ r: a_r, g: a_g, b: a_b, a: a_a } = convertHexToRGBA(values.ambientColor);
+        activeComponent.material.ambientColor = new Color(a_r, a_g, a_b, a_a);
+        const { r: d_r, g: d_g, b: d_b, a: d_a } = convertHexToRGBA(values.diffuseColor);
+        activeComponent.material.diffuseColor = new Color(d_r, d_g, d_b, d_a);
+        const { r: s_r, g: s_g, b: s_b, a: s_a } = convertHexToRGBA(values.specularColor);
+        activeComponent.material.specularColor = new Color(s_r, s_g, s_b, s_a);
+      }
     }
     
     setActiveComponent(activeComponent);
