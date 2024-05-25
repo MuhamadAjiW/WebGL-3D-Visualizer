@@ -407,9 +407,9 @@
           "id": "phong_3",
           "materialType": 1,
           "normalTexture": 0,
-          "parallaxTexture": 1,
           "diffuseTexture": 1,
-          "specularTexture": 1,
+          "parallaxTexture": 2,
+          "specularTexture": 2,
           "ambientColor": {
             "r": 65,
             "g": 65,
@@ -517,7 +517,7 @@
             "repeatS": 1,
             "repeatT": 1,
             "generateMipmaps": false
-          },
+        },
         {
             "id": 1,
             "isActive": false,
