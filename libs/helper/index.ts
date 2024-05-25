@@ -2,6 +2,7 @@ import { TreeViewBaseItem } from "@mui/x-tree-view";
 import Object3D from "../class/object3d";
 import { Scene } from "../class/scene";
 import { Mesh } from "../class/mesh";
+import { Color } from "../base-types/color";
 
 export const convertGLTFToTreeView = (
   scheneSchema: any //change this later
@@ -70,18 +71,34 @@ export const convertLoadToTree = (
   }
 };
 
-export const convertGLTFToLoad = (GLTFTree: any): Scene =>{
-  const saveScene = new Scene()
+export const convertGLTFToLoad = (GLTFTree: any): Scene => {
+  const saveScene = new Scene();
 
-  saveScene.name = GLTFTree.name
+  saveScene.name = GLTFTree.name;
 
-  const length = GLTFTree.children.length
+  const length = GLTFTree.children.length;
 
-  for(let i=0; i<length; i++) {
-    const node = GLTFTree.children[0]
-    saveScene.add(node)
-    GLTFTree.children.push(node)
+  for (let i = 0; i < length; i++) {
+    const node = GLTFTree.children[0];
+    saveScene.add(node);
+    GLTFTree.children.push(node);
   }
 
-  return saveScene
+  return saveScene;
+};
+
+export const convertHexToRGBA = (hex: string) => {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return { r, g, b, a: 1 };
+};
+
+export const rgbaToHex = (color: Color) => {
+  let [r, g, b, a] = color.get();
+  r = Math.floor(r * a);
+  g = Math.floor(g * a);
+  b = Math.floor(b * a);
+  const hex = (r << 16) | (g << 8) | b;
+  return '#' + hex.toString(16).padStart(6, '0');
 }

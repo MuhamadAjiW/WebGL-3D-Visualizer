@@ -7,18 +7,26 @@ import ComponentController from "@/components/ui/Controller";
 import CustomSlider from "@/components/ui/slider";
 import TreeView from "@/components/ui/TreeView";
 import { AnimationClip } from "@/libs/base-types/animation";
+import { Color } from "@/libs/base-types/color";
 import { Euler } from "@/libs/base-types/euler";
 import { Quaternion } from "@/libs/base-types/quaternion";
 import Vector3 from "@/libs/base-types/vector3";
 import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
 import { Loader } from "@/libs/class/loader/loader";
+import { PhongMaterial } from "@/libs/class/material/phong-material";
+import { Mesh } from "@/libs/class/mesh";
 import Object3D from "@/libs/class/object3d";
 import { Scene } from "@/libs/class/scene";
 import {
   AnimationControllerType,
   CameraControllerType,
 } from "@/libs/controllers";
-import { convertGLTFToLoad, convertGLTFToTreeView, findMeshById } from "@/libs/helper";
+import {
+  convertGLTFToLoad,
+  convertGLTFToTreeView,
+  convertHexToRGBA,
+  findMeshById,
+} from "@/libs/helper";
 import { MathUtil } from "@/libs/util/math-util";
 import { InputOptions } from "@/types/ui";
 import {
@@ -209,7 +217,6 @@ export default function Home() {
         };
         reader.readAsText(animationSelectedFile);
       });
-      
     } else {
       const responseAnim = await fetch("/animation-awe.json");
       loadedAnim = await responseAnim.json();
@@ -222,13 +229,11 @@ export default function Home() {
       JSON.stringify(loadedAnim)
     );
 
-    console.log(loadedFile)
+    console.log(loadedFile);
 
     setData(loadedFile.scene);
     setActiveComponent(loadedFile.scene);
     setActiveAnimationClip(loadedAnimation[activeAnimationClipIdx]);
-
-    
   };
 
   useEffect(() => {
@@ -272,30 +277,34 @@ export default function Home() {
   };
 
   const handleSaveFile = async (fileType: string) => {
-    if (!GLTFTree) return
+    if (!GLTFTree) return;
 
-    if (fileType === 'model') {
+    if (fileType === "model") {
       // const copiedGLTFTree = copyGLTFTree(GLTFTree);
-      console.log(GLTFTree)
+      console.log(GLTFTree);
       // console.log(copiedGLTFTree)
-      const convertScene = convertGLTFToLoad(GLTFTree)
-      console.log(GLTFTree)
-      const saveFile = loader.save(convertScene)
-      console.log(saveFile)
+      const convertScene = convertGLTFToLoad(GLTFTree);
+      console.log(GLTFTree);
+      const saveFile = loader.save(convertScene);
+      console.log(saveFile);
       try {
-        console.log("Uploading")
-        const formData = new FormData()
-        const blob = new Blob([saveFile], { type: 'application/json' });
-        formData.append("myFile", blob, selectedFile?.name || "articulated-awe.json")
-        const { data } = await axios.post('api/file-upload', formData)
-        console.log(data)
-        console.log(activeComponent)
+        console.log("Uploading");
+        const formData = new FormData();
+        const blob = new Blob([saveFile], { type: "application/json" });
+        formData.append(
+          "myFile",
+          blob,
+          selectedFile?.name || "articulated-awe.json"
+        );
+        const { data } = await axios.post("api/file-upload", formData);
+        console.log(data);
+        console.log(activeComponent);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }
-    if (fileType === 'animation') console.log('animation')
-  }
+    if (fileType === "animation") console.log("animation");
+  };
 
   const handleAnimationControllerCheckbox = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -322,10 +331,19 @@ export default function Home() {
     );
     const scale = new Vector3(values.scale.x, values.scale.y, values.scale.z);
 
+    // if (activeComponent instanceof Mesh)
+    const { r, g, b, a } = convertHexToRGBA(values.ambientColors);
+    const color = new Color(r, g, b, a);
+
     if (activeComponent) {
       activeComponent.position = position;
       activeComponent.rotation = rotation;
       activeComponent.scale = scale;
+      if (
+        activeComponent instanceof Mesh &&
+        activeComponent.material instanceof PhongMaterial
+      )
+        activeComponent.material.ambient = color;
       setActiveComponent(activeComponent);
       setIsControllerChange(!isControllerChange);
     }
@@ -366,12 +384,12 @@ export default function Home() {
     if (isSelected) {
       // if (!GLTFTree.children) return;
       const selectedComponent = findMeshById(GLTFTree.children, itemId);
-      
+
       if (!selectedComponent) {
-        console.log(GLTFTree)
+        console.log(GLTFTree);
         setActiveComponent(data);
       } else {
-        console.log(selectedComponent, itemId)
+        console.log(selectedComponent, itemId);
         setActiveComponent(selectedComponent);
       }
     }
@@ -474,7 +492,7 @@ export default function Home() {
               </div>
               <Button
                 id="save-button"
-                handleClick={() => handleSaveFile('model')}
+                handleClick={() => handleSaveFile("model")}
                 text="Save"
                 className="bg-white text-black px-4 rounded-sm"
               />
@@ -514,7 +532,7 @@ export default function Home() {
               </div>
               <Button
                 id="save-button"
-                handleClick={() => handleSaveFile('animation')}
+                handleClick={() => handleSaveFile("animation")}
                 text="Save"
                 className="bg-white text-black px-4 rounded-sm"
               />
