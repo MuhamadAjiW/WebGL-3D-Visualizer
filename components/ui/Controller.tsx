@@ -53,7 +53,6 @@ const ComponentController: React.FC<ControllerProps> = ({
   const visible = useRef<boolean>(false);
   const parallaxHeight = useRef<number>(0.1);
 
-  // Texture
   if (component && component != savedComponent.current) {
     console.log("This is component", component);
     savedComponent.current = component;

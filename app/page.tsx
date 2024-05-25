@@ -249,7 +249,7 @@ export default function Home() {
     activeComponent.position = position;
     activeComponent.rotation = rotation;
     activeComponent.scale = scale;
-    // activeComponent.visible = values.visible;
+    activeComponent.visible = values.isVisible;
     if (
       activeComponent instanceof Mesh
     ){

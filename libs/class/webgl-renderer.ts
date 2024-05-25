@@ -100,13 +100,18 @@ export class WebGLRenderer {
     }
 
     node.children.forEach((child) => {
-      if (!node.visible) return;
+      if (!child.visible) return;
       this.renderNodes(child);
     });
   }
 
   public render(scene: Scene, camera: Camera) {
-    if (!scene.visible) return;
+    this.clean();
+    if (!scene.visible) {
+      // console.log("Scene is not visible");
+      return;
+    }
+    // console.log("Scene is visible");
 
     WebGLUtil.setUniforms(this.currentProgram, {
       u_projection: M4.flatten(camera.projectionMatrix),
