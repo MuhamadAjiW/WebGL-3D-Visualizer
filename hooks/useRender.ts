@@ -20,6 +20,7 @@ import fragmentShaderSource from "@/shaders/fragment-shader.frag?raw";
 import vertexShaderSource from "@/shaders/vertex-shader.vert?raw";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { AnimationRunner } from "../libs/class/animation/animation-runner";
+import { Mesh } from "@/libs/class/mesh";
 
 interface HooksRenderProps {
   activeComponent: Object3D; // change this later

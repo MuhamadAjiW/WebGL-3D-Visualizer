@@ -49,9 +49,11 @@ const ComponentController: React.FC<ControllerProps> = ({
   const name = useRef<string>("");
   const normal = useRef<boolean>(false);
   const parallax = useRef<boolean>(false);
+  const displacement = useRef<boolean>(false);
   const smoothShade = useRef<boolean>(false);
   const visible = useRef<boolean>(false);
   const parallaxHeight = useRef<number>(0.1);
+  const displacementHeight = useRef<number>(0);
 
   if (component && component != savedComponent.current) {
     console.log("This is component", component);
@@ -70,6 +72,8 @@ const ComponentController: React.FC<ControllerProps> = ({
       parallax.current = component.material.parallaxActive;
       smoothShade.current = component.geometry.smoothShade;
       parallaxHeight.current = component.material.parallaxHeight;
+      displacement.current = component.material.displacementActive;
+      displacementHeight.current = component.material.displacementHeight;
     }
   }
 
@@ -101,11 +105,13 @@ const ComponentController: React.FC<ControllerProps> = ({
       // diffuseTexture: diffuseTexture.current,
       // specularTexture: specularTexture.current,
       // ambientColors: "",
-      isNormal: normal.current,
-      isVisible: visible.current,
-      isParallax: parallax.current,
-      isSmoothShading: smoothShade.current,
+      visible: visible.current,
+      normalActive: normal.current,
+      smoothShade: smoothShade.current,
+      parallaxActive: parallax.current,
       parallaxHeight: parallaxHeight.current,
+      displacementActive: displacement.current,
+      displacementHeight: displacementHeight.current,
     },
     onSubmit: (values) => {
       handleSubmit(values);
@@ -136,7 +142,6 @@ const ComponentController: React.FC<ControllerProps> = ({
         }
       };
       reader.readAsDataURL(file);
-      console.log(isControllerChange);
       setIsControllerChange(!isControllerChange);
     }
   };
@@ -177,7 +182,6 @@ const ComponentController: React.FC<ControllerProps> = ({
         if (
           component instanceof Mesh
         ) {
-          console.log("Changing diffuse texture");
           (component.material as any).diffuseTexture.image = image;
           (component.material as any).diffuseTexture.image_path = image_path;
           component.material.setNeedsUpdate();
@@ -443,10 +447,10 @@ const ComponentController: React.FC<ControllerProps> = ({
                             color: "silver",
                           },
                         }}
-                        checked={formik.values.isVisible}
+                        checked={formik.values.visible}
                         onChange={refresh}
-                        name="isVisible"
-                        id="isVisible"
+                        name="visible"
+                        id="visible"
                       />
                     }
                     label="Visible"
@@ -463,13 +467,33 @@ const ComponentController: React.FC<ControllerProps> = ({
                             color: "silver",
                           },
                         }}
-                        checked={formik.values.isNormal}
+                        checked={formik.values.normalActive}
                         onChange={refresh}
-                        name="isNormal"
-                        id="isNormal"
+                        name="normalActive"
+                        id="normalActive"
                       />
                     }
                     label="Normal"
+                  ></FormControlLabel>
+                  )}
+                  {component &&
+                  component instanceof Mesh && (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        sx={{
+                          color: "white",
+                          "&.Mui-checked": {
+                            color: "silver",
+                          },
+                        }}
+                        checked={formik.values.displacementActive}
+                        onChange={refresh}
+                        name="displacementActive"
+                        id="displacementActive"
+                      />
+                    }
+                    label="Displace"
                   ></FormControlLabel>
                   )}
                   {component &&
@@ -484,10 +508,10 @@ const ComponentController: React.FC<ControllerProps> = ({
                             color: "silver",
                           },
                         }}
-                        checked={formik.values.isParallax}
+                        checked={formik.values.parallaxActive}
                         onChange={refresh}
-                        name="isParallax"
-                        id="isParallax"
+                        name="parallaxActive"
+                        id="parallaxActive"
                       />
                     }
                     label="Parallax"
@@ -505,10 +529,10 @@ const ComponentController: React.FC<ControllerProps> = ({
                             color: "silver",
                           },
                         }}
-                        checked={formik.values.isSmoothShading}
+                        checked={formik.values.smoothShade}
                         onChange={refresh}
-                        name="isSmoothShading"
-                        id="isSmoothShading"
+                        name="smoothShade"
+                        id="smoothShade"
                       />
                     }
                     label="Smooth"
@@ -544,7 +568,7 @@ const ComponentController: React.FC<ControllerProps> = ({
                 component.material instanceof PhongMaterial && 
                 component.material.parallaxActive && (
                 <div className="flex items-center justify-between">
-                  <div className="pr-4">Height</div>
+                  <div className="pr-4">Parallax Height</div>
                   <TextField
                     id="parallaxHeight"
                     name="parallaxHeight"
@@ -554,6 +578,23 @@ const ComponentController: React.FC<ControllerProps> = ({
                     size="small"
                     onChange={refresh}
                     value={formik.values.parallaxHeight}
+                  />
+                </div>
+              )}
+              {component &&
+                component instanceof Mesh &&
+                component.material.displacementActive && (
+                <div className="flex items-center justify-between">
+                  <div className="pr-4">Displacement Height</div>
+                  <TextField
+                    id="displacementHeight"
+                    name="displacementHeight"
+                    fullWidth
+                    type="number"
+                    className="bg-white"
+                    size="small"
+                    onChange={refresh}
+                    value={formik.values.displacementHeight}
                   />
                 </div>
               )}

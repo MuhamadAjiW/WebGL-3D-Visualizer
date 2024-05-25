@@ -15,7 +15,6 @@ class BufferGeometry {
     if (!this.smoothShade) {
       this.calculateNormalsFlat(forceNewAttribute);
     } else {
-      console.log("Calculating Smooth shading normals");
       this.calculateNormalsSmooth(forceNewAttribute);
     }
   }
@@ -154,7 +153,6 @@ class BufferGeometry {
         i += 1;
       });
     }
-    console.log(this.vertexToIndex);
   }
 
   calculateSmoothShading() {

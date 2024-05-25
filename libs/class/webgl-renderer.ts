@@ -73,7 +73,6 @@ export class WebGLRenderer {
     }
 
     if (materialStored.needsUpdate) {
-      console.log("Refreshing materials");
       material.refreshTextures();
       materialStored.needsUpdate = false;
     }

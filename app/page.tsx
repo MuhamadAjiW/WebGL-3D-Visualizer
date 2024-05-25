@@ -103,7 +103,7 @@ export default function Home() {
         reader.readAsText(selectedFile);
       });
     } else {
-      const response = await fetch("/box.json");
+      const response = await fetch("/articulated-awe.json");
       loaded = await response.json();
     }
 
@@ -203,7 +203,7 @@ export default function Home() {
         formData.append(
           "myFile",
           blob,
-          selectedFile?.name || "box.json"
+          selectedFile?.name || "articulated-awe.json"
         );
         const { data } = await axios.post("api/file-upload", formData);
         console.log(data);
@@ -245,14 +245,16 @@ export default function Home() {
     activeComponent.position = position;
     activeComponent.rotation = rotation;
     activeComponent.scale = scale;
-    activeComponent.visible = values.isVisible;
+    activeComponent.visible = values.visible;
     if (
       activeComponent instanceof Mesh
     ){
-      activeComponent.material.normalActive = values.isNormal;
-      activeComponent.material.parallaxActive = values.isParallax;
+      activeComponent.material.normalActive = values.normalActive;
+      activeComponent.material.parallaxActive = values.parallaxActive;
       activeComponent.material.parallaxHeight = values.parallaxHeight;
-      activeComponent.geometry.smoothShade = values.isSmoothShading;
+      activeComponent.material.displacementActive = values.displacementActive;
+      activeComponent.material.displacementHeight = values.displacementHeight;
+      activeComponent.geometry.smoothShade = values.smoothShade;
 
       // const { r, g, b, a } = convertHexToRGBA(values.ambientColors);
       // const color = new Color(r, g, b, a);
