@@ -2,8 +2,10 @@ import { Euler } from "@/libs/base-types/euler";
 import { Quaternion } from "@/libs/base-types/quaternion";
 import Vector3 from "@/libs/base-types/vector3";
 import { PhongMaterial } from "@/libs/class/material/phong-material";
+import { ShaderMaterial } from "@/libs/class/material/shader-material";
 import { Mesh } from "@/libs/class/mesh";
 import Object3D from "@/libs/class/object3d";
+import { InputOptions } from "@/types/ui";
 import {
   Button,
   Checkbox,
@@ -12,6 +14,7 @@ import {
   FormGroup,
   MenuItem,
   Select,
+  SelectChangeEvent,
   TextField
 } from "@mui/material";
 import { useFormik } from "formik";
@@ -25,6 +28,7 @@ interface ControllerProps {
   handleClick: () => void;
   title: string;
   component: Object3D;
+  materials: ShaderMaterial[] | null;
   handleSubmit: (values: any) => void;
   setIsControllerChange: Dispatch<SetStateAction<boolean>>;
   isControllerChange: boolean
@@ -36,6 +40,7 @@ const ComponentController: React.FC<ControllerProps> = ({
   handleClick,
   title,
   component,
+  materials,
   handleSubmit,
   setIsControllerChange,
   isControllerChange,
@@ -75,6 +80,22 @@ const ComponentController: React.FC<ControllerProps> = ({
       displacement.current = component.material.displacementActive;
       displacementHeight.current = component.material.displacementHeight;
     }
+  }
+
+  let materialData: InputOptions[] = [];
+  let materialIndex: number = 0;
+  if(materials){
+    materials.forEach((mat, index) => {
+      let option: InputOptions = {
+        name: mat.id,
+        value: index
+      };
+      materialData.push(option);
+
+      if(component instanceof Mesh && mat == component.material){
+        materialIndex = index;
+      }
+    })
   }
 
   const formik = useFormik({
@@ -124,6 +145,12 @@ const ComponentController: React.FC<ControllerProps> = ({
     formik.submitForm();
   };
 
+  const handleMaterialChange = (e: SelectChangeEvent) => {
+    const index = parseInt(e.target.value);
+    (component as Mesh).material = materials![index];
+    setIsControllerChange(!isControllerChange);
+  }
+
   const handleNormalTextureChange = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -142,8 +169,8 @@ const ComponentController: React.FC<ControllerProps> = ({
         }
       };
       reader.readAsDataURL(file);
-      setIsControllerChange(!isControllerChange);
     }
+    setIsControllerChange(!isControllerChange);
   };
 
   const handleParallaxTextureChange = (
@@ -164,8 +191,8 @@ const ComponentController: React.FC<ControllerProps> = ({
         }
       };
       reader.readAsDataURL(file);
-      setIsControllerChange(!isControllerChange);
     }
+    setIsControllerChange(!isControllerChange);
   };
 
   const handleDiffuseTextureChange = (
@@ -188,8 +215,8 @@ const ComponentController: React.FC<ControllerProps> = ({
         }
       };
       reader.readAsDataURL(file);
-      setIsControllerChange(!isControllerChange);
     }
+    setIsControllerChange(!isControllerChange);
   };
 
   const handleSpecularTextureChange = (
@@ -213,8 +240,8 @@ const ComponentController: React.FC<ControllerProps> = ({
         }
       };
       reader.readAsDataURL(file);
-      setIsControllerChange(!isControllerChange);
     }
+    setIsControllerChange(!isControllerChange);
   };
 
   return (
@@ -421,6 +448,31 @@ const ComponentController: React.FC<ControllerProps> = ({
                 </div>
               </div>
               {component &&
+                component instanceof Mesh && 
+                materials && (
+                <div className="flex items-center justify-between">
+                  <div>Material</div>
+                  <FormControl
+                    sx={{ m: 1, minWidth: 120 }}
+                    size="small"
+                    className="bg-white"
+                  >
+                    <Select
+                      value={materialIndex.toString()}
+                      aria-label="Material selector"
+                      onChange={handleMaterialChange}
+                      size="small"
+                    >
+                    {materialData!.map((option, index) => (
+                      <MenuItem key={index} value={option.value}>
+                        {option.name}
+                      </MenuItem>
+                    ))}
+                    </Select>
+                  </FormControl>
+                </div>
+              )}
+              {component &&
                 component instanceof Mesh &&
                 component.material instanceof PhongMaterial && (
                   <div className="flex items-center justify-between">
@@ -540,29 +592,6 @@ const ComponentController: React.FC<ControllerProps> = ({
                   )}
                 </div>
               </FormGroup>
-              {component &&
-                component instanceof Mesh && (
-                <div className="flex items-center justify-between">
-                  <div>Material</div>
-                  <FormControl
-                    sx={{ m: 1, minWidth: 120 }}
-                    size="small"
-                    className="bg-white"
-                  >
-                    <Select
-                      labelId="demo-select-small-label"
-                      id="demo-select-small"
-                      value={10}
-                      label="Age"
-                      onChange={() => {}}
-                    >
-                      <MenuItem value={10}>Ten</MenuItem>
-                      <MenuItem value={20}>Twenty</MenuItem>
-                      <MenuItem value={30}>Thirty</MenuItem>
-                    </Select>
-                  </FormControl>
-                </div>
-              )}
               {component &&
                 component instanceof Mesh &&
                 component.material instanceof PhongMaterial && 

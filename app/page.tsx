@@ -566,6 +566,7 @@ export default function Home() {
             handleClick={handleComponentExpanded}
             title="Component Controller"
             component={activeComponent}
+            materials={materialData}
             handleSubmit={handleSubmitController}
             setIsControllerChange={setIsControllerChange}
             isControllerChange={isControllerChange}
