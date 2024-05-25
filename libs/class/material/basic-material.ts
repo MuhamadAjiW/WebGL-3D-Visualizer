@@ -31,12 +31,15 @@ export class BasicMaterial extends ShaderMaterial {
   public loadTexture(renderer: WebGLRenderer): void {
     this.normalTexture.load(renderer, 0);
     this.parallaxTexture.load(renderer, 1);
+    this.parallaxTexture.format = WebGLRenderingContext.LUMINANCE;
     this.diffuseTexture.load(renderer, 2);
   }
 
   public loadUniform(renderer: WebGLRenderer): void {
     WebGLUtil.setUniforms(renderer.currentProgram, {
       u_textureDiffuse: this.diffuseTexture.glTexture,
+      u_textureNormal: this.normalTexture.glTexture,
+      u_textureParallax: this.parallaxTexture.glTexture,
       u_diffuse: this.diffuse.getNormalized(),
       u_materialType: this.materialType,
       u_useNormalTex: this.useNormalTex,

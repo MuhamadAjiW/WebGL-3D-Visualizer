@@ -28,21 +28,24 @@ uniform float u_parallaxScale;
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 {
     float height = texture2D(u_textureParallax, texCoords).r;
-    vec2 p = viewDir.xy / viewDir.z * (height * u_parallaxScale);
+    // vec2 p = viewDir.xy / viewDir.z * (height * u_parallaxScale);
+    vec2 p = viewDir.xy * (height * 0.05) / viewDir.z;
     return texCoords - p;
 }
 
 void main() {
     vec3 viewDir = normalize(v_tangentViewPos - v_tangentFragPos);
-    // vec3 lightDir = normalize(v_tangentLightPos - v_tangentFragPos);
-    vec3 lightDir = normalize(v_lightPos - v_position);
+    vec3 lightDir = normalize(v_tangentLightPos - v_tangentFragPos);
+    // vec3 lightDir = normalize(v_lightPos - v_position);
 
     vec2 uv;
-    if(u_useParallaxTex){
+    // uv = ParallaxMapping(v_texCoord, viewDir);
+
+    // if(true){
         uv = ParallaxMapping(v_texCoord, viewDir);
-    } else{
-        uv = v_texCoord;
-    }
+    // } else{
+        // uv = v_texCoord;
+    // }
 
     vec3 N;
     if(u_useNormalTex){
@@ -55,28 +58,32 @@ void main() {
     }
 
     vec4 textureDiffuse = texture2D(u_textureDiffuse, uv);
-    vec4 textureSpecular = texture2D(u_textureSpecular, uv);
 
     vec4 outColor;
     if(u_materialType == 0){
         outColor = u_diffuse * textureDiffuse;
-        
     } else if (u_materialType == 1){
+        vec4 textureSpecular = texture2D(u_textureSpecular, uv);
+        
         // Lambert's cosine law
         float lambertian = max(dot(N, lightDir), 0.0);
         float specular = 0.0;
         if(lambertian > 0.0) {
-            vec3 R = reflect(-lightDir, N);      // Reflected light vector
-            vec3 V = normalize(-v_position); // Vector to viewer
+            vec3 reflect = reflect(-lightDir, N);      // Reflected light vector
+
             // Compute the specular term
-            float specAngle = max(dot(R, V), 0.0);
+            float specAngle = max(dot(reflect, viewDir), 0.0);
             specular = pow(specAngle, u_shininess);
         }
 
         outColor = (u_ambient +
                     lambertian * u_diffuse) * textureDiffuse +
                     (specular * u_specular) * textureSpecular;
+    
+        // float diff = max(dot(lightDir, N), 0.0);
+        // outColor = vec4(diff * textureDiffuse + u_ambient);
     }
 
     gl_FragColor = outColor;
+    // gl_FragColor = vec4(v_tangentViewPos, 1.0);
 }

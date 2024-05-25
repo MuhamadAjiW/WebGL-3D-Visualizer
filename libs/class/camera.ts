@@ -64,6 +64,7 @@ class Camera extends Object3d {
 
   setDistance(value: number) {
     this.distance = value;
+    this.position = new Vector3(0, 0, -this.distance);
     this.computeCameraMatrix();
   }
 

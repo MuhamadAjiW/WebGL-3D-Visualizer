@@ -77,7 +77,7 @@ export default function Home() {
     setData(loadedFile.scene);
     setActiveComponent(loadedFile.scene);
     setActiveAnimationClip(loadedAnimation[activeAnimationClipIdx]);
-    loader.saveAnimation(loadedAnimation);
+    // loader.saveAnimation(loadedAnimation);
     // setActiveAnimationClip(testAnim);
   };
 

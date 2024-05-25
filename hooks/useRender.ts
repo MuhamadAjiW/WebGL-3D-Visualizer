@@ -29,6 +29,7 @@ import { TextureLoader } from "@/libs/class/texture/texture-loader";
 import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
 import { Loader } from "@/libs/class/loader/loader";
 import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
+import { BasicMaterial } from "@/libs/class/material/basic-material";
 
 interface HooksRenderProps {
   activeComponent: Object3D; // change this later
@@ -44,7 +45,7 @@ interface HooksRenderProps {
 const dummyUniformsData = {
   // Light
   u_lightPos: new BufferUniform(
-    new Float32Array([0, 0, 1]),
+    new Float32Array([0, 0, 100]),
     3,
     WebGLRenderingContext.FLOAT_VEC3
   ),
@@ -289,13 +290,11 @@ const useRender = ({
       WebGLUtils.setUniforms(renderer.currentProgram, dummyUniformsData);
 
       // TODO: Delete, this is testing
-      const geometry = new CubeGeometry(0.5);
+      const geometry = new CubeGeometry(1);
       const diffuseTexture = await TextureLoader.load("res/woodbox.png");
       const specularTexture = await TextureLoader.load("res/woodboxSpec.png");
-      const normalTexture = await TextureLoader.load("res/woodboxNorm2.png");
-      const parallaxTexture = await TextureLoader.load(
-        "res/woodboxParallax.png"
-      );
+      const normalTexture = await TextureLoader.load("res/bump_normal.png");
+      const parallaxTexture = await TextureLoader.load("res/bump_depth.png");
       const material = new PhongMaterial({
         diffuseTexture: diffuseTexture,
         specularTexture: specularTexture,
@@ -304,8 +303,16 @@ const useRender = ({
         ambient: new Color(0x818181ff),
         diffuse: new Color(0xffffffff),
         specular: new Color(0xffffffff),
-        shinyness: 0.05,
+        shinyness: 1,
+        useNormalTex: true,
       });
+      // const material = new BasicMaterial({
+      //   // diffuseTexture: diffuseTexture,
+      //   normalTexture: normalTexture,
+      //   parallaxTexture: parallaxTexture,
+      //   diffuseColor: new Color(0x00ffffff),
+      //   useNormalTex: true,
+      // });
       const testScene = new Scene();
       const mesh = new Mesh(geometry, material);
       testScene.add(mesh);
@@ -323,13 +330,15 @@ const useRender = ({
             updateAnimationController(newAnimationControllerState);
           }
         }
+        // activeCamera.setOrbitControl(180, 0);
 
+        // dx += 0.1;
         activeCamera.setOrbitControl(dy, dx);
 
         // activeComponentRef.current!.rotateOnWorldAxis(Vector3.right, 0.001);
         // activeComponentRef.current!.rotateOnWorldAxis(Vector3.up, 0.001);
-        mesh.rotateOnWorldAxis(Vector3.right, 0.001);
-        mesh.rotateOnWorldAxis(Vector3.up, 0.001);
+        mesh.rotateOnWorldAxis(Vector3.right, 0.005);
+        mesh.rotateOnWorldAxis(Vector3.up, 0.005);
 
         // renderer.render(activeComponentRef.current!, activeCamera);
         renderer.render(testScene, activeCamera);
