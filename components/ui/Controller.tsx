@@ -246,6 +246,30 @@ const ComponentController: React.FC<ControllerProps> = ({
     setIsControllerChange(!isControllerChange);
   };
 
+  const handleDisplacementTextureChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const image = new Image();
+        image.src = event.target?.result as string;
+        const image_path = "res/" + file.name;
+
+        if (
+          component instanceof Mesh
+        ) {
+          component.material.displacementTexture.image = image;
+          component.material.displacementTexture.image_path = image_path;
+          component.material.setNeedsUpdate();
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+    setIsControllerChange(!isControllerChange);
+  };
+
   return (
     <>
       {component && (
@@ -654,6 +678,86 @@ const ComponentController: React.FC<ControllerProps> = ({
                 </div>
               )}
 
+              {component instanceof Mesh && (
+              <div className="flex flex-col gap-2">
+                <div>Diffuse Texture</div>
+
+                {((component.material as any).diffuseTexture.image && (
+                  <div className="flex justify-center mb-2">
+                    <img
+                      src={(component.material as any).diffuseTexture.image_path}
+                      alt="Current Texture"
+                      className="max-w-full max-h-32"
+                    />
+                  </div>
+                ))
+                ||
+                (
+                  <div className="flex justify-center mb-2">
+                    No texture loaded
+                  </div>
+                )}
+                <Button variant="contained" component="label">
+                  Insert Texture
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleDiffuseTextureChange}
+                  />
+                </Button>
+                <Button variant="contained" component="label"onClick={() => {
+                      (component.material as any).diffuseActive = false;
+                      (component.material as any).diffuseTexture.image = undefined;
+                      (component.material as any).diffuseTexture.image_path = "";
+                      component.material.setNeedsUpdate();
+                      setIsControllerChange(!isControllerChange);
+                    }}>
+                  Remove
+                </Button>
+              </div>
+              )}
+
+              {component instanceof Mesh && (
+              <div className="flex flex-col gap-2">
+                <div>Displacement Texture</div>
+
+                {(component.material.displacementTexture.image && (
+                  <div className="flex justify-center mb-2">
+                    <img
+                      src={component.material.displacementTexture.image_path}
+                      alt="Current Texture"
+                      className="max-w-full max-h-32"
+                    />
+                  </div>
+                ))
+                ||
+                (
+                  <div className="flex justify-center mb-2">
+                    No texture loaded
+                  </div>
+                )}
+                <Button variant="contained" component="label">
+                  Insert Texture
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleDisplacementTextureChange}
+                  />
+                </Button>
+                <Button variant="contained" component="label"onClick={() => {
+                      component.material.displacementActive = false;
+                      component.material.displacementTexture.image = undefined;
+                      component.material.displacementTexture.image_path = "";
+                      component.material.setNeedsUpdate();
+                      setIsControllerChange(!isControllerChange);
+                    }}>
+                  Remove
+                </Button>
+              </div>
+              )}
+
               {component instanceof Mesh && component.material instanceof PhongMaterial && (
               <div className="flex flex-col gap-2">
                 <div>Normal Texture</div>
@@ -673,13 +777,22 @@ const ComponentController: React.FC<ControllerProps> = ({
                     </div>
                   )}
                   <Button variant="contained" component="label">
-                    Normal Texture
+                    Insert Texture
                     <input
                       type="file"
                       hidden
                       accept="image/*"
                       onChange={handleNormalTextureChange}
                     />
+                  </Button>
+                  <Button variant="contained" component="label"onClick={() => {
+                        component.material.normalActive = false;
+                        component.material.normalTexture.image = undefined;
+                        component.material.normalTexture.image_path = "";
+                        component.material.setNeedsUpdate();
+                        setIsControllerChange(!isControllerChange);
+                      }}>
+                    Remove
                   </Button>
               </div>
               )}
@@ -688,15 +801,23 @@ const ComponentController: React.FC<ControllerProps> = ({
               {component instanceof Mesh && component.material instanceof PhongMaterial && (
               <div className="flex flex-col gap-2">
                 <div>Parallax Texture</div>
-                  <div className="flex justify-center mb-2">
-                    <img
-                      src={component.material.parallaxTexture.image_path}
-                      alt="Current Texture"
-                      className="max-w-full max-h-32"
-                    />
-                  </div>
+                  {(component.material.parallaxTexture.image && (
+                    <div className="flex justify-center mb-2">
+                      <img
+                        src={component.material.parallaxTexture.image_path}
+                        alt="Current Texture"
+                        className="max-w-full max-h-32"
+                      />
+                    </div>
+                  ))
+                  ||
+                  (
+                    <div className="flex justify-center mb-2">
+                      No texture loaded
+                    </div>
+                  )}
                   <Button variant="contained" component="label">
-                    Parallax Texture
+                    Insert Texture
                     <input
                       type="file"
                       hidden
@@ -704,50 +825,54 @@ const ComponentController: React.FC<ControllerProps> = ({
                       onChange={handleParallaxTextureChange}
                     />
                   </Button>
-              </div>
-              )}
-
-              {component instanceof Mesh && (
-              <div className="flex flex-col gap-2">
-                <div>Diffuse Texture</div>
-
-                <div className="flex justify-center mb-2">
-                  <img
-                    src={(component.material as any).diffuseTexture.image_path}
-                    alt="Current Texture"
-                    className="max-w-full max-h-32"
-                  />
-                </div>
-                <Button variant="contained" component="label">
-                  Diffuse Texture
-                  <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    onChange={handleDiffuseTextureChange}
-                  />
-                </Button>
+                  <Button variant="contained" component="label"onClick={() => {
+                        component.material.parallaxActive = false;
+                        component.material.parallaxTexture.image = undefined;
+                        component.material.parallaxTexture.image_path = "";
+                        component.material.setNeedsUpdate();
+                        setIsControllerChange(!isControllerChange);
+                      }}>
+                    Remove
+                  </Button>
               </div>
               )}
 
               {component instanceof Mesh && component.material instanceof PhongMaterial && (
               <div className="flex flex-col gap-2">
                 <div>Specular Texture</div>
-                <div className="flex justify-center mb-2">
-                  <img
-                    src={component.material.specularTexture.image_path}
-                    alt="Current Texture"
-                    className="max-w-full max-h-32"
-                  />
-                </div>
+                {(component.material.specularTexture.image && (
+                  <div className="flex justify-center mb-2">
+                    <img
+                      src={component.material.specularTexture.image_path}
+                      alt="Current Texture"
+                      className="max-w-full max-h-32"
+                    />
+                  </div>
+                ))
+                ||
+                (
+                  <div className="flex justify-center mb-2">
+                    No texture loaded
+                  </div>
+                )}
                 <Button variant="contained" component="label">
-                  Specular Texture
+                  Insert Texture
                   <input
                     type="file"
                     hidden
                     accept="image/*"
                     onChange={handleSpecularTextureChange}
                   />
+                </Button>
+                <Button variant="contained" component="label"onClick={() => {
+                      if(component.material instanceof PhongMaterial){
+                        component.material.specularTexture.image = undefined;
+                        component.material.specularTexture.image_path = "";
+                        component.material.setNeedsUpdate();
+                        setIsControllerChange(!isControllerChange);
+                      }
+                    }}>
+                  Remove
                 </Button>
               </div>
               )}
