@@ -100,11 +100,14 @@ export class WebGLRenderer {
     }
 
     node.children.forEach((child) => {
+      if (!node.visible) return;
       this.renderNodes(child);
     });
   }
 
   public render(scene: Scene, camera: Camera) {
+    if (!scene.visible) return;
+
     WebGLUtil.setUniforms(this.currentProgram, {
       u_projection: M4.flatten(camera.projectionMatrix),
       u_view: M4.flatten(camera.computeViewMatrix()),
@@ -125,6 +128,7 @@ export class WebGLRenderer {
     }
 
     scene.children.forEach((node) => {
+      if (!node.visible) return;
       this.renderNodes(node);
     });
   }

@@ -52,6 +52,26 @@ export class Color {
     return [this.r / 255, this.g / 255, this.b / 255, this.a / 255];
   }
 
+  public getNumber(): number {
+    return (
+      ((this.r & 0xff) << 24) |
+      ((this.g & 0xff) << 16) |
+      ((this.b & 0xff) << 8) |
+      (this.a & 0xff)
+    );
+  }
+
+  public getHexString(): string {
+    const number = (
+      ((this.r & 0xff) << 24) |
+      ((this.g & 0xff) << 16) |
+      ((this.b & 0xff) << 8) |
+      (this.a & 0xff)
+    );
+  
+    return number.toString(16).padStart(8, '0');
+  }
+
   public set(w: number, x: number, y: number, z: number): void {
     this.r = w;
     this.g = x;
