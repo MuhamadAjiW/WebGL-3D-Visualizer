@@ -21,6 +21,8 @@ import { useFormik } from "formik";
 import { Dispatch, SetStateAction, useRef } from "react";
 import { Collapse } from "react-collapse";
 import { GoChevronDown, GoChevronRight } from "react-icons/go";
+import UIButton from "../ui/Button";
+import { BasicMaterial } from "@/libs/class/material/basic-material";
 
 interface ControllerProps {
   id: string;
@@ -470,6 +472,30 @@ const ComponentController: React.FC<ControllerProps> = ({
                     ))}
                     </Select>
                   </FormControl>
+                </div>
+              )}
+              {component &&
+                component instanceof Mesh && 
+                materials && (
+                <div className="flex items-center justify-between">
+                    <UIButton
+                      id="add-basic-mat"
+                      text="Add Basic"
+                      className="bg-white text-black py-1 px-4 rounded-sm"
+                      handleClick={() => {
+                        materials.push(new BasicMaterial());
+                        setIsControllerChange(!isControllerChange);
+                      }}
+                    />
+                    <UIButton
+                      id="add-phong-mat"
+                      text="Add Phong"
+                      className="bg-white text-black py-1 px-4 rounded-sm"
+                      handleClick={() => {
+                        materials.push(new PhongMaterial());
+                        setIsControllerChange(!isControllerChange);
+                      }}
+                    />
                 </div>
               )}
               {component &&

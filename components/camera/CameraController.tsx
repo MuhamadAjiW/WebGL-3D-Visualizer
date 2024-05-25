@@ -4,7 +4,7 @@ import { MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import React, { Dispatch, SetStateAction } from "react";
 import { Collapse } from "react-collapse";
 import { GoChevronDown, GoChevronRight } from "react-icons/go";
-import Button from "../ui/Button";
+import UIButton from "../ui/Button";
 
 interface ControllerProps {
   id: string;
@@ -95,7 +95,7 @@ const CameraController: React.FC<ControllerProps> = ({
               </Select>
             </div>
             <div className="flex justify-end items-center">
-              <Button
+              <UIButton
                 id="reset-default"
                 text="Reset"
                 className="bg-white text-black py-1 px-4 rounded-sm"

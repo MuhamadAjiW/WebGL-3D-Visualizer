@@ -8,7 +8,7 @@ interface ButtonProps {
   type?: 'button' | 'submit' | 'reset';
 }
 
-const Button: React.FC<ButtonProps> = ({
+const UIButton: React.FC<ButtonProps> = ({
   id,
   text,
   disable = false,
@@ -30,4 +30,4 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
-export default Button;
+export default UIButton;

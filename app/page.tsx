@@ -2,7 +2,7 @@
 
 import CameraController from "@/components/camera/CameraController";
 import RenderComponent from "@/components/render/RenderComponent";
-import Button from "@/components/ui/Button";
+import UIButton from "@/components/ui/Button";
 import ComponentController from "@/components/ui/Controller";
 import CustomSlider from "@/components/ui/slider";
 import TreeView from "@/components/ui/TreeView";
@@ -384,7 +384,7 @@ export default function Home() {
           <div className="pb-6 flex items-center justify-between">
             <div className="text-2xl font-bold bg-gray-900">Scene Graph</div>
             <div className="flex items-center justify-center gap-3">
-              <Button
+              <UIButton
                 id="load-button"
                 handleClick={() => {
                   toogleFileInput("model");
@@ -405,7 +405,7 @@ export default function Home() {
                   accept=".json"
                 />
               </div>
-              <Button
+              <UIButton
                 id="save-button"
                 handleClick={() => handleSaveFile("model")}
                 text="Save"
@@ -424,7 +424,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold bg-gray-900">Animation</div>
             <div className="flex items-center justify-center gap-3">
-              <Button
+              <UIButton
                 id="load-button"
                 handleClick={() => {
                   toogleFileInput("animation");
@@ -445,7 +445,7 @@ export default function Home() {
                   accept=".json"
                 />
               </div>
-              <Button
+              <UIButton
                 id="save-button"
                 handleClick={() => handleSaveFile("animation")}
                 text="Save"
@@ -454,7 +454,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex gap-5 items-strech w-full py-3">
-            <Button
+            <UIButton
               id="play-button"
               handleClick={() => {
                 handleAnimationControllerButton("play");
@@ -462,7 +462,7 @@ export default function Home() {
               text="Play"
               className="bg-white text-black px-4"
             />
-            <Button
+            <UIButton
               id="pause-button"
               handleClick={() => {
                 handleAnimationControllerButton("pause");
