@@ -44,10 +44,10 @@ void main() {
     // Calculate tbn
     mat3 normalMat = mat3(u_normalMat);
     vec3 t = normalize(vec3(normalMat * a_tangent));
-    // vec3 b = normalize(vec3(u_world * vec4(a_bitangent, 0.0)));
+    vec3 b = normalize(vec3(normalMat * a_bitangent));
     vec3 n = normalize(vec3(normalMat * a_normal));
     // t = normalize(t - dot(t, n) * n);
-    vec3 b = cross(n, t);
+    // vec3 b = cross(n, t);
 
     v_TBN = transpose(mat3(t, b, n));
 
