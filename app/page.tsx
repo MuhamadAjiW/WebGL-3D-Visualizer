@@ -272,6 +272,7 @@ export default function Home() {
         activeComponent.material.diffuseColor = new Color(r, g, b, a);
       }
       else if(activeComponent.material instanceof PhongMaterial){
+        activeComponent.material.shininess = values.shininess;
         const{ r: a_r, g: a_g, b: a_b, a: a_a } = convertHexToRGBA(values.ambientColor);
         activeComponent.material.ambientColor = new Color(a_r, a_g, a_b, a_a);
         const { r: d_r, g: d_g, b: d_b, a: d_a } = convertHexToRGBA(values.diffuseColor);

@@ -41,27 +41,28 @@ void main() {
     v_lightPos = u_lightPos;
     v_normal = normalize(vec3(mat3(u_normalMat) * a_normal));
 
+    // Calculate tbn
+    mat3 normalMat = mat3(u_normalMat);
+    vec3 t = normalize(vec3(normalMat * a_tangent));
+    // vec3 b = normalize(vec3(u_world * vec4(a_bitangent, 0.0)));
+    vec3 n = normalize(vec3(normalMat * a_normal));
+    // t = normalize(t - dot(t, n) * n);
+    vec3 b = cross(n, t);
+
+    v_TBN = transpose(mat3(t, b, n));
+
     // Calculate displacement
-    vec4 vertPos4;
+    vec4 vertPos4 = u_world * vec4(a_position, 1.0);
     if(u_displacementActive) {
-        float disp = texture2D(u_displacementTexture, a_texCoord).r;
-        vertPos4 = u_world * vec4(a_position + v_normal * disp * u_displacementHeight, 1.0);
-    } else {
-        vertPos4 = u_world * vec4(a_position, 1.0);
+        float d = texture2D(u_displacementTexture, a_texCoord).r;
+        vertPos4.xyz += d * u_displacementHeight * n;
+        v_normal = n;
     }
     v_position = vec3(vertPos4);
 
-    // Calculate tbn
-    vec3 t = normalize(vec3(u_world * vec4(a_tangent, 0.0)));
-    vec3 b = normalize(vec3(u_world * vec4(a_bitangent, 0.0)));
-    vec3 n = normalize(vec3(u_world * vec4(a_normal, 0.0)));
-    // t = normalize(t - dot(t, n) * n);
-    // vec3 b = cross(n, t);
-    v_TBN = transpose(mat3(t, b, n));
-
     v_tangentLightPos = v_TBN * u_lightPos;
-    v_tangentViewPos = v_TBN * vec3(-u_cameraPos);
-    v_tangentFragPos = v_TBN * vec3(vertPos4);
+    v_tangentViewPos = v_TBN * -u_cameraPos;
+    v_tangentFragPos = v_TBN * vertPos4.xyz;
 
     v_TBN = transpose(v_TBN);
 

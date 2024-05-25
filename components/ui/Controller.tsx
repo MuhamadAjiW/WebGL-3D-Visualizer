@@ -66,6 +66,7 @@ const ComponentController: React.FC<ControllerProps> = ({
   const visible = useRef<boolean>(false);
   const parallaxHeight = useRef<number>(0.1);
   const displacementHeight = useRef<number>(0);
+  const shininess = useRef<number>(0);
   const ambientColor = useRef<string>("#ffffffff");
   const diffuseColor = useRef<string>("#ffffffff");
   const specularColor = useRef<string>("#ffffffff");
@@ -98,6 +99,7 @@ const ComponentController: React.FC<ControllerProps> = ({
         ambientColor.current = component.material.ambientColor.getHexString();
         diffuseColor.current = component.material.diffuseColor.getHexString();
         specularColor.current = component.material.specularColor.getHexString();
+        shininess.current = component.material.shininess;
       }
     }
 
@@ -150,6 +152,7 @@ const ComponentController: React.FC<ControllerProps> = ({
       diffuseColor: diffuseColor.current,
       specularColor: specularColor.current,
       
+      shininess: shininess.current,
       visible: visible.current,
       normalActive: normal.current,
       smoothShade: smoothShade.current,
@@ -180,14 +183,19 @@ const ComponentController: React.FC<ControllerProps> = ({
       parallaxHeight.current = component.material.parallaxHeight;
       displacement.current = component.material.displacementActive;
       displacementHeight.current = component.material.displacementHeight;
-
+      
       formik.values.normalActive = component.material.normalActive;
       formik.values.parallaxActive = component.material.parallaxActive;
       formik.values.smoothShade = component.geometry.smoothShade;
       formik.values.parallaxHeight = component.material.parallaxHeight;
       formik.values.displacementActive = component.material.displacementActive;
       formik.values.displacementHeight = component.material.displacementHeight;
-  
+
+      if(component.material instanceof PhongMaterial){
+        shininess.current = component.material.shininess;
+        formik.values.shininess = component.material.shininess;
+      }
+      
       setIsControllerChange(!isControllerChange);
     }
   }
@@ -665,6 +673,23 @@ const ComponentController: React.FC<ControllerProps> = ({
                   )}
                 </div>
               </FormGroup>
+              {component &&
+                component instanceof Mesh &&
+                component.material instanceof PhongMaterial && (
+                <div className="flex items-center justify-between">
+                  <div className="pr-4">Shininess</div>
+                  <TextField
+                    id="shininess"
+                    name="shininess"
+                    fullWidth
+                    type="number"
+                    className="bg-white"
+                    size="small"
+                    onChange={refresh}
+                    value={formik.values.shininess}
+                  />
+                </div>
+              )}
               {component &&
                 component instanceof Mesh &&
                 component.material instanceof PhongMaterial && 

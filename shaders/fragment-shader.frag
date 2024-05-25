@@ -1,5 +1,3 @@
-// Source https://www.cs.toronto.edu/~jacobson/phong-demo/
-
 precision mediump float;
 
 varying vec3 v_normal;          // Surface normal
@@ -57,6 +55,7 @@ void main() {
     if(u_materialType == 0){
         outColor = u_diffuseColor * textureDiffuse;
     } else if (u_materialType == 1){
+        // Source https://www.cs.toronto.edu/~jacobson/phong-demo/
         vec4 textureSpecular = texture2D(u_specularTexture, uv);
         
         // Lambert's cosine law
@@ -73,9 +72,6 @@ void main() {
         outColor = (u_ambientColor +
                     lambertian * u_diffuseColor) * textureDiffuse +
                     (specular * u_specularColor) * textureSpecular;
-    
-        // float diff = max(dot(lightDir, N), 0.0);
-        // outColor = vec4(diff * textureDiffuse + u_ambientColor);
     }
 
     gl_FragColor = outColor;
