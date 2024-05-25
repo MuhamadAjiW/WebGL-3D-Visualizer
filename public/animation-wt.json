@@ -21,6 +21,13 @@
                 "translation": [0, 0, 0],
                 "rotation": [0, 0, 0]
               }
+            },
+            "Top": {
+              "id": "_aktioelso",
+              "keyframe": {
+                "translation": [0, 0, 0],
+                "rotation": [0, 0, 0]
+              }
             }
           }
         },
@@ -32,7 +39,14 @@
               "id": "_p6cdmet31",
               "keyframe": {
                 "translation": [0, 0, 0],
-                "rotation": [0, 0.5, 0]
+                "rotation": [0, 0.25, 0]
+              }
+            },
+            "Top": {
+              "id": "_aktioelso",
+              "keyframe": {
+                "translation": [0, 0, 0],
+                "rotation": [0, -0.25, 0]
               }
             }
           }
@@ -45,7 +59,134 @@
               "id": "_aktioelso",
               "keyframe": {
                 "translation": [0, 0, 0],
+                "rotation": [0, 0.5, 0]
+              }
+            },
+            "Top": {
+              "id": "_aktioelso",
+              "keyframe": {
+                "translation": [0, 0, 0],
+                "rotation": [0, -0.5, 0]
+              }
+            }
+          }
+        },
+        {
+          "id": "_rc3ggk1kw",
+          "keyframe": {},
+          "children": {
+            "Body": {
+              "id": "_aktioelso",
+              "keyframe": {
+                "translation": [0, 0, 0],
+                "rotation": [0, 0.75, 0]
+              }
+            },
+            "Top": {
+              "id": "_aktioelso",
+              "keyframe": {
+                "translation": [0, 0, 0],
+                "rotation": [0, -0.75, 0]
+              }
+            }
+          }
+        },
+        {
+          "id": "_rc3ggk1kw",
+          "keyframe": {},
+          "children": {
+            "Body": {
+              "id": "_aktioelso",
+              "keyframe": {
+                "translation": [0, 0, 0],
+                "rotation": [0, 0, 0]
+              }
+            },
+            "Top": {
+              "id": "_aktioelso",
+              "keyframe": {
+                "translation": [0, 0, 0],
+                "rotation": [0, 0, 0]
+              }
+            }
+          }
+        },
+        {
+          "id": "_8xakcf45d",
+          "keyframe": {},
+          "children": {
+            "Body": {
+              "id": "_9ujw48a98",
+              "keyframe": {
+                "translation": [0, -0.25, 0],
                 "rotation": [0, 0.25, 0]
+              }
+            },
+            "Top": {
+              "id": "_aktioelso",
+              "keyframe": {
+                "translation": [0, 0.25, 0],
+                "rotation": [0, -0.25, 0]
+              }
+            }
+          }
+        },
+        {
+          "id": "_8xakcf45d",
+          "keyframe": {},
+          "children": {
+            "Body": {
+              "id": "_9ujw48a98",
+              "keyframe": {
+                "translation": [0.25, -0.25, 0],
+                "rotation": [0, 0.5, 0]
+              }
+            },
+            "Top": {
+              "id": "_aktioelso",
+              "keyframe": {
+                "translation": [-0.25, 0.25, 0],
+                "rotation": [0, -0.5, 0]
+              }
+            }
+          }
+        },
+        {
+          "id": "_8xakcf45d",
+          "keyframe": {},
+          "children": {
+            "Body": {
+              "id": "_9ujw48a98",
+              "keyframe": {
+                "translation": [0.25, 0, 0],
+                "rotation": [0, 0.75, 0]
+              }
+            },
+            "Top": {
+              "id": "_aktioelso",
+              "keyframe": {
+                "translation": [-0.25, 0, 0],
+                "rotation": [0, -0.75, 0]
+              }
+            }
+          }
+        },
+        {
+          "id": "_8xakcf45d",
+          "keyframe": {},
+          "children": {
+            "Body": {
+              "id": "_9ujw48a98",
+              "keyframe": {
+                "translation": [0, 0, 0],
+                "rotation": [0, 2, 0]
+              }
+            },
+            "Top": {
+              "id": "_aktioelso",
+              "keyframe": {
+                "translation": [0, 0, 0],
+                "rotation": [0, -2, 0]
               }
             }
           }
