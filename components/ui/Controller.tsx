@@ -66,10 +66,10 @@ const ComponentController: React.FC<ControllerProps> = ({
     visible.current = component.visible;
 
     if(component instanceof Mesh){
-      normal.current = component.material.useNormalTex;
-      parallax.current = component.material.useParallaxTex;
+      normal.current = component.material.normalActive;
+      parallax.current = component.material.parallaxActive;
       smoothShade.current = component.geometry.smoothShade;
-      parallaxHeight.current = component.material.parallaxScale;
+      parallaxHeight.current = component.material.parallaxHeight;
     }
   }
 
@@ -542,7 +542,7 @@ const ComponentController: React.FC<ControllerProps> = ({
               {component &&
                 component instanceof Mesh &&
                 component.material instanceof PhongMaterial && 
-                component.material.useParallaxTex && (
+                component.material.parallaxActive && (
                 <div className="flex items-center justify-between">
                   <div className="pr-4">Height</div>
                   <TextField

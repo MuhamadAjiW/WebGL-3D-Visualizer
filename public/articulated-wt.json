@@ -1225,13 +1225,13 @@
   ],
   "materials": [
     {
-      "ambient": {
+      "ambientColor": {
         "a": 255,
         "b": 129,
         "g": 129,
         "r": 129
       },
-      "diffuse": {
+      "diffuseColor": {
         "a": 255,
         "b": 255,
         "g": 255,
@@ -1240,7 +1240,7 @@
       "id": "phong_1",
       "materialType": 1,
       "shininess": 32,
-      "specular": {
+      "specularColor": {
         "a": 255,
         "b": 255,
         "g": 255,

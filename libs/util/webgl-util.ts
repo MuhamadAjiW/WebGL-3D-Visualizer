@@ -20,24 +20,36 @@ export type AttributeSetters = (...v: AttributeDataType) => void;
 export type AttributeMapSetters = { [key: string]: AttributeSetters };
 
 export type ShaderUniforms = {
+  // World information
   u_projection?: UniformSingleDataType;
   u_view?: UniformSingleDataType;
   u_world?: UniformSingleDataType;
   u_normalMat?: UniformSingleDataType;
-  u_textureDiffuse?: UniformSingleDataType;
-  u_textureSpecular?: UniformSingleDataType;
-  u_textureNormal?: UniformSingleDataType;
-  u_textureParallax?: UniformSingleDataType;
-  u_ambient?: UniformSingleDataType;
-  u_diffuse?: UniformSingleDataType;
-  u_specular?: UniformSingleDataType;
-  u_shininess?: UniformSingleDataType;
-  u_materialType?: UniformSingleDataType;
   u_lightPos?: UniformSingleDataType;
   u_cameraPos?: UniformSingleDataType;
-  u_useNormalTex?: UniformSingleDataType;
-  u_useParallaxTex?: UniformSingleDataType;
-  u_parallaxScale?: UniformSingleDataType;
+
+  // Material information
+  u_materialType?: UniformSingleDataType;
+
+  u_ambientColor?: UniformSingleDataType;
+
+  u_diffuseColor?: UniformSingleDataType;
+  u_diffuseTexture?: UniformSingleDataType;
+
+  u_specularColor?: UniformSingleDataType;
+  u_specularTexture?: UniformSingleDataType;
+  u_shininess?: UniformSingleDataType;
+
+  u_normalActive?: UniformSingleDataType;
+  u_normalTexture?: UniformSingleDataType;
+
+  u_parallaxActive?: UniformSingleDataType;
+  u_parallaxTexture?: UniformSingleDataType;
+  u_parallaxHeight?: UniformSingleDataType;
+
+  u_displacementActive?: UniformSingleDataType;
+  u_displacementTexture?: UniformSingleDataType;
+  u_displacementHeight?: UniformSingleDataType;
 };
 export type ShaderAttributes = {
   a_position?: AttributeSingleDataType;

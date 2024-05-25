@@ -767,19 +767,19 @@
       "id": "phong_7",
       "materialType": 1,
       "texture": 0,
-      "ambient": {
+      "ambientColor": {
         "r": 129,
         "g": 129,
         "b": 129,
         "a": 255
       },
-      "diffuse": {
+      "diffuseColor": {
         "r": 255,
         "g": 255,
         "b": 255,
         "a": 255
       },
-      "specular": {
+      "specularColor": {
         "r": 255,
         "g": 255,
         "b": 255,

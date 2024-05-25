@@ -1,32 +1,26 @@
-import { boolean, z } from "zod";
-import { CameraType } from "../camera-types";
-import { Scene } from "@/libs/class/scene";
-import Object3D from "@/libs/class/object3d";
-import Camera from "@/libs/class/camera";
-import { Mesh } from "@/libs/class/mesh";
-import ObliqueCamera from "@/libs/class/oblique-camera";
-import OrthographicCamera from "@/libs/class/orthographic-camera";
-import PerspectiveCamera from "@/libs/class/perspective-camera";
-import { BufferGeometry } from "@/libs/class/geometry/geometry";
-import { ShaderMaterial } from "@/libs/class/material/shader-material";
-import { BufferAttribute } from "@/libs/class/webgl/attribute";
-import { Texture } from "@/libs/class/texture/texture";
-import { BasicMaterial } from "@/libs/class/material/basic-material";
-import { Color } from "@/libs/base-types/color";
-import { PhongMaterial } from "@/libs/class/material/phong-material";
-import Vector3 from "@/libs/base-types/vector3";
-import { Quaternion } from "@/libs/base-types/quaternion";
-import { BlockGeometry } from "../geometry/block-geometry";
-import { GeometryType } from "../geometry/geometry-types";
-import { CubeGeometry } from "../geometry/cube-geometry";
-import { PlaneGeometry } from "../geometry/plane-geometry";
-import { HollowBlockGeometry } from "../geometry/hollow-block-geometry";
-import { HollowPlaneGeometry } from "../geometry/hollow-plane-geometry";
 import {
   AnimationClip,
   AnimationPath,
   AnimationTRS,
 } from "@/libs/base-types/animation";
+import { Color } from "@/libs/base-types/color";
+import { Quaternion } from "@/libs/base-types/quaternion";
+import Vector3 from "@/libs/base-types/vector3";
+import Camera from "@/libs/class/camera";
+import { BufferGeometry } from "@/libs/class/geometry/geometry";
+import { BasicMaterial } from "@/libs/class/material/basic-material";
+import { PhongMaterial } from "@/libs/class/material/phong-material";
+import { ShaderMaterial } from "@/libs/class/material/shader-material";
+import { Mesh } from "@/libs/class/mesh";
+import Object3D from "@/libs/class/object3d";
+import ObliqueCamera from "@/libs/class/oblique-camera";
+import OrthographicCamera from "@/libs/class/orthographic-camera";
+import PerspectiveCamera from "@/libs/class/perspective-camera";
+import { Scene } from "@/libs/class/scene";
+import { Texture } from "@/libs/class/texture/texture";
+import { BufferAttribute } from "@/libs/class/webgl/attribute";
+import { z } from "zod";
+import { CameraType } from "../camera-types";
 import { TextureLoader } from "../texture/texture-loader";
 
 const ArrayIndex = z.array(z.number().int());
@@ -139,17 +133,26 @@ const GLTFSchema = z.object({
     z.object({
       id: z.string(),
       materialType: z.number(),
-      normalTexture: z.number().int(), // textures
-      parallaxTexture: z.number().int(), // textures
-      diffuseTexture: z.number().int(), // textures
-      specularTexture: z.number().int(), // textures
-      ambient: ColorSchema.optional(),
-      diffuse: ColorSchema.optional(),
-      specular: ColorSchema.optional(),
-      shininess: z.number(),
-      useNormalTex: z.boolean(),
-      useParallaxTex: z.boolean(),
-      parallaxScale: z.number(),
+
+      ambientColor: ColorSchema.optional(),
+
+      diffuseColor: ColorSchema.optional(),
+      diffuseTexture: z.number().int().optional(),
+
+      normalActive: z.boolean(),
+      normalTexture: z.number().int().optional(),
+
+      parallaxActive: z.boolean(),
+      parallaxTexture: z.number().int().optional(),
+      parallaxHeight: z.number().optional(),
+
+      displacementActive: z.boolean(),
+      displacementTexture: z.number().int().optional(),
+      displacementHeight: z.number().optional(),
+
+      specularColor: ColorSchema.optional(),
+      specularTexture: z.number().int().optional(),
+      shininess: z.number().optional(),
     })
   ),
   textures: z.array(
@@ -415,25 +418,36 @@ export class Loader {
     const materialData = {
       id: material.id,
       materialType: material.materialType,
-      normalTexture: material.normalTexture
-        ? this.saveTexture(material.normalTexture)
-        : undefined,
-      parallaxTexture: material.parallaxTexture
-        ? this.saveTexture(material.parallaxTexture)
-        : undefined,
+
+      ambientColor: this.saveColor(material.ambientColor),
+
+      diffuseColor: this.saveColor(material.diffuseColor),
       diffuseTexture: material.diffuseTexture
         ? this.saveTexture(material.diffuseTexture)
         : undefined,
+
+      normalActive: material.normalActive,
+      normalTexture: material.normalTexture
+        ? this.saveTexture(material.normalTexture)
+        : undefined,
+
+      parallaxActive: material.parallaxActive,
+      parallaxTexture: material.parallaxTexture
+        ? this.saveTexture(material.parallaxTexture)
+        : undefined,
+      parallaxHeight: material.parallaxHeight,
+
+      displacementActive: material.displacementActive,
+      displacementTexture: material.displacementTexture
+        ? this.saveTexture(material.displacementTexture)
+        : undefined,
+      displacementHeight: material.displacementHeight,
+
+      specularColor: this.saveColor(material.specular),
       specularTexture: material.specularTexture
         ? this.saveTexture(material.specularTexture)
         : undefined,
-      ambient: this.saveColor(material.ambient),
-      diffuse: this.saveColor(material.diffuse),
-      specular: this.saveColor(material.specular),
       shininess: material.shininess,
-      useNormalTex: material.useNormalTex,
-      useParallaxTex: material.useParallaxTex,
-      parallaxScale: material.parallaxScale,
     };
 
     // Save the material data
@@ -538,9 +552,9 @@ export class Loader {
 
   public async loadFromJson(jsonString: string): Promise<{
     scene: Scene;
+    materials: ShaderMaterial[];
   }> {
     this.savedData = JSON.parse(jsonString);
-
     let scene = await this.loadScene();
 
     // check valid
@@ -550,8 +564,10 @@ export class Loader {
     } else {
       console.error("Validation failed:", result.error.errors);
     }
+
     return {
       scene: scene,
+      materials: Array.from(this.loadMaterialMap.values()),
     };
   }
 
@@ -750,44 +766,69 @@ export class Loader {
     const materialObject = {
       id: materialData.id,
       materialType: materialData.materialType,
-      normalTexture: await this.loadTexture(materialData.normalTexture),
-      parallaxTexture: await this.loadTexture(materialData.parallaxTexture),
+
+      ambientColor: this.loadColor(materialData.ambientColor),
+
+      diffuseColor: this.loadColor(materialData.diffuseColor),
       diffuseTexture: await this.loadTexture(materialData.diffuseTexture),
+
+      normalActive: materialData.normalActive,
+      normalTexture: await this.loadTexture(materialData.normalTexture),
+
+      parallaxActive: materialData.parallaxActive,
+      parallaxTexture: await this.loadTexture(materialData.parallaxTexture),
+      parallaxHeight: materialData.parallaxHeight,
+
+      displacementActive: materialData.displacementActive,
+      displacementTexture: await this.loadTexture(
+        materialData.displacementTexture
+      ),
+      displacementHeight: materialData.displacementHeight,
+
       specularTexture: await this.loadTexture(materialData.specularTexture),
-      ambient: this.loadColor(materialData.ambient),
-      diffuse: this.loadColor(materialData.diffuse),
-      specular: this.loadColor(materialData.specular),
+      specularColor: this.loadColor(materialData.specularColor),
       shininess: materialData.shininess,
-      useNormalTex: materialData.useNormalTex,
-      useParallaxTex: materialData.useParallaxTex,
-      parallaxScale: materialData.parallaxScale,
     };
 
     let material: ShaderMaterial;
 
     if (materialObject.materialType == 0) {
       material = new BasicMaterial({
-        normalTexture: materialObject.normalTexture,
-        parallaxTexture: materialObject.parallaxTexture,
+        diffuseColor: materialObject.diffuseColor,
         diffuseTexture: materialObject.diffuseTexture,
-        diffuseColor: materialObject.diffuse,
-        useNormalTex: materialObject.useNormalTex,
-        useParallaxTex: materialObject.useParallaxTex,
-        parallaxScale: materialObject.parallaxScale,
+
+        normalActive: materialObject.normalActive,
+        normalTexture: materialObject.normalTexture,
+
+        parallaxActive: materialObject.parallaxActive,
+        parallaxTexture: materialObject.parallaxTexture,
+        parallaxHeight: materialObject.parallaxHeight,
+
+        displacementActive: materialObject.displacementActive,
+        displacementTexture: materialObject.displacementTexture,
+        displacementHeight: materialObject.displacementHeight,
       });
     } else {
       material = new PhongMaterial({
-        normalTexture: materialObject.normalTexture,
-        parallaxTexture: materialObject.parallaxTexture,
+        ambientColor: materialObject.ambientColor,
+
+        diffuseColor: materialObject.diffuseColor,
         diffuseTexture: materialObject.diffuseTexture,
+
+        normalActive: materialObject.normalActive,
+        normalTexture: materialObject.normalTexture,
+
+        parallaxActive: materialObject.parallaxActive,
+        parallaxTexture: materialObject.parallaxTexture,
+        parallaxHeight: materialObject.parallaxHeight,
+
+        displacementActive: materialObject.displacementActive,
+        displacementTexture: materialObject.displacementTexture,
+        displacementHeight: materialObject.displacementHeight,
+
         specularTexture: materialObject.specularTexture,
-        ambient: materialObject.ambient,
-        diffuse: materialObject.diffuse,
-        specular: materialObject.specular,
+        specularColor: materialObject.specularColor,
         shinyness: materialObject.shininess,
-        useNormalTex: materialObject.useNormalTex,
-        useParallaxTex: materialObject.useParallaxTex,
-        parallaxScale: materialObject.parallaxScale,
       });
     }
 
@@ -796,11 +837,14 @@ export class Loader {
   }
 
   private async loadTexture(textureIndex: number): Promise<Texture> {
+    if (!textureIndex) return undefined;
+
     if (this.loadTextureMap.has(textureIndex)) {
       return this.loadTextureMap.get(textureIndex)!;
     }
 
     const textureData = this.savedData.textures[textureIndex];
+    console.log(textureIndex);
     console.log(textureData);
     const textureObject = {
       id: textureData.id,

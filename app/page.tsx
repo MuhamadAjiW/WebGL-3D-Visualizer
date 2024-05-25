@@ -7,14 +7,12 @@ import ComponentController from "@/components/ui/Controller";
 import CustomSlider from "@/components/ui/slider";
 import TreeView from "@/components/ui/TreeView";
 import { AnimationClip } from "@/libs/base-types/animation";
-import { Color } from "@/libs/base-types/color";
 import { Euler } from "@/libs/base-types/euler";
 import { Quaternion } from "@/libs/base-types/quaternion";
 import Vector3 from "@/libs/base-types/vector3";
 import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
 import { Loader } from "@/libs/class/loader/loader";
-import { BasicMaterial } from "@/libs/class/material/basic-material";
-import { PhongMaterial } from "@/libs/class/material/phong-material";
+import { ShaderMaterial } from "@/libs/class/material/shader-material";
 import { Mesh } from "@/libs/class/mesh";
 import Object3D from "@/libs/class/object3d";
 import { Scene } from "@/libs/class/scene";
@@ -25,8 +23,7 @@ import {
 import {
   convertGLTFToLoad,
   convertGLTFToTreeView,
-  convertHexToRGBA,
-  findMeshById,
+  findMeshById
 } from "@/libs/helper";
 import { MathUtil } from "@/libs/util/math-util";
 import { InputOptions } from "@/types/ui";
@@ -41,7 +38,6 @@ import {
 } from "@mui/material";
 import { TreeViewBaseItem } from "@mui/x-tree-view";
 import axios from "axios";
-import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 
 export default function Home() {
@@ -49,6 +45,7 @@ export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const animationFileInputRef = useRef<HTMLInputElement>(null);
   const [data, setData] = useState<Scene | null>(null);
+  const [materialData, setMaterialData] = useState<ShaderMaterial[] | null>(null);
   const [isComponentExpanded, setIsComponentExpanded] = useState<boolean>(true);
   const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(true);
   const [activeComponent, setActiveComponent] = useState<Object3D | null>(null);
@@ -136,13 +133,12 @@ export default function Home() {
     console.log("This is loaded file", loaded);
 
     const loadedFile = await loader.loadFromJson(JSON.stringify(loaded));
-    const loadedAnimation = await loader.loadAnimation(
+    const loadedAnimation = loader.loadAnimation(
       JSON.stringify(loadedAnim)
     );
 
-    console.log(loadedFile);
-
     setData(loadedFile.scene);
+    setMaterialData(loadedFile.materials);
     setActiveComponent(loadedFile.scene);
     setActiveAnimationClip(loadedAnimation[activeAnimationClipIdx]);
     // loader.saveAnimation(loadedAnimation);
@@ -253,9 +249,9 @@ export default function Home() {
     if (
       activeComponent instanceof Mesh
     ){
-      activeComponent.material.useNormalTex = values.isNormal;
-      activeComponent.material.useParallaxTex = values.isParallax;
-      activeComponent.material.parallaxScale = values.parallaxHeight;
+      activeComponent.material.normalActive = values.isNormal;
+      activeComponent.material.parallaxActive = values.isParallax;
+      activeComponent.material.parallaxHeight = values.parallaxHeight;
       activeComponent.geometry.smoothShade = values.isSmoothShading;
 
       // const { r, g, b, a } = convertHexToRGBA(values.ambientColors);

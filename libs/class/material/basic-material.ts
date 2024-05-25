@@ -8,52 +8,75 @@ export class BasicMaterial extends ShaderMaterial {
   public static materialType: number = 0;
   private static idAutoIncrement: number = 0;
 
-  public diffuse: Color = Color.WHITE;
+  public diffuseColor: Color = Color.WHITE;
   public diffuseTexture: Texture;
 
   constructor(options?: {
     diffuseColor?: Color;
     diffuseTexture?: Texture;
+
+    normalActive?: boolean;
     normalTexture?: Texture;
+
+    parallaxActive?: boolean;
     parallaxTexture?: Texture;
-    useNormalTex?: boolean;
-    useParallaxTex?: boolean;
-    parallaxScale?: number;
+    parallaxHeight?: number;
+
+    displacementActive?: boolean;
+    displacementTexture?: Texture;
+    displacementHeight?: number;
   }) {
     super(BasicMaterial.materialType, {
+      normalActive: options?.normalActive,
       normalTexture: options?.normalTexture,
-      parallaxTexture: options?.parallaxTexture,
-      useNormalTex: options?.useNormalTex,
-      useParallaxTex: options?.useParallaxTex,
-      parallaxScale: options?.parallaxScale,
-    });
 
-    this.diffuse = options?.diffuseColor || new Color(0xffffffff);
+      parallaxActive: options?.parallaxActive,
+      parallaxTexture: options?.parallaxTexture,
+      parallaxHeight: options?.parallaxHeight,
+
+      displacementActive: options?.displacementActive,
+      displacementTexture: options?.displacementTexture,
+      displacementHeight: options?.displacementHeight,
+    });
+    this.diffuseColor = options?.diffuseColor || new Color(0xffffffff);
     this.diffuseTexture = options?.diffuseTexture || new Texture();
   }
 
   public loadTexture(renderer: WebGLRenderer): void {
     this.normalTexture.load(renderer, 0);
-    this.parallaxTexture.load(renderer, 1);
+
     this.parallaxTexture.format = WebGLRenderingContext.LUMINANCE;
-    this.diffuseTexture.load(renderer, 2);
+    this.parallaxTexture.load(renderer, 1);
+
+    this.parallaxTexture.format = WebGLRenderingContext.LUMINANCE;
+    this.displacementTexture.load(renderer, 2);
+
+    this.diffuseTexture.load(renderer, 3);
   }
   public unloadTexture(renderer: WebGLRenderer): void {
     this.normalTexture.unregister(renderer);
     this.parallaxTexture.unregister(renderer);
+    this.displacementTexture.unregister(renderer);
     this.diffuseTexture.unregister(renderer);
   }
 
   public loadUniform(renderer: WebGLRenderer): void {
     WebGLUtil.setUniforms(renderer.currentProgram, {
-      u_textureDiffuse: this.diffuseTexture.get(renderer),
-      u_textureNormal: this.normalTexture.get(renderer),
-      u_textureParallax: this.parallaxTexture.get(renderer),
-      u_diffuse: this.diffuse.getNormalized(),
       u_materialType: this.materialType,
-      u_useNormalTex: this.useNormalTex,
-      u_useParallaxTex: this.useParallaxTex,
-      u_parallaxScale: this.parallaxScale,
+
+      u_diffuseColor: this.diffuseColor.getNormalized(),
+      u_diffuseTexture: this.diffuseTexture.get(renderer),
+
+      u_normalActive: this.normalActive,
+      u_normalTexture: this.normalTexture.get(renderer),
+
+      u_parallaxActive: this.parallaxActive,
+      u_parallaxTexture: this.parallaxTexture.get(renderer),
+      u_parallaxHeight: this.parallaxHeight,
+
+      u_displacementActive: this.displacementActive,
+      u_displacementTexture: this.displacementTexture.get(renderer),
+      u_displacementHeight: this.displacementHeight,
     });
   }
 

@@ -7,30 +7,47 @@ export abstract class ShaderMaterial {
   public materialType: number = 0;
   public registeredRenderers: WebGLRenderer[] = [];
 
-  public useNormalTex: boolean = false;
-  public useParallaxTex: boolean = false;
-  public normalTexture: Texture;
-  public parallaxTexture: Texture;
   public needsUpdate: boolean = false;
-  public parallaxScale: number = 0.1;
+
+  public normalActive: boolean = false;
+  public normalTexture: Texture;
+
+  public parallaxActive: boolean = false;
+  public parallaxTexture: Texture;
+  public parallaxHeight: number = 0.1;
+
+  public displacementTexture: Texture;
+  public displacementHeight: number = 0;
+  public displacementActive: boolean = false;
 
   constructor(
     materialType: number,
     options?: {
+      normalActive?: boolean;
       normalTexture?: Texture;
+
+      parallaxActive?: boolean;
       parallaxTexture?: Texture;
-      useNormalTex?: boolean;
-      useParallaxTex?: boolean;
-      parallaxScale?: number;
+      parallaxHeight?: number;
+
+      displacementActive?: boolean;
+      displacementTexture?: Texture;
+      displacementHeight?: number;
     }
   ) {
     this.id = this.generateId();
     this.materialType = materialType;
+
     this.normalTexture = options?.normalTexture || new Texture();
+    this.normalActive = options?.normalActive || false;
+
+    this.parallaxActive = options?.parallaxActive || false;
     this.parallaxTexture = options?.parallaxTexture || new Texture();
-    this.useNormalTex = options?.useNormalTex || false;
-    this.useParallaxTex = options?.useParallaxTex || false;
-    this.parallaxScale = options?.parallaxScale || 0.1;
+    this.parallaxHeight = options?.parallaxHeight || 0.1;
+
+    this.displacementActive = options?.displacementActive || false;
+    this.displacementTexture = options?.displacementTexture || new Texture();
+    this.displacementHeight = options?.displacementHeight || 0;
   }
 
   public register(renderer: WebGLRenderer) {
@@ -47,8 +64,6 @@ export abstract class ShaderMaterial {
     this.registeredRenderers.forEach((renderer) => {
       this.loadTexture(renderer);
     });
-    // this.loadTexture(this.registeredRenderers[0]);
-    // this.loadTexture(this.registeredRenderers[1]);
   }
 
   protected abstract generateId(): string;

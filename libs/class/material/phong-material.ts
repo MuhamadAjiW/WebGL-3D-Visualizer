@@ -8,37 +8,52 @@ export class PhongMaterial extends ShaderMaterial {
   public static materialType: number = 1;
   private static idAutoIncrement: number = 0;
 
-  public ambient: Color = Color.WHITE;
-  public diffuse: Color = Color.WHITE;
-  public specular: Color = Color.WHITE;
-  public shininess: number = 1.0;
+  public ambientColor: Color = Color.WHITE;
+
+  public diffuseColor: Color = Color.WHITE;
   public diffuseTexture: Texture;
+
+  public specularColor: Color = Color.WHITE;
   public specularTexture: Texture;
+  public shininess: number = 1.0;
 
   constructor(options?: {
+    ambientColor?: Color;
+
+    diffuseColor?: Color;
     diffuseTexture?: Texture;
-    specularTexture?: Texture;
-    ambient?: Color;
-    diffuse?: Color;
-    specular?: Color;
-    shinyness?: number;
+
+    normalActive?: boolean;
     normalTexture?: Texture;
+
+    parallaxActive?: boolean;
     parallaxTexture?: Texture;
-    useNormalTex?: boolean;
-    useParallaxTex?: boolean;
-    parallaxScale?: number;
+    parallaxHeight?: number;
+
+    displacementActive?: boolean;
+    displacementTexture?: Texture;
+    displacementHeight?: number;
+
+    specularColor?: Color;
+    specularTexture?: Texture;
+    shinyness?: number;
   }) {
     super(PhongMaterial.materialType, {
+      normalActive: options?.normalActive,
       normalTexture: options?.normalTexture,
+
+      parallaxActive: options?.parallaxActive,
       parallaxTexture: options?.parallaxTexture,
-      useNormalTex: options?.useNormalTex,
-      useParallaxTex: options?.useParallaxTex,
-      parallaxScale: options?.parallaxScale,
+      parallaxHeight: options?.parallaxHeight,
+
+      displacementActive: options?.displacementActive,
+      displacementTexture: options?.displacementTexture,
+      displacementHeight: options?.displacementHeight,
     });
 
-    this.ambient = options?.ambient || new Color(0xffffffff);
-    this.diffuse = options?.diffuse || new Color(0xffffffff);
-    this.specular = options?.specular || new Color(0xffffffff);
+    this.ambientColor = options?.ambientColor || new Color(0xffffffff);
+    this.diffuseColor = options?.diffuseColor || new Color(0xffffffff);
+    this.specularColor = options?.specularColor || new Color(0xffffffff);
     this.shininess = options?.shinyness || 1;
 
     this.diffuseTexture = options?.diffuseTexture || new Texture();
@@ -47,33 +62,49 @@ export class PhongMaterial extends ShaderMaterial {
 
   public loadTexture(renderer: WebGLRenderer): void {
     this.normalTexture.load(renderer, 0);
-    this.parallaxTexture.load(renderer, 1);
+
     this.parallaxTexture.format = WebGLRenderingContext.LUMINANCE;
-    this.diffuseTexture.load(renderer, 2);
+    this.parallaxTexture.load(renderer, 1);
+
+    this.displacementTexture.format = WebGLRenderingContext.LUMINANCE;
+    this.displacementTexture.load(renderer, 2);
+
+    this.diffuseTexture.load(renderer, 3);
+
     this.specularTexture.format = WebGLRenderingContext.LUMINANCE;
-    this.specularTexture.load(renderer, 3);
+    this.specularTexture.load(renderer, 4);
   }
   public unloadTexture(renderer: WebGLRenderer): void {
     this.normalTexture.unregister(renderer);
     this.parallaxTexture.unregister(renderer);
+    this.displacementTexture.unregister(renderer);
     this.diffuseTexture.unregister(renderer);
     this.specularTexture.unregister(renderer);
   }
 
   public loadUniform(renderer: WebGLRenderer): void {
     WebGLUtil.setUniforms(renderer.currentProgram, {
-      u_textureNormal: this.normalTexture.get(renderer),
-      u_textureParallax: this.parallaxTexture.get(renderer),
-      u_textureDiffuse: this.diffuseTexture.get(renderer),
-      u_textureSpecular: this.specularTexture.get(renderer),
-      u_ambient: this.ambient.getNormalized(),
-      u_diffuse: this.diffuse.getNormalized(),
-      u_specular: this.specular.getNormalized(),
-      u_shininess: this.shininess,
       u_materialType: this.materialType,
-      u_useNormalTex: this.useNormalTex,
-      u_useParallaxTex: this.useParallaxTex,
-      u_parallaxScale: this.parallaxScale,
+
+      u_ambientColor: this.ambientColor.getNormalized(),
+
+      u_diffuseColor: this.diffuseColor.getNormalized(),
+      u_diffuseTexture: this.diffuseTexture.get(renderer),
+
+      u_normalActive: this.normalActive,
+      u_normalTexture: this.normalTexture.get(renderer),
+
+      u_parallaxActive: this.parallaxActive,
+      u_parallaxTexture: this.parallaxTexture.get(renderer),
+      u_parallaxHeight: this.parallaxHeight,
+
+      u_displacementActive: this.displacementActive,
+      u_displacementTexture: this.displacementTexture.get(renderer),
+      u_displacementHeight: this.displacementHeight,
+
+      u_specularTexture: this.specularTexture.get(renderer),
+      u_specularColor: this.specularColor.getNormalized(),
+      u_shininess: this.shininess,
     });
   }
 
@@ -88,10 +119,10 @@ export class PhongMaterial extends ShaderMaterial {
   public static fromJson(json: string): ShaderMaterial {
     const material = JSON.parse(json);
     return new PhongMaterial({
-      ambient: Color.fromJson(material.ambient),
-      diffuse:
+      ambientColor: Color.fromJson(material.ambient),
+      diffuseColor:
         Color.fromJson(material.diffuse) || Texture.fromJson(material.diffuse),
-      specular:
+      specularColor:
         Color.fromJson(material.specular) ||
         Texture.fromJson(material.specular),
       shinyness: material.shinyness,

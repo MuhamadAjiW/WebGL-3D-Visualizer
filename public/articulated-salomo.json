@@ -441,26 +441,26 @@
         "parallaxTexture": 1,
         "diffuseTexture": 2,
         "specularTexture": 3,
-        "ambient": {
+        "ambientColor": {
           "r": 65,
           "g": 65,
           "b": 65,
           "a": 255
         },
-        "diffuse": {
+        "diffuseColor": {
           "r": 255,
           "g": 255,
           "b": 255,
           "a": 255
         },
-        "specular": {
+        "specularColor": {
           "r": 255,
           "g": 255,
           "b": 255,
           "a": 255
         },
         "shininess": 1,
-        "useNormalTex": true
+        "normalActive": true
       }
     ],
     "textures": [

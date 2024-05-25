@@ -13,7 +13,7 @@
 //   diffuse: new Color(0xffffffff),
 //   specular: new Color(0xffffffff),
 //   shinyness: 1,
-//   useNormalTex: true,
+//   normalActive: true,
 // });
 // const testScene = new Scene();
 // const mesh = new Mesh(geometry, material);
