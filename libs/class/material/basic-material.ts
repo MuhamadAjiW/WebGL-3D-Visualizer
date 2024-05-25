@@ -48,7 +48,7 @@ export class BasicMaterial extends ShaderMaterial {
     this.parallaxTexture.format = WebGLRenderingContext.LUMINANCE;
     this.parallaxTexture.load(renderer, 1);
 
-    this.parallaxTexture.format = WebGLRenderingContext.LUMINANCE;
+    this.displacementTexture.format = WebGLRenderingContext.LUMINANCE;
     this.displacementTexture.load(renderer, 2);
 
     this.diffuseTexture.load(renderer, 3);
