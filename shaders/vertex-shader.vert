@@ -43,7 +43,7 @@ void main() {
 
     // Calculate displacement
     vec4 vertPos4;
-    if(true) {
+    if(u_displacementActive) {
         float disp = texture2D(u_displacementTexture, a_texCoord).r;
         vertPos4 = u_world * vec4(a_position + v_normal * disp * u_displacementHeight, 1.0);
     } else {
