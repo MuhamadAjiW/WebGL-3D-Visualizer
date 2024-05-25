@@ -1,6 +1,7 @@
 import Camera from "./camera";
 import M4 from "../base-types/m4";
 import { to } from "@react-spring/web";
+import Vector3 from "../base-types/vector3";
 
 class OrthographicCamera extends Camera {
   top: number;
@@ -46,6 +47,7 @@ class OrthographicCamera extends Camera {
     this.bottom *= zoomFactor;
     this.top *= zoomFactor;
     this.distance = value;
+    this.position = new Vector3(0, 0, -this.distance);
     this.computeProjectionMatrix();
   }
 }

@@ -2,6 +2,7 @@ import Object3d from "./object3d";
 import M4 from "../base-types/m4";
 import Vector3 from "../base-types/vector3";
 import { MathUtil } from "../util/math-util";
+import { Quaternion } from "../base-types/quaternion";
 
 class Camera extends Object3d {
   protected _projectionMatrix = M4.identity();
@@ -25,18 +26,23 @@ class Camera extends Object3d {
   }
 
   computeCameraMatrix() {
-    var rotationY = M4.yRotation(MathUtil.DegreesToRad(this.angleY));
-    var rotationX = M4.xRotation(MathUtil.DegreesToRad(this.angleX));
-    var translationMatrix = M4.translation3d(new Vector3(0, 0, this.distance));
-    this.cameraMatrix = M4.multiply(
-      M4.multiply(rotationX, rotationY),
-      translationMatrix
-    );
+    // TODO: Patchwork solution, position should ideally be separated from camera matrix but eh whatever
+    const initPosition = new Vector3(0, 0, this.distance);
+
+    const rotationY = M4.yRotation(MathUtil.DegreesToRad(this.angleY));
+    const rotationX = M4.xRotation(MathUtil.DegreesToRad(this.angleX));
+    const rotationMatrix = M4.multiply(rotationX, rotationY);
+    const translationMatrix = M4.translation3d(initPosition);
+
+    this.cameraMatrix = M4.multiply(rotationMatrix, translationMatrix);
+
+    this.position = rotationMatrix.transformPosition(initPosition);
   }
 
   computeViewMatrix() {
     this.computeCameraMatrix();
-    return this.cameraMatrix.inverse();
+    const viewMatrix = this.cameraMatrix.inverse();
+    return viewMatrix;
   }
 
   // computeWorldMatrix() {
@@ -64,6 +70,7 @@ class Camera extends Object3d {
 
   setDistance(value: number) {
     this.distance = value;
+    this.position = new Vector3(0, 0, -this.distance);
     this.computeCameraMatrix();
   }
 

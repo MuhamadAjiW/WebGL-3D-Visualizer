@@ -13,6 +13,7 @@ import { Quaternion } from "@/libs/base-types/quaternion";
 import Vector3 from "@/libs/base-types/vector3";
 import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
 import { Loader } from "@/libs/class/loader/loader";
+import { BasicMaterial } from "@/libs/class/material/basic-material";
 import { PhongMaterial } from "@/libs/class/material/phong-material";
 import { Mesh } from "@/libs/class/mesh";
 import Object3D from "@/libs/class/object3d";
@@ -42,96 +43,6 @@ import { TreeViewBaseItem } from "@mui/x-tree-view";
 import axios from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
-
-const testAnim: AnimationClip = {
-  name: "Test",
-  frames: [
-    // 0
-    {
-      keyframe: {},
-      children: {
-        Parent: {
-          keyframe: {
-            translation: [0, 0, 0],
-            rotation: [0, 0, 0],
-          },
-          children: {
-            Left: {
-              keyframe: {
-                rotation: [0, 0, 0],
-              },
-            },
-          },
-        },
-      },
-    },
-    // 1
-    {
-      keyframe: {},
-      children: {
-        Parent: {
-          keyframe: {
-            translation: [-0.5, 0, 0],
-            rotation: [0, 0.5, 0],
-          },
-          children: {
-            Left: {
-              keyframe: {
-                rotation: [2, 0, 0],
-              },
-            },
-          },
-        },
-      },
-    },
-    // 2
-    {
-      keyframe: {},
-      children: {
-        Parent: {
-          keyframe: {
-            translation: [0.5, 0, 0],
-            rotation: [0, 0.25, 0],
-          },
-          children: {
-            Left: {
-              keyframe: {
-                rotation: [0, 1, 0],
-              },
-            },
-          },
-        },
-      },
-    },
-  ],
-};
-// const testAnim: AnimationClip = {
-//   name: "Test2",
-//   frames: [
-//     // 0
-//     {
-//       keyframe: {
-//         rotation: [0, 0, 0],
-//       },
-//       children: {},
-//     },
-//     // 1
-//     {
-//       keyframe: {
-//         rotation: [0, 1, 0],
-//       },
-//       children: {},
-//     },
-//     // 2
-//     {
-//       keyframe: {
-//         rotation: [0, 2, 0],
-//       },
-//       children: {},
-//     },
-//   ],
-// };
-//
 
 export default function Home() {
   // States
@@ -234,6 +145,8 @@ export default function Home() {
     setData(loadedFile.scene);
     setActiveComponent(loadedFile.scene);
     setActiveAnimationClip(loadedAnimation[activeAnimationClipIdx]);
+    // loader.saveAnimation(loadedAnimation);
+    // setActiveAnimationClip(testAnim);
   };
 
   useEffect(() => {
@@ -330,6 +243,7 @@ export default function Home() {
       )
     );
     const scale = new Vector3(values.scale.x, values.scale.y, values.scale.z);
+    const normalTexture = values.normalTexture;
 
     // if (activeComponent instanceof Mesh)
     const { r, g, b, a } = convertHexToRGBA(values.ambientColors);
@@ -339,6 +253,10 @@ export default function Home() {
       activeComponent.position = position;
       activeComponent.rotation = rotation;
       activeComponent.scale = scale;
+      if (activeComponent instanceof Mesh && activeComponent.material instanceof BasicMaterial) {
+        activeComponent.material.normalTexture = normalTexture;
+      }
+
       if (
         activeComponent instanceof Mesh &&
         activeComponent.material instanceof PhongMaterial
@@ -628,7 +546,7 @@ export default function Home() {
             />
           </div>
           <div className="bg-white flex-grow relative">
-            <RenderComponent
+            {/* <RenderComponent
               activeComponent={activeComponent}
               isControllerChange={isControllerChange}
               activeAnimationClip={activeAnimationClip!!}
@@ -636,7 +554,7 @@ export default function Home() {
               setCameraController={setCameraController}
               animationController={animationController}
               setAnimationController={setAnimationController}
-            />
+            /> */}
           </div>
         </div>
       </div>

@@ -34,7 +34,10 @@ export type ShaderUniforms = {
   u_shininess?: UniformSingleDataType;
   u_materialType?: UniformSingleDataType;
   u_lightPos?: UniformSingleDataType;
+  u_cameraPos?: UniformSingleDataType;
   u_useNormalTex?: UniformSingleDataType;
+  u_useParallaxTex?: UniformSingleDataType;
+  u_parallaxScale?: UniformSingleDataType;
 };
 export type ShaderAttributes = {
   a_position?: AttributeSingleDataType;

@@ -258,7 +258,7 @@ class M4 {
     }
 
     // Return only the x, y, z components, discarding the homogeneous coordinate
-    return new Vector3(result);
+    return new Vector3(result[0], result[1], result[2]);
   }
 
   // Method to transform a direction vector by the matrix
