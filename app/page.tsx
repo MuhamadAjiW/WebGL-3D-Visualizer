@@ -18,7 +18,7 @@ import {
   AnimationControllerType,
   CameraControllerType,
 } from "@/libs/controllers";
-import { convertGLTFToTreeView, findMeshById } from "@/libs/helper";
+import { convertGLTFToLoad, convertGLTFToTreeView, copyGLTFTree, findMeshById } from "@/libs/helper";
 import { MathUtil } from "@/libs/util/math-util";
 import { InputOptions } from "@/types/ui";
 import {
@@ -31,6 +31,8 @@ import {
   TextField,
 } from "@mui/material";
 import { TreeViewBaseItem } from "@mui/x-tree-view";
+import axios from "axios";
+import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 
 const testAnim: AnimationClip = {
@@ -159,11 +161,13 @@ export default function Home() {
     });
 
   // Fetch data with default to initialize
+
+  const loader: Loader = new Loader();
+
   const fetchData = async () => {
-    let loaded: any;
-    let loadedAnim: any;
-    console.log("This is selected file", selectedFile);
-    console.log("This is animation selected file", animationSelectedFile);
+    let loaded: any = null;
+    let loadedAnim: any = null;
+
     if (selectedFile) {
       loaded = await new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -205,6 +209,7 @@ export default function Home() {
         };
         reader.readAsText(animationSelectedFile);
       });
+      
     } else {
       const responseAnim = await fetch("/animation-awe.json");
       loadedAnim = await responseAnim.json();
@@ -212,16 +217,18 @@ export default function Home() {
 
     console.log("This is loaded file", loaded);
 
-    const loader: Loader = new Loader();
     const loadedFile = await loader.loadFromJson(JSON.stringify(loaded));
     const loadedAnimation = await loader.loadAnimation(
       JSON.stringify(loadedAnim)
     );
+
+    console.log(loadedFile)
+
     setData(loadedFile.scene);
     setActiveComponent(loadedFile.scene);
     setActiveAnimationClip(loadedAnimation[activeAnimationClipIdx]);
-    loader.saveAnimation(loadedAnimation);
-    // setActiveAnimationClip(testAnim);
+
+    
   };
 
   useEffect(() => {
@@ -263,6 +270,32 @@ export default function Home() {
       }));
     }
   };
+
+  const handleSaveFile = async (fileType: string) => {
+    if (!GLTFTree) return
+
+    if (fileType === 'model') {
+      // const copiedGLTFTree = copyGLTFTree(GLTFTree);
+      console.log(GLTFTree)
+      // console.log(copiedGLTFTree)
+      const convertScene = convertGLTFToLoad(GLTFTree)
+      console.log(GLTFTree)
+      const saveFile = loader.save(convertScene)
+      console.log(saveFile)
+      try {
+        console.log("Uploading")
+        const formData = new FormData()
+        const blob = new Blob([saveFile], { type: 'application/json' });
+        formData.append("myFile", blob, selectedFile?.name || "articulated-awe.json")
+        const { data } = await axios.post('api/file-upload', formData)
+        console.log(data)
+        console.log(activeComponent)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    if (fileType === 'animation') console.log('animation')
+  }
 
   const handleAnimationControllerCheckbox = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -333,9 +366,12 @@ export default function Home() {
     if (isSelected) {
       // if (!GLTFTree.children) return;
       const selectedComponent = findMeshById(GLTFTree.children, itemId);
+      
       if (!selectedComponent) {
+        console.log(GLTFTree)
         setActiveComponent(data);
       } else {
+        console.log(selectedComponent, itemId)
         setActiveComponent(selectedComponent);
       }
     }
@@ -438,7 +474,7 @@ export default function Home() {
               </div>
               <Button
                 id="save-button"
-                handleClick={() => {}}
+                handleClick={() => handleSaveFile('model')}
                 text="Save"
                 className="bg-white text-black px-4 rounded-sm"
               />
@@ -478,7 +514,7 @@ export default function Home() {
               </div>
               <Button
                 id="save-button"
-                handleClick={() => {}}
+                handleClick={() => handleSaveFile('animation')}
                 text="Save"
                 className="bg-white text-black px-4 rounded-sm"
               />

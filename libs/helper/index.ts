@@ -1,5 +1,7 @@
 import { TreeViewBaseItem } from "@mui/x-tree-view";
 import Object3D from "../class/object3d";
+import { Scene } from "../class/scene";
+import { Mesh } from "../class/mesh";
 
 export const convertGLTFToTreeView = (
   scheneSchema: any //change this later
@@ -67,3 +69,19 @@ export const convertLoadToTree = (
     };
   }
 };
+
+export const convertGLTFToLoad = (GLTFTree: any): Scene =>{
+  const saveScene = new Scene()
+
+  saveScene.name = GLTFTree.name
+
+  const length = GLTFTree.children.length
+
+  for(let i=0; i<length; i++) {
+    const node = GLTFTree.children[0]
+    saveScene.add(node)
+    GLTFTree.children.push(node)
+  }
+
+  return saveScene
+}

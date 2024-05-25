@@ -237,7 +237,7 @@ export class Loader {
     }
 
     // Now savedData contains the serialized scene data
-    console.log(JSON.stringify(this.savedData, null, 2));
+    return JSON.stringify(this.savedData, null, 2);
   }
 
   public saveAnimation(animationList: AnimationClip[]) {
