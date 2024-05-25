@@ -148,9 +148,26 @@ const ComponentController: React.FC<ControllerProps> = ({
   };
 
   const handleMaterialChange = (e: SelectChangeEvent) => {
-    const index = parseInt(e.target.value);
-    (component as Mesh).material = materials![index];
-    setIsControllerChange(!isControllerChange);
+    if(component instanceof Mesh){
+      const index = parseInt(e.target.value);
+      component.material = materials![index];
+      
+      normal.current = component.material.normalActive;
+      parallax.current = component.material.parallaxActive;
+      smoothShade.current = component.geometry.smoothShade;
+      parallaxHeight.current = component.material.parallaxHeight;
+      displacement.current = component.material.displacementActive;
+      displacementHeight.current = component.material.displacementHeight;
+
+      formik.values.normalActive = component.material.normalActive;
+      formik.values.parallaxActive = component.material.parallaxActive;
+      formik.values.smoothShade = component.geometry.smoothShade;
+      formik.values.parallaxHeight = component.material.parallaxHeight;
+      formik.values.displacementActive = component.material.displacementActive;
+      formik.values.displacementHeight = component.material.displacementHeight;
+  
+      setIsControllerChange(!isControllerChange);
+    }
   }
 
   const handleNormalTextureChange = async (
@@ -718,7 +735,7 @@ const ComponentController: React.FC<ControllerProps> = ({
               </div>
               )}
 
-              {component instanceof Mesh && (
+              {component instanceof Mesh && component.material.displacementActive && (
               <div className="flex flex-col gap-2">
                 <div>Displacement Texture</div>
 
@@ -758,7 +775,7 @@ const ComponentController: React.FC<ControllerProps> = ({
               </div>
               )}
 
-              {component instanceof Mesh && component.material instanceof PhongMaterial && (
+              {component instanceof Mesh && component.material instanceof PhongMaterial && component.material.normalActive && (
               <div className="flex flex-col gap-2">
                 <div>Normal Texture</div>
                   {(component.material.normalTexture.image && (
@@ -798,7 +815,7 @@ const ComponentController: React.FC<ControllerProps> = ({
               )}
 
 
-              {component instanceof Mesh && component.material instanceof PhongMaterial && (
+              {component instanceof Mesh && component.material instanceof PhongMaterial && component.material.parallaxActive && (
               <div className="flex flex-col gap-2">
                 <div>Parallax Texture</div>
                   {(component.material.parallaxTexture.image && (
