@@ -101,6 +101,7 @@ export class WebGLRenderer {
     WebGLUtil.setUniforms(this.currentProgram, {
       u_projection: M4.flatten(camera.projectionMatrix),
       u_view: M4.flatten(camera.computeViewMatrix()),
+      u_cameraPos: camera.position.getVector(),
     });
 
     if (scene instanceof Mesh) {

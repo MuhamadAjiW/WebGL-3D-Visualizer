@@ -5,6 +5,7 @@ uniform mat4 u_view;
 uniform mat4 u_world;
 uniform mat4 u_normalMat;
 uniform vec3 u_lightPos;        // Light position
+uniform vec3 u_cameraPos;
 
 attribute vec3 a_position;
 attribute vec3 a_normal;
@@ -44,7 +45,8 @@ void main() {
     v_TBN = transpose(mat3(t, b, n));
 
     v_tangentLightPos = v_TBN * u_lightPos;
-    v_tangentViewPos = v_TBN * vec3(u_view[3]);
+    // v_tangentViewPos = v_TBN * vec3(u_view[3]);
+    v_tangentViewPos = v_TBN * vec3(-u_cameraPos);
     v_tangentFragPos = v_TBN * vec3(vertPos4);
 
     v_TBN = transpose(v_TBN);

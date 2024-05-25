@@ -330,15 +330,27 @@ const useRender = ({
             updateAnimationController(newAnimationControllerState);
           }
         }
-        // activeCamera.setOrbitControl(180, 0);
-
         // dx += 0.1;
         activeCamera.setOrbitControl(dy, dx);
+        // activeCamera.setOrbitControl(180, 0);
+
+        // const uniformloc = renderer.gl.getUniformLocation(
+        //   renderer.currentProgram.program,
+        //   "u_view"
+        // );
+        // const value = renderer.gl.getUniform(
+        //   renderer.currentProgram.program,
+        //   uniformloc!
+        // );
+        // console.log(value[0], value[1], value[2], value[3]);
+        // console.log(value[4], value[5], value[6], value[7]);
+        // console.log(value[8], value[9], value[10], value[11]);
+        // console.log(value[12], value[13], value[14], value[15]);
 
         // activeComponentRef.current!.rotateOnWorldAxis(Vector3.right, 0.001);
         // activeComponentRef.current!.rotateOnWorldAxis(Vector3.up, 0.001);
-        mesh.rotateOnWorldAxis(Vector3.right, 0.005);
-        mesh.rotateOnWorldAxis(Vector3.up, 0.005);
+        // mesh.rotateOnWorldAxis(Vector3.right, 0.005);
+        // mesh.rotateOnWorldAxis(Vector3.up, 0.005);
 
         // renderer.render(activeComponentRef.current!, activeCamera);
         renderer.render(testScene, activeCamera);

@@ -25,26 +25,20 @@ uniform bool u_useParallaxTex;
 
 uniform float u_parallaxScale;
 
-vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
-{
+vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir) {
     float height = texture2D(u_textureParallax, texCoords).r;
-    // vec2 p = viewDir.xy / viewDir.z * (height * u_parallaxScale);
-    vec2 p = viewDir.xy * (height * 0.05) / viewDir.z;
+    vec2 p = viewDir.xy / viewDir.z * (height * 0.1);
     return texCoords - p;
 }
 
 void main() {
     vec3 viewDir = normalize(v_tangentViewPos - v_tangentFragPos);
     vec3 lightDir = normalize(v_tangentLightPos - v_tangentFragPos);
-    // vec3 lightDir = normalize(v_lightPos - v_position);
 
-    vec2 uv;
-    // uv = ParallaxMapping(v_texCoord, viewDir);
+    vec2 uv = v_texCoord;
 
     // if(true){
         uv = ParallaxMapping(v_texCoord, viewDir);
-    // } else{
-        // uv = v_texCoord;
     // }
 
     vec3 N;
@@ -85,5 +79,5 @@ void main() {
     }
 
     gl_FragColor = outColor;
-    // gl_FragColor = vec4(v_tangentViewPos, 1.0);
+    // gl_FragColor = vec4(viewDir.z, 0, 0, 1.0);
 }

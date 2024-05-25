@@ -34,6 +34,7 @@ export type ShaderUniforms = {
   u_shininess?: UniformSingleDataType;
   u_materialType?: UniformSingleDataType;
   u_lightPos?: UniformSingleDataType;
+  u_cameraPos?: UniformSingleDataType;
   u_useNormalTex?: UniformSingleDataType;
 };
 export type ShaderAttributes = {

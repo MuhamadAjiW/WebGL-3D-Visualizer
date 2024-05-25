@@ -368,7 +368,7 @@ export default function Home() {
             />
           </div>
           <div className="bg-white flex-grow relative">
-            <RenderComponent
+            {/* <RenderComponent
               activeComponent={activeComponent}
               isControllerChange={isControllerChange}
               activeAnimationClip={activeAnimationClip}
@@ -376,7 +376,7 @@ export default function Home() {
               setCameraController={setCameraController}
               animationController={animationController}
               setAnimationController={setAnimationController}
-            />
+            /> */}
           </div>
         </div>
       </div>
