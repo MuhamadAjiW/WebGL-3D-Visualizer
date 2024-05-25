@@ -506,7 +506,7 @@ export default function Home() {
           </div>
         </div>
         <div className="py-5 px-7 flex flex-col h-2/3">
-          <div className="pb-6 flex items-center justify-between">
+          <div className="flex items-center justify-between">
             <div className="text-2xl font-bold bg-gray-900">Animation</div>
             <div className="flex items-center justify-center gap-3">
               <Button
@@ -538,7 +538,7 @@ export default function Home() {
               />
             </div>
           </div>
-          <div className="flex gap-5 items-strech w-full py-3 overflow-x-auto">
+          <div className="flex gap-5 items-strech w-full py-3">
             <Button
               id="play-button"
               handleClick={() => {

@@ -8,7 +8,17 @@ import { Mesh } from "@/libs/class/mesh";
 import Object3D from "@/libs/class/object3d";
 import { Texture } from "@/libs/class/texture/texture";
 import { convertHexToRGBA, rgbaToHex } from "@/libs/helper";
-import { Button, TextField } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { useFormik } from "formik";
 import { useEffect, useRef, useState } from "react";
 import { Collapse } from "react-collapse";
@@ -89,11 +99,21 @@ const ComponentController: React.FC<ControllerProps> = ({
         y: scale.current.y,
         z: scale.current.z,
       },
+      light: {
+        x: 0,
+        y: 0,
+        z: 0,
+      },
       normalTexture: normalTexture.current,
       parallaxTexture: parallaxTexture.current,
       diffuseTexture: diffuseTexture.current,
       specularTexture: specularTexture.current,
       ambientColors: "",
+      isNormal: false,
+      isVisible: false,
+      isParallax: false,
+      isSmoothShading: false,
+      parallaxHeight: 0,
     },
     onSubmit: (values) => {
       handleSubmit(values);
@@ -359,6 +379,50 @@ const ComponentController: React.FC<ControllerProps> = ({
                   </div>
                 </div>
               </div>
+              <div className="flex flex-col gap-2">
+                <div>Global Light</div>
+                <div className="flex gap-2 items-center">
+                  <div className="flex gap-1 items-center">
+                    <div>X</div>
+                    <TextField
+                      id="light.x"
+                      name="light.x"
+                      type="number"
+                      fullWidth
+                      className="bg-white"
+                      size="small"
+                      onChange={refresh}
+                      value={formik.values.light.x}
+                    />
+                  </div>
+                  <div className="flex gap-1 items-center">
+                    <div>Y</div>
+                    <TextField
+                      id="light.y"
+                      name="light.y"
+                      fullWidth
+                      type="number"
+                      className="bg-white"
+                      size="small"
+                      onChange={refresh}
+                      value={formik.values.light.y}
+                    />
+                  </div>
+                  <div className="flex gap-1 items-center">
+                    <div>Z</div>
+                    <TextField
+                      id="light.z"
+                      name="light.z"
+                      fullWidth
+                      type="number"
+                      className="bg-white"
+                      size="small"
+                      onChange={refresh}
+                      value={formik.values.light.z}
+                    />
+                  </div>
+                </div>
+              </div>
               {component &&
                 component instanceof Mesh &&
                 component.material instanceof PhongMaterial &&
@@ -377,6 +441,113 @@ const ComponentController: React.FC<ControllerProps> = ({
                     </div>
                   </div>
                 )}
+              <FormGroup>
+                <div className="grid grid-cols-2">
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        sx={{
+                          color: "white",
+                          "&.Mui-checked": {
+                            color: "silver",
+                          },
+                        }}
+                        checked={formik.values.isNormal}
+                        onChange={refresh}
+                        name="isNormal"
+                        id="isNormal"
+                      />
+                    }
+                    label="Normal"
+                  ></FormControlLabel>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        sx={{
+                          color: "white",
+                          "&.Mui-checked": {
+                            color: "silver",
+                          },
+                        }}
+                        checked={formik.values.isParallax}
+                        onChange={refresh}
+                        name="isParallax"
+                        id="isParallax"
+                      />
+                    }
+                    label="Parallax"
+                  ></FormControlLabel>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        sx={{
+                          color: "white",
+                          "&.Mui-checked": {
+                            color: "silver",
+                          },
+                        }}
+                        checked={formik.values.isVisible}
+                        onChange={refresh}
+                        name="isVisible"
+                        id="isVisible"
+                      />
+                    }
+                    label="Visible"
+                  ></FormControlLabel>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        sx={{
+                          color: "white",
+                          "&.Mui-checked": {
+                            color: "silver",
+                          },
+                        }}
+                        checked={formik.values.isSmoothShading}
+                        onChange={refresh}
+                        name="isSmoothShading"
+                        id="isSmoothShading"
+                      />
+                    }
+                    label="Smooth"
+                  ></FormControlLabel>
+                </div>
+              </FormGroup>
+              <div className="flex items-center justify-between">
+                <div>Material</div>
+                <FormControl
+                  sx={{ m: 1, minWidth: 120 }}
+                  size="small"
+                  className="bg-white"
+                >
+                  <Select
+                    labelId="demo-select-small-label"
+                    id="demo-select-small"
+                    value={10}
+                    label="Age"
+                    onChange={() => {}}
+                  >
+                    <MenuItem value={10}>Ten</MenuItem>
+                    <MenuItem value={20}>Twenty</MenuItem>
+                    <MenuItem value={30}>Thirty</MenuItem>
+                  </Select>
+                </FormControl>
+              </div>
+              {formik.values.isParallax && (
+                <div className="flex items-center justify-between">
+                  <div className="pr-4">Height</div>
+                  <TextField
+                    id="parallaxHeight"
+                    name="parallaxHeight"
+                    fullWidth
+                    type="number"
+                    className="bg-white"
+                    size="small"
+                    onChange={refresh}
+                    value={formik.values.parallaxHeight}
+                  />
+                </div>
+              )}
               // Normal Texture
               <div className="flex flex-col gap-2">
                 <div>Normal Texture</div>
@@ -389,6 +560,7 @@ const ComponentController: React.FC<ControllerProps> = ({
                     />
                   </div>
                 )}
+
                 {component instanceof Mesh && (
                   <Button variant="contained" component="label">
                     Normal Texture
