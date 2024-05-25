@@ -6,6 +6,9 @@ uniform mat4 u_world;
 uniform mat4 u_normalMat;
 uniform vec3 u_lightPos;        // Light position
 uniform vec3 u_cameraPos;
+uniform bool u_displacementActive;
+uniform sampler2D u_displacementTexture;
+uniform float u_displacementHeight;
 
 attribute vec3 a_position;
 attribute vec3 a_normal;
@@ -33,23 +36,35 @@ mat3 transpose(in mat3 inMatrix) {
 }
 
 void main() {
-    vec4 vertPos4 = u_world * vec4(a_position, 1.0);
+    // Pass base data to fragment shader
     v_texCoord = a_texCoord;
     v_lightPos = u_lightPos;
-    v_position = vec3(vertPos4);
-    v_normal = vec3(mat3(u_normalMat) * a_normal);
+    v_normal = normalize(vec3(mat3(u_normalMat) * a_normal));
 
+    // Calculate displacement
+    vec4 vertPos4;
+    if(true) {
+        float disp = texture2D(u_displacementTexture, a_texCoord).r;
+        vertPos4 = u_world * vec4(a_position + v_normal * disp * u_displacementHeight, 1.0);
+    } else {
+        vertPos4 = u_world * vec4(a_position, 1.0);
+    }
+    v_position = vec3(vertPos4);
+
+    // Calculate tbn
     vec3 t = normalize(vec3(u_world * vec4(a_tangent, 0.0)));
     vec3 b = normalize(vec3(u_world * vec4(a_bitangent, 0.0)));
     vec3 n = normalize(vec3(u_world * vec4(a_normal, 0.0)));
+    // t = normalize(t - dot(t, n) * n);
+    // vec3 b = cross(n, t);
     v_TBN = transpose(mat3(t, b, n));
 
     v_tangentLightPos = v_TBN * u_lightPos;
-    // v_tangentViewPos = v_TBN * vec3(u_view[3]);
     v_tangentViewPos = v_TBN * vec3(-u_cameraPos);
     v_tangentFragPos = v_TBN * vec3(vertPos4);
 
     v_TBN = transpose(v_TBN);
 
+    // Finalize
     gl_Position = u_projection * u_view * vertPos4;
 }

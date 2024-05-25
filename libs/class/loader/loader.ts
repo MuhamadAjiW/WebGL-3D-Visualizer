@@ -837,7 +837,7 @@ export class Loader {
   }
 
   private async loadTexture(textureIndex: number): Promise<Texture> {
-    if (!textureIndex) return undefined;
+    if (!textureIndex) return new Texture();
 
     if (this.loadTextureMap.has(textureIndex)) {
       return this.loadTextureMap.get(textureIndex)!;

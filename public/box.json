@@ -254,12 +254,13 @@
   ],
   "materials": [
     {
-      "id": "phong_3",
+      "id": "phong_0",
       "materialType": 1,
       "normalTexture": 0,
       "parallaxTexture": 1,
       "diffuseTexture": 2,
       "specularTexture": 3,
+      "displacementTexture": 4,
       "ambientColor": {
         "r": 65,
         "g": 65,
@@ -279,41 +280,42 @@
         "a": 255
       },
       "shininess": 1,
-      "normalActive": true
+      "normalActive": true,
+      "parallaxActive": true,
+      "parallaxHeight": 0.05,
+      "displacementActive": true,
+      "displacementHeight": 0.01
     }
   ],
   "textures": [
     {
-      "id": 14,
-      "isActive": false,
+      "id": 0,
       "name": "",
       "wrapS": 33071,
       "wrapT": 33071,
       "magFilter": 9728,
       "minFilter": 9728,
       "format": 6408,
-      "image": "res/woodboxNorm2.png",
+      "image": "res/woodboxNorm.png",
       "repeatS": 1,
       "repeatT": 1,
       "generateMipmaps": false
     },
     {
-      "id": 15,
-      "isActive": false,
+      "id": 1,
       "name": "",
       "wrapS": 33071,
       "wrapT": 33071,
       "magFilter": 9728,
       "minFilter": 9728,
       "format": 6408,
-      "image": "",
+      "image": "res/woodboxParallax.png",
       "repeatS": 1,
       "repeatT": 1,
       "generateMipmaps": false
     },
     {
-      "id": 12,
-      "isActive": false,
+      "id": 2,
       "name": "",
       "wrapS": 33071,
       "wrapT": 33071,
@@ -326,15 +328,27 @@
       "generateMipmaps": false
     },
     {
-      "id": 13,
-      "isActive": false,
+      "id": 3,
       "name": "",
       "wrapS": 33071,
       "wrapT": 33071,
       "magFilter": 9728,
       "minFilter": 9728,
-      "format": 6408,
+      "format": 6409,
       "image": "res/woodboxSpec.png",
+      "repeatS": 1,
+      "repeatT": 1,
+      "generateMipmaps": false
+    },
+    {
+      "id": 4,
+      "name": "",
+      "wrapS": 33071,
+      "wrapT": 33071,
+      "magFilter": 9728,
+      "minFilter": 9728,
+      "format": 6409,
+      "image": "res/woodboxDisplacement.png",
       "repeatS": 1,
       "repeatT": 1,
       "generateMipmaps": false

@@ -22,7 +22,6 @@ uniform float u_shininess;      // Shininess
 uniform int u_materialType;
 uniform bool u_normalActive;
 uniform bool u_parallaxActive;
-
 uniform float u_parallaxHeight;
 
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir) {

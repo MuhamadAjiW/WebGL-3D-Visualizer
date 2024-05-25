@@ -103,7 +103,7 @@ export default function Home() {
         reader.readAsText(selectedFile);
       });
     } else {
-      const response = await fetch("/articulated-awe.json");
+      const response = await fetch("/box.json");
       loaded = await response.json();
     }
 
@@ -203,7 +203,7 @@ export default function Home() {
         formData.append(
           "myFile",
           blob,
-          selectedFile?.name || "articulated-awe.json"
+          selectedFile?.name || "box.json"
         );
         const { data } = await axios.post("api/file-upload", formData);
         console.log(data);
