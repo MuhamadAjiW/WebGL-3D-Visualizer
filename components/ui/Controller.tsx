@@ -47,6 +47,11 @@ const ComponentController: React.FC<ControllerProps> = ({
   const position = useRef<Vector3>(Vector3.zero);
   const scale = useRef<Vector3>(Vector3.one);
   const name = useRef<string>("");
+  const normal = useRef<boolean>(false);
+  const parallax = useRef<boolean>(false);
+  const smoothShade = useRef<boolean>(false);
+  const visible = useRef<boolean>(false);
+  const parallaxHeight = useRef<number>(0.1);
 
   // Texture
   if (component && component != savedComponent.current) {
@@ -59,6 +64,14 @@ const ComponentController: React.FC<ControllerProps> = ({
     position.current = component.position;
     scale.current = component.scale;
     name.current = component.name;
+    visible.current = component.visible;
+
+    if(component instanceof Mesh){
+      normal.current = component.material.useNormalTex;
+      parallax.current = component.material.useParallaxTex;
+      smoothShade.current = component.geometry.smoothShade;
+      parallaxHeight.current = component.material.parallaxScale;
+    }
   }
 
   const formik = useFormik({
@@ -89,11 +102,11 @@ const ComponentController: React.FC<ControllerProps> = ({
       // diffuseTexture: diffuseTexture.current,
       // specularTexture: specularTexture.current,
       // ambientColors: "",
-      isNormal: false,
-      isVisible: false,
-      isParallax: false,
-      isSmoothShading: false,
-      parallaxHeight: 0,
+      isNormal: normal.current,
+      isVisible: visible.current,
+      isParallax: parallax.current,
+      isSmoothShading: smoothShade.current,
+      parallaxHeight: parallaxHeight.current,
     },
     onSubmit: (values) => {
       handleSubmit(values);
@@ -431,6 +444,26 @@ const ComponentController: React.FC<ControllerProps> = ({
                             color: "silver",
                           },
                         }}
+                        checked={formik.values.isVisible}
+                        onChange={refresh}
+                        name="isVisible"
+                        id="isVisible"
+                      />
+                    }
+                    label="Visible"
+                  ></FormControlLabel>
+                  {component &&
+                  component instanceof Mesh &&
+                  component.material instanceof PhongMaterial && (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        sx={{
+                          color: "white",
+                          "&.Mui-checked": {
+                            color: "silver",
+                          },
+                        }}
                         checked={formik.values.isNormal}
                         onChange={refresh}
                         name="isNormal"
@@ -439,6 +472,10 @@ const ComponentController: React.FC<ControllerProps> = ({
                     }
                     label="Normal"
                   ></FormControlLabel>
+                  )}
+                  {component &&
+                  component instanceof Mesh &&
+                  component.material instanceof PhongMaterial && (
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -456,23 +493,10 @@ const ComponentController: React.FC<ControllerProps> = ({
                     }
                     label="Parallax"
                   ></FormControlLabel>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        sx={{
-                          color: "white",
-                          "&.Mui-checked": {
-                            color: "silver",
-                          },
-                        }}
-                        checked={formik.values.isVisible}
-                        onChange={refresh}
-                        name="isVisible"
-                        id="isVisible"
-                      />
-                    }
-                    label="Visible"
-                  ></FormControlLabel>
+                  )}
+                  {component &&
+                  component instanceof Mesh &&
+                  component.material instanceof PhongMaterial && (
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -490,29 +514,36 @@ const ComponentController: React.FC<ControllerProps> = ({
                     }
                     label="Smooth"
                   ></FormControlLabel>
+                  )}
                 </div>
               </FormGroup>
-              <div className="flex items-center justify-between">
-                <div>Material</div>
-                <FormControl
-                  sx={{ m: 1, minWidth: 120 }}
-                  size="small"
-                  className="bg-white"
-                >
-                  <Select
-                    labelId="demo-select-small-label"
-                    id="demo-select-small"
-                    value={10}
-                    label="Age"
-                    onChange={() => {}}
+              {component &&
+                component instanceof Mesh && (
+                <div className="flex items-center justify-between">
+                  <div>Material</div>
+                  <FormControl
+                    sx={{ m: 1, minWidth: 120 }}
+                    size="small"
+                    className="bg-white"
                   >
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
-              {formik.values.isParallax && (
+                    <Select
+                      labelId="demo-select-small-label"
+                      id="demo-select-small"
+                      value={10}
+                      label="Age"
+                      onChange={() => {}}
+                    >
+                      <MenuItem value={10}>Ten</MenuItem>
+                      <MenuItem value={20}>Twenty</MenuItem>
+                      <MenuItem value={30}>Thirty</MenuItem>
+                    </Select>
+                  </FormControl>
+                </div>
+              )}
+              {component &&
+                component instanceof Mesh &&
+                component.material instanceof PhongMaterial && 
+                component.material.useParallaxTex && (
                 <div className="flex items-center justify-between">
                   <div className="pr-4">Height</div>
                   <TextField

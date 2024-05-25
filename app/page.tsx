@@ -229,6 +229,8 @@ export default function Home() {
   };
 
   const handleSubmitController = (values: any) => {
+    if(!activeComponent) return;
+
     const position = new Vector3(
       values.position.x,
       values.position.y,
@@ -243,28 +245,25 @@ export default function Home() {
       )
     );
     const scale = new Vector3(values.scale.x, values.scale.y, values.scale.z);
-    const normalTexture = values.normalTexture;
 
-    // if (activeComponent instanceof Mesh)
-    const { r, g, b, a } = convertHexToRGBA(values.ambientColors);
-    const color = new Color(r, g, b, a);
+    activeComponent.position = position;
+    activeComponent.rotation = rotation;
+    activeComponent.scale = scale;
+    // activeComponent.visible = values.visible;
+    if (
+      activeComponent instanceof Mesh
+    ){
+      activeComponent.material.useNormalTex = values.isNormal;
+      activeComponent.material.useParallaxTex = values.isParallax;
+      activeComponent.material.parallaxScale = values.parallaxHeight;
+      activeComponent.geometry.smoothShade = values.isSmoothShading;
 
-    if (activeComponent) {
-      activeComponent.position = position;
-      activeComponent.rotation = rotation;
-      activeComponent.scale = scale;
-      if (activeComponent instanceof Mesh && activeComponent.material instanceof BasicMaterial) {
-        activeComponent.material.normalTexture = normalTexture;
-      }
-
-      if (
-        activeComponent instanceof Mesh &&
-        activeComponent.material instanceof PhongMaterial
-      )
-        activeComponent.material.ambient = color;
-      setActiveComponent(activeComponent);
-      setIsControllerChange(!isControllerChange);
+      // const { r, g, b, a } = convertHexToRGBA(values.ambientColors);
+      // const color = new Color(r, g, b, a);
     }
+
+    setActiveComponent(activeComponent);
+    setIsControllerChange(!isControllerChange);
   };
 
   const handleLoadFile = (
