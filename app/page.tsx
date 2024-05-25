@@ -18,7 +18,7 @@ import {
   AnimationControllerType,
   CameraControllerType,
 } from "@/libs/controllers";
-import { convertGLTFToLoad, convertGLTFToTreeView, copyGLTFTree, findMeshById } from "@/libs/helper";
+import { convertGLTFToLoad, convertGLTFToTreeView, findMeshById } from "@/libs/helper";
 import { MathUtil } from "@/libs/util/math-util";
 import { InputOptions } from "@/types/ui";
 import {
@@ -622,7 +622,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="w-1/4 py-5 px-7 flex flex-col">
+      <div className="w-1/4 py-5 px-7 flex flex-col overflow-y-auto">
         <div className="pb-6">
           <div className="text-2xl font-bold bg-gray-900">Inspector</div>
         </div>
