@@ -72,6 +72,21 @@ void main() {
         outColor = (u_ambientColor +
                     lambertian * u_diffuseColor) * textureDiffuse +
                     (specular * u_specularColor) * textureSpecular;
+
+        // Ini kalo ngikutin guidebook
+        // vec4 ambient = u_ambientColor * vec4(1.0, 1.0, 1.0, 1.0) * 0.3;
+        // vec4 diffuse =
+        //     u_diffuseColor *
+        //     max(dot(-lightDir, N), 0.0) *
+        //     texture2D(u_diffuseTexture, v_texCoord);
+        // vec4 specular =
+        //     u_specularColor *
+        //     pow(max(dot(N, lightDir + viewDir), 0.0), u_shininess) *
+        //     texture2D(u_specularTexture, v_texCoord);
+
+
+        // float attenuation = 1.0;
+        // outColor = attenuation * (diffuse + specular) + ambient;
     }
 
     gl_FragColor = outColor;

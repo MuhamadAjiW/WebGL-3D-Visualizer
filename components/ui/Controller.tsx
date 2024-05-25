@@ -95,7 +95,6 @@ const ComponentController: React.FC<ControllerProps> = ({
         diffuseColor.current = component.material.diffuseColor.getHexString();
       }
       else if(component.material instanceof PhongMaterial){
-        console.log(component.material.diffuseColor.getHexString());
         ambientColor.current = component.material.ambientColor.getHexString();
         diffuseColor.current = component.material.diffuseColor.getHexString();
         specularColor.current = component.material.specularColor.getHexString();
@@ -191,9 +190,17 @@ const ComponentController: React.FC<ControllerProps> = ({
       formik.values.displacementActive = component.material.displacementActive;
       formik.values.displacementHeight = component.material.displacementHeight;
 
-      if(component.material instanceof PhongMaterial){
+      if(component.material instanceof BasicMaterial){
+        diffuseColor.current = component.material.diffuseColor.getHexString();
+      }
+      else if(component.material instanceof PhongMaterial){
         shininess.current = component.material.shininess;
         formik.values.shininess = component.material.shininess;
+
+        ambientColor.current = component.material.ambientColor.getHexString();
+        diffuseColor.current = component.material.diffuseColor.getHexString();
+        specularColor.current = component.material.specularColor.getHexString();
+        shininess.current = component.material.shininess;
       }
       
       setIsControllerChange(!isControllerChange);
