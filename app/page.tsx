@@ -13,6 +13,7 @@ import { Quaternion } from "@/libs/base-types/quaternion";
 import Vector3 from "@/libs/base-types/vector3";
 import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
 import { Loader } from "@/libs/class/loader/loader";
+import { BasicMaterial } from "@/libs/class/material/basic-material";
 import { PhongMaterial } from "@/libs/class/material/phong-material";
 import { Mesh } from "@/libs/class/mesh";
 import Object3D from "@/libs/class/object3d";
@@ -330,6 +331,7 @@ export default function Home() {
       )
     );
     const scale = new Vector3(values.scale.x, values.scale.y, values.scale.z);
+    const normalTexture = values.normalTexture;
 
     // if (activeComponent instanceof Mesh)
     const { r, g, b, a } = convertHexToRGBA(values.ambientColors);
@@ -339,6 +341,10 @@ export default function Home() {
       activeComponent.position = position;
       activeComponent.rotation = rotation;
       activeComponent.scale = scale;
+      if (activeComponent instanceof Mesh && activeComponent.material instanceof BasicMaterial) {
+        activeComponent.material.normalTexture = normalTexture;
+      }
+
       if (
         activeComponent instanceof Mesh &&
         activeComponent.material instanceof PhongMaterial

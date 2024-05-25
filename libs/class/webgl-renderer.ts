@@ -71,6 +71,12 @@ export class WebGLRenderer {
       return materialStored;
     }
 
+    if (materialStored.needsUpdate) {
+      console.log(materialStored.normalTexture.image_path)
+      material.loadTexture(this);
+      materialStored.needsUpdate = false;
+    }
+
     return materialStored;
   }
 

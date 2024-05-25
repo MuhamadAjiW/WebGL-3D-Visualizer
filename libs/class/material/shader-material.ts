@@ -11,6 +11,7 @@ export abstract class ShaderMaterial {
   public useNormalTex: boolean = false;
   public normalTexture: Texture;
   public parallaxTexture: Texture;
+  public needsUpdate: boolean = false;
 
   constructor(
     materialType: number,
@@ -30,6 +31,9 @@ export abstract class ShaderMaterial {
   public abstract loadTexture(renderer: WebGLRenderer): void;
   public abstract loadUniform(renderer: WebGLRenderer): void;
   public abstract toJson(): string;
+  public setNeedsUpdate() {
+    this.needsUpdate = true;
+  }
 
   // public static fromJson(json: string) : ShaderMaterial{
   //   const material = JSON.parse(json);

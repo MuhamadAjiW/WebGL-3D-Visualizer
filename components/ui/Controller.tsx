@@ -141,6 +141,9 @@ const ComponentController: React.FC<ControllerProps> = ({
           component.material.normalTexture.image = image;
           component.material.normalTexture.image_path = image_path;
 
+          component.material.setNeedsUpdate();
+          console.log(component.material.needsUpdate);
+
           normalTexture.current = component.material.normalTexture;
         }
       };
@@ -548,7 +551,7 @@ const ComponentController: React.FC<ControllerProps> = ({
                   />
                 </div>
               )}
-              // Normal Texture
+
               <div className="flex flex-col gap-2">
                 <div>Normal Texture</div>
                 {component instanceof Mesh && (
@@ -573,7 +576,7 @@ const ComponentController: React.FC<ControllerProps> = ({
                   </Button>
                 )}
               </div>
-              // Parallax Texture
+
               <div className="flex flex-col gap-2">
                 <div>Parallax Texture</div>
                 {component instanceof Mesh && (
@@ -597,7 +600,7 @@ const ComponentController: React.FC<ControllerProps> = ({
                   </Button>
                 )}
               </div>
-              // Diffuse Texture
+
               <div className="flex flex-col gap-2">
                 <div>Diffuse Texture</div>
                 {component instanceof Mesh &&
@@ -623,7 +626,7 @@ const ComponentController: React.FC<ControllerProps> = ({
                     </Button>
                   )}
               </div>
-              // Specular Texture
+
               <div className="flex flex-col gap-2">
                 <div>Specular Texture</div>
                 {component instanceof Mesh &&
