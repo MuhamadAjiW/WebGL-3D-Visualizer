@@ -657,13 +657,21 @@ const ComponentController: React.FC<ControllerProps> = ({
               {component instanceof Mesh && component.material instanceof PhongMaterial && (
               <div className="flex flex-col gap-2">
                 <div>Normal Texture</div>
-                  <div className="flex justify-center mb-2">
-                    <img
-                      src={component.material.normalTexture.image_path}
-                      alt="Current Texture"
-                      className="max-w-full max-h-32"
-                    />
-                  </div>
+                  {(component.material.normalTexture.image && (
+                    <div className="flex justify-center mb-2">
+                      <img
+                        src={component.material.normalTexture.image_path}
+                        alt="Current Texture"
+                        className="max-w-full max-h-32"
+                      />
+                    </div>
+                  ))
+                  ||
+                  (
+                    <div className="flex justify-center mb-2">
+                      No texture loaded
+                    </div>
+                  )}
                   <Button variant="contained" component="label">
                     Normal Texture
                     <input

@@ -576,7 +576,7 @@ export class Loader {
     let animationClip = this.loadAnimationClip();
     const result = GLTFSchema.safeParse(this.savedData);
     if (result.success) {
-      console.log("Validation successful:", result.data);
+      // console.log("Validation successful:", result.data);
     } else {
       console.error("Validation failed:", result.error.errors);
     }
@@ -837,15 +837,13 @@ export class Loader {
   }
 
   private async loadTexture(textureIndex: number): Promise<Texture> {
-    if (!textureIndex) return new Texture();
+    if (textureIndex === undefined) return new Texture();
 
     if (this.loadTextureMap.has(textureIndex)) {
       return this.loadTextureMap.get(textureIndex)!;
     }
 
     const textureData = this.savedData.textures[textureIndex];
-    console.log(textureIndex);
-    console.log(textureData);
     const textureObject = {
       id: textureData.id,
       isActive: textureData.isActive,

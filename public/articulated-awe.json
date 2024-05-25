@@ -580,7 +580,7 @@
         "magFilter": 9728,
         "minFilter": 9728,
         "format": 6408,
-        "image": "res/woodboxNorm.png",
+        "image": "res/woodboxNorm2.png",
         "repeatS": 1,
         "repeatT": 1,
         "generateMipmaps": false
