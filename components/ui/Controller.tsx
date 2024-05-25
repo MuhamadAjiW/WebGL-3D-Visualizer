@@ -548,10 +548,10 @@ const ComponentController: React.FC<ControllerProps> = ({
                   />
                 </div>
               )}
-              // Normal Texture
+
+              {component instanceof Mesh && component.material instanceof PhongMaterial && (
               <div className="flex flex-col gap-2">
                 <div>Normal Texture</div>
-                {component instanceof Mesh && (
                   <div className="flex justify-center mb-2">
                     <img
                       src={component.material.normalTexture.image_path}
@@ -559,9 +559,6 @@ const ComponentController: React.FC<ControllerProps> = ({
                       className="max-w-full max-h-32"
                     />
                   </div>
-                )}
-
-                {component instanceof Mesh && (
                   <Button variant="contained" component="label">
                     Normal Texture
                     <input
@@ -571,12 +568,13 @@ const ComponentController: React.FC<ControllerProps> = ({
                       onChange={handleNormalTextureChange}
                     />
                   </Button>
-                )}
               </div>
-              // Parallax Texture
+              )}
+
+
+              {component instanceof Mesh && component.material instanceof PhongMaterial && (
               <div className="flex flex-col gap-2">
                 <div>Parallax Texture</div>
-                {component instanceof Mesh && (
                   <div className="flex justify-center mb-2">
                     <img
                       src={component.material.parallaxTexture.image_path}
@@ -584,8 +582,6 @@ const ComponentController: React.FC<ControllerProps> = ({
                       className="max-w-full max-h-32"
                     />
                   </div>
-                )}
-                {component instanceof Mesh && (
                   <Button variant="contained" component="label">
                     Parallax Texture
                     <input
@@ -595,60 +591,53 @@ const ComponentController: React.FC<ControllerProps> = ({
                       onChange={handleParallaxTextureChange}
                     />
                   </Button>
-                )}
               </div>
-              // Diffuse Texture
+              )}
+
+              {component instanceof Mesh && (
               <div className="flex flex-col gap-2">
                 <div>Diffuse Texture</div>
-                {component instanceof Mesh &&
-                  component.material instanceof BasicMaterial && (
-                    <div className="flex justify-center mb-2">
-                      <img
-                        src={component.material.diffuseTexture.image_path}
-                        alt="Current Texture"
-                        className="max-w-full max-h-32"
-                      />
-                    </div>
-                  )}
-                {component instanceof Mesh &&
-                  component.material instanceof BasicMaterial && (
-                    <Button variant="contained" component="label">
-                      Diffuse Texture
-                      <input
-                        type="file"
-                        hidden
-                        accept="image/*"
-                        onChange={handleDiffuseTextureChange}
-                      />
-                    </Button>
-                  )}
+
+                <div className="flex justify-center mb-2">
+                  <img
+                    src={(component.material as any).diffuseTexture.image_path}
+                    alt="Current Texture"
+                    className="max-w-full max-h-32"
+                  />
+                </div>
+                <Button variant="contained" component="label">
+                  Diffuse Texture
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleDiffuseTextureChange}
+                  />
+                </Button>
               </div>
-              // Specular Texture
+              )}
+
+              {component instanceof Mesh && component.material instanceof PhongMaterial && (
               <div className="flex flex-col gap-2">
                 <div>Specular Texture</div>
-                {component instanceof Mesh &&
-                  component.material instanceof PhongMaterial && (
-                    <div className="flex justify-center mb-2">
-                      <img
-                        src={component.material.specularTexture.image_path}
-                        alt="Current Texture"
-                        className="max-w-full max-h-32"
-                      />
-                    </div>
-                  )}
-                {component instanceof Mesh &&
-                  component.material instanceof PhongMaterial && (
-                    <Button variant="contained" component="label">
-                      Specular Texture
-                      <input
-                        type="file"
-                        hidden
-                        accept="image/*"
-                        onChange={handleSpecularTextureChange}
-                      />
-                    </Button>
-                  )}
+                <div className="flex justify-center mb-2">
+                  <img
+                    src={component.material.specularTexture.image_path}
+                    alt="Current Texture"
+                    className="max-w-full max-h-32"
+                  />
+                </div>
+                <Button variant="contained" component="label">
+                  Specular Texture
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleSpecularTextureChange}
+                  />
+                </Button>
               </div>
+              )}
             </div>
           </Collapse>
         </div>
