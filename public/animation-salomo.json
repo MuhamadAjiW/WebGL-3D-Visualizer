@@ -1,0 +1,161 @@
+{
+    "scene": null,
+    "nodes": [],
+    "cameras": [],
+    "meshes": [],
+    "geometries": [],
+    "materials": [],
+    "textures": [],
+    "colors": [],
+    "animations": [
+      {
+        "name": "Animasi Salomo",
+        "frames": [
+          {
+            "id": "1",
+            "keyframe": {},
+            "children": {
+              "Body Roof":{
+                "id": "11",
+                "keyframe": {
+                  "translation": [0, 0, 0],
+                  "rotation": [0, 0, 0]
+                }
+              }
+            }
+          },
+          {
+            "id": "2",
+            "keyframe": {},
+            "children": {
+              "Body Roof":{
+                "id": "21",
+                "keyframe": {
+                  "translation": [0.3, 0, 0],
+                  "rotation": [1.5, 0, 0]
+                }
+              }
+            }
+          },
+          {
+            "id": "3",
+            "keyframe": {},
+            "children": {
+              "Body Roof":{
+                "id": "31",
+                "keyframe": {
+                  "translation": [-0.3, 0, 0],
+                  "rotation": [2.5, 0, 0]
+                }
+              }
+            }
+          },
+          {
+            "id": "4",
+            "keyframe": {},
+            "children": {
+              "Body Roof":{
+                "id": "41",
+                "keyframe": {
+                  "translation": [0.4, 1, 0],
+                  "rotation": [-2.5, 5, 0]
+                }
+              }
+            }
+          },
+          {
+            "id": "5",
+            "keyframe": {},
+            "children": {
+              "Body Roof":{
+                "id": "51",
+                "keyframe": {
+                  "translation": [0.1, -0.5, 0],
+                  "rotation": [-5, 10, 0]
+                }
+              }
+            }
+          },
+          {
+            "id": "6",
+            "keyframe": {},
+            "children": {
+              "Body Roof":{
+                "id": "61",
+                "keyframe": {
+                  "translation": [-0.1, 0.5, 0],
+                  "rotation": [10, -10, 0]
+                }
+              }
+            }
+          },
+          {
+            "id": "7",
+            "keyframe": {},
+            "children": {
+              "Body Roof":{
+                "id": "71",
+                "keyframe": {
+                  "translation": [0, 0.7, 0],
+                  "rotation": [5, 5, 0]
+                }
+              }
+            }
+          },
+          {
+            "id": "8",
+            "keyframe": {},
+            "children": {
+              "Body Roof":{
+                "id": "81",
+                "keyframe": {
+                  "translation": [0, -0.7, 0],
+                  "rotation": [3, 3, 0]
+                }
+              }
+            }
+          },
+          {
+            "id": "9",
+            "keyframe": {},
+            "children": {
+              "Body Roof":{
+                "id": "91",
+                "keyframe": {
+                  "translation": [0, 0, 0],
+                  "rotation": [5, 5, 0]
+                }
+              }
+            }
+          },
+          {
+            "id": "10",
+            "keyframe": {},
+            "children": {
+              "Body Roof":{
+                "id": "101",
+                "keyframe": {
+                  "translation": [0, 0, 0],
+                  "rotation": [2, 0, 0]
+                }
+              }
+            }
+          },
+          {
+            "id": "11",
+            "keyframe": {},
+            "children": {
+              "Body Roof":{
+                "id": "111",
+                "keyframe": {
+                  "translation": [0, 0, 0],
+                  "rotation": [0, 0, 0]
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "animationpaths": []
+  }
