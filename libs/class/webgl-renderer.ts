@@ -66,14 +66,15 @@ export class WebGLRenderer {
 
     if (!materialStored) {
       this.materials.set(material.id, material);
+      material.register(this);
       material.loadTexture(this);
 
       return materialStored;
     }
 
     if (materialStored.needsUpdate) {
-      console.log(materialStored.normalTexture.image_path)
-      material.loadTexture(this);
+      console.log("Refreshing materials");
+      material.refreshTextures();
       materialStored.needsUpdate = false;
     }
 

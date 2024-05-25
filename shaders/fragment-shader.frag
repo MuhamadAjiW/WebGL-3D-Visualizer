@@ -33,7 +33,8 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir) {
 
 void main() {
     vec3 viewDir = normalize(v_tangentViewPos - v_tangentFragPos);
-    vec3 lightDir = normalize(v_tangentLightPos - v_tangentFragPos);
+    // vec3 lightDir = normalize(v_tangentLightPos - v_tangentFragPos);
+    vec3 lightDir = normalize(v_lightPos - v_position);
 
     vec2 uv = v_texCoord;
 

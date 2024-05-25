@@ -2,12 +2,11 @@ import { Texture } from "../texture/texture";
 import { WebGLRenderer } from "../webgl-renderer";
 
 export abstract class ShaderMaterial {
-  // TODO: Review this note, might be a better way to improve it
-  // Note: After the initial use of a texture, its dimensions, format, and type cannot be changed.
-
   // This is internal and really should not be changed outside of texture or texture loader
   public id: string;
   public materialType: number = 0;
+  public registeredRenderers: WebGLRenderer[] = [];
+
   public useNormalTex: boolean = false;
   public useParallaxTex: boolean = false;
   public normalTexture: Texture;
@@ -33,8 +32,28 @@ export abstract class ShaderMaterial {
     this.useParallaxTex = options?.useParallaxTex || false;
     this.parallaxScale = options?.parallaxScale || 0.1;
   }
+
+  public register(renderer: WebGLRenderer) {
+    this.registeredRenderers.push(renderer);
+  }
+  public unregister(renderer: WebGLRenderer) {
+    this.unloadTexture(renderer);
+    this.registeredRenderers = this.registeredRenderers.filter(
+      (r) => r !== renderer
+    );
+  }
+
+  public refreshTextures() {
+    this.registeredRenderers.forEach((renderer) => {
+      this.loadTexture(renderer);
+    });
+    // this.loadTexture(this.registeredRenderers[0]);
+    // this.loadTexture(this.registeredRenderers[1]);
+  }
+
   protected abstract generateId(): string;
   public abstract loadTexture(renderer: WebGLRenderer): void;
+  public abstract unloadTexture(renderer: WebGLRenderer): void;
   public abstract loadUniform(renderer: WebGLRenderer): void;
   public abstract toJson(): string;
   public setNeedsUpdate() {

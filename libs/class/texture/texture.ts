@@ -10,10 +10,11 @@ export class Texture {
   // This is internal and really should not be changed outside of texture or texture loader
   private static idAutoIncrement: number = 0;
   public readonly id: number;
-
-  // TODO: Review whether this is necessary or not
-  public glTexture: BufferUniform | undefined;
-  public isActive: boolean;
+  public registeredRenderers: Map<WebGLRenderer, BufferUniform> = new Map<
+    WebGLRenderer,
+    BufferUniform
+  >();
+  // public glTexture: BufferUniform | undefined;
 
   public image?: HTMLImageElement;
   public name: string = "";
@@ -38,8 +39,6 @@ export class Texture {
     repeatT?: number;
     generateMipmaps?: boolean;
   }) {
-    this.isActive = false;
-
     this.id = Texture.idAutoIncrement++;
     this.wrapS = options?.wrapS || WebGLRenderingContext.CLAMP_TO_EDGE;
     this.wrapT = options?.wrapT || WebGLRenderingContext.CLAMP_TO_EDGE;
@@ -52,27 +51,18 @@ export class Texture {
     this.generateMipmaps = options?.generateMipmaps || false;
   }
 
-  public activate() {
-    this.isActive = true;
+  public unregister(renderer: WebGLRenderer) {
+    const data = this.registeredRenderers.get(renderer);
+    if (!data) return;
+    renderer.gl.deleteTexture((data.data as GLTexture).webGLTexture);
   }
-
   public setRepeatT(t: number): Texture {
-    if (this.isActive == true) {
-      console.error("Texture already been used");
-      return this;
-    }
-
     this.wrapT = WebGLRenderingContext.REPEAT;
     this.repeatT = t;
     return this;
   }
 
   public setRepeatS(s: number): Texture {
-    if (this.isActive == true) {
-      console.error("Texture already been used");
-      return this;
-    }
-
     this.wrapS = WebGLRenderingContext.REPEAT;
     this.repeatT = s;
     return this;
@@ -85,11 +75,6 @@ export class Texture {
     magFilter?: GLenum;
     minFilter?: GLenum;
   }): Texture {
-    if (this.isActive == true) {
-      console.error("Texture already been used");
-      return this;
-    }
-
     this.wrapS = options.wrapS || this.wrapS;
     this.wrapT = options.wrapT || this.wrapT;
     this.magFilter = options.magFilter || this.magFilter;
@@ -98,18 +83,33 @@ export class Texture {
     return this;
   }
 
-  public load(renderer: WebGLRenderer, unit: number) {
-    if (this.glTexture != null)
-      renderer.gl.deleteTexture(
-        (this.glTexture.data as GLTexture).webGLTexture
-      );
+  public get(renderer: WebGLRenderer) {
+    return this.registeredRenderers.get(renderer);
+  }
 
-    const glTexture = new GLTexture(unit, renderer.gl.createTexture()!);
-    this.glTexture = new BufferUniform(glTexture, 1);
+  public load(renderer: WebGLRenderer, unit: number) {
+    // if (this.glTexture != null)
+    //   renderer.gl.deleteTexture(
+    //     (this.glTexture.data as GLTexture).webGLTexture
+    //   );
+
+    // const glTexture = new GLTexture(unit, renderer.gl.createTexture()!);
+    // this.glTexture = new BufferUniform(glTexture, 1);
+    // renderer.gl.bindTexture(
+    //   renderer.gl.TEXTURE_2D,
+    //   (this.glTexture!.data as GLTexture).webGLTexture
+    // );
+
+    let textureData = this.registeredRenderers.get(renderer);
+    if (this.registeredRenderers.get(renderer) == null) {
+      const glTexture = new GLTexture(unit, renderer.gl.createTexture()!);
+      this.registeredRenderers.set(renderer, new BufferUniform(glTexture, 1));
+      textureData = this.registeredRenderers.get(renderer);
+    }
 
     renderer.gl.bindTexture(
       renderer.gl.TEXTURE_2D,
-      (this.glTexture.data as GLTexture).webGLTexture
+      (textureData!.data as GLTexture).webGLTexture
     );
 
     if (this.image != null) {
@@ -137,8 +137,8 @@ export class Texture {
       renderer.gl.texImage2D(
         renderer.gl.TEXTURE_2D,
         0,
-        renderer.gl.RGBA,
-        renderer.gl.RGBA,
+        this.format,
+        this.format,
         renderer.gl.UNSIGNED_BYTE,
         this?.image
       );
