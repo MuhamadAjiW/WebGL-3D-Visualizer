@@ -530,7 +530,9 @@
           "a": 255
         },
         "shininess": 1,
-        "useNormalTex": false
+        "useNormalTex": true,
+        "useParallaxTex": true,
+        "parallaxScale": 0.05
       }
     ],
     "textures": [
@@ -557,7 +559,7 @@
         "magFilter": 9728,
         "minFilter": 9728,
         "format": 6408,
-        "image": "",
+        "image": "res/woodboxParallax.png",
         "repeatS": 1,
         "repeatT": 1,
         "generateMipmaps": false

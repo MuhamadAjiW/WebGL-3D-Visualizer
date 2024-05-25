@@ -28,6 +28,8 @@ import { Scene } from "@/libs/class/scene";
 import { TextureLoader } from "@/libs/class/texture/texture-loader";
 import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
 import { Loader } from "@/libs/class/loader/loader";
+import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
+import { BasicMaterial } from "@/libs/class/material/basic-material";
 
 interface HooksRenderProps {
   activeComponent: Object3D; // change this later
@@ -43,7 +45,7 @@ interface HooksRenderProps {
 const dummyUniformsData = {
   // Light
   u_lightPos: new BufferUniform(
-    new Float32Array([0, 0, 1]),
+    new Float32Array([0, 0, 100]),
     3,
     WebGLRenderingContext.FLOAT_VEC3
   ),
@@ -286,7 +288,6 @@ const useRender = ({
       }
 
       WebGLUtils.setUniforms(renderer.currentProgram, dummyUniformsData);
-
       function render() {
         if (!renderer) return;
         if (activeCameraRef.current == null) return;
@@ -300,7 +301,7 @@ const useRender = ({
             updateAnimationController(newAnimationControllerState);
           }
         }
-
+        // dx += 0.1;
         activeCamera.setOrbitControl(dy, dx);
 
         // activeComponentRef.current!.rotateOnWorldAxis(Vector3.right, 0.001);

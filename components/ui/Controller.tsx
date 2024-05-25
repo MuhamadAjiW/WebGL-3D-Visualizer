@@ -141,6 +141,9 @@ const ComponentController: React.FC<ControllerProps> = ({
           component.material.normalTexture.image = image;
           component.material.normalTexture.image_path = image_path;
 
+          component.material.setNeedsUpdate();
+          console.log(component.material.needsUpdate);
+
           normalTexture.current = component.material.normalTexture;
         }
       };

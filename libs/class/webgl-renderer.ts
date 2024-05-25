@@ -71,6 +71,12 @@ export class WebGLRenderer {
       return materialStored;
     }
 
+    if (materialStored.needsUpdate) {
+      console.log(materialStored.normalTexture.image_path)
+      material.loadTexture(this);
+      materialStored.needsUpdate = false;
+    }
+
     return materialStored;
   }
 
@@ -101,6 +107,7 @@ export class WebGLRenderer {
     WebGLUtil.setUniforms(this.currentProgram, {
       u_projection: M4.flatten(camera.projectionMatrix),
       u_view: M4.flatten(camera.computeViewMatrix()),
+      u_cameraPos: camera.position.getVector(),
     });
 
     if (scene instanceof Mesh) {

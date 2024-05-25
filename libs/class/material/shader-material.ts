@@ -9,8 +9,11 @@ export abstract class ShaderMaterial {
   public id: string;
   public materialType: number = 0;
   public useNormalTex: boolean = false;
+  public useParallaxTex: boolean = false;
   public normalTexture: Texture;
   public parallaxTexture: Texture;
+  public needsUpdate: boolean = false;
+  public parallaxScale: number = 0.1;
 
   constructor(
     materialType: number,
@@ -18,6 +21,8 @@ export abstract class ShaderMaterial {
       normalTexture?: Texture;
       parallaxTexture?: Texture;
       useNormalTex?: boolean;
+      useParallaxTex?: boolean;
+      parallaxScale?: number;
     }
   ) {
     this.id = this.generateId();
@@ -25,11 +30,16 @@ export abstract class ShaderMaterial {
     this.normalTexture = options?.normalTexture || new Texture();
     this.parallaxTexture = options?.parallaxTexture || new Texture();
     this.useNormalTex = options?.useNormalTex || false;
+    this.useParallaxTex = options?.useParallaxTex || false;
+    this.parallaxScale = options?.parallaxScale || 0.1;
   }
   protected abstract generateId(): string;
   public abstract loadTexture(renderer: WebGLRenderer): void;
   public abstract loadUniform(renderer: WebGLRenderer): void;
   public abstract toJson(): string;
+  public setNeedsUpdate() {
+    this.needsUpdate = true;
+  }
 
   // public static fromJson(json: string) : ShaderMaterial{
   //   const material = JSON.parse(json);
