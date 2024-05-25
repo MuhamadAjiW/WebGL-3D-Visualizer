@@ -30,6 +30,7 @@ interface HooksRenderProps {
   animationController?: AnimationControllerType;
   setAnimationController?: Dispatch<SetStateAction<AnimationControllerType>>;
   activeAnimationClip?: AnimationClip;
+  lightPos?: Vector3;
 }
 
 // TODO: Delete
@@ -50,6 +51,7 @@ const useRender = ({
   animationController,
   setAnimationController,
   activeAnimationClip,
+  lightPos,
 }: HooksRenderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<WebGLRenderer | null>(null);
@@ -282,6 +284,7 @@ const useRender = ({
       function render() {
         if (!renderer) return;
         if (activeCameraRef.current == null) return;
+        if (!lightPos) return;
         if (animationRunnerRef.current) {
           animationRunner.update();
           if (animationController && setAnimationController) {
@@ -298,7 +301,7 @@ const useRender = ({
         // activeComponentRef.current!.rotateOnWorldAxis(Vector3.right, 0.001);
         // activeComponentRef.current!.rotateOnWorldAxis(Vector3.up, 0.001);
 
-        renderer.render(activeComponentRef.current!, activeCamera);
+        renderer.render(activeComponentRef.current!, activeCamera, lightPos);
         if (!stop) {
           requestAnimationFrame(render);
         }
@@ -326,6 +329,7 @@ const useRender = ({
     animationController?.play,
     animationController?.playback,
     animationController?.reverse,
+    lightPos,
   ]);
 
   return canvasRef;

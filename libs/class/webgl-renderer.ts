@@ -1,4 +1,5 @@
 import M4 from "../base-types/m4";
+import Vector3 from "../base-types/vector3";
 import { ProgramInfo } from "../base-types/webgl-program-info";
 import { WebGLUtil } from "../util/webgl-util";
 import Camera from "./camera";
@@ -6,6 +7,7 @@ import { ShaderMaterial } from "./material/shader-material";
 import { Mesh } from "./mesh";
 import Object3D from "./object3d";
 import { Scene } from "./scene";
+import { BufferUniform } from "./webgl/uniform";
 
 export class WebGLRenderer {
   public canvas: HTMLCanvasElement;
@@ -104,7 +106,7 @@ export class WebGLRenderer {
     });
   }
 
-  public render(scene: Scene, camera: Camera) {
+  public render(scene: Scene, camera: Camera, lightPos: Vector3) {
     this.clean();
     if (!scene.visible) {
       // console.log("Scene is not visible");
@@ -116,6 +118,7 @@ export class WebGLRenderer {
       u_projection: M4.flatten(camera.projectionMatrix),
       u_view: M4.flatten(camera.computeViewMatrix()),
       u_cameraPos: camera.position.getVector(),
+      u_lightPos: lightPos.getVector(),
     });
 
     if (scene instanceof Mesh) {

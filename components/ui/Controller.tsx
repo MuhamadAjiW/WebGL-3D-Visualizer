@@ -31,6 +31,7 @@ interface ControllerProps {
   title: string;
   component: Object3D;
   materials: ShaderMaterial[] | null;
+  light: Vector3;
   handleSubmit: (values: any) => void;
   setIsControllerChange: Dispatch<SetStateAction<boolean>>;
   isControllerChange: boolean
@@ -43,6 +44,7 @@ const ComponentController: React.FC<ControllerProps> = ({
   title,
   component,
   materials,
+  light,
   handleSubmit,
   setIsControllerChange,
   isControllerChange,
@@ -53,6 +55,7 @@ const ComponentController: React.FC<ControllerProps> = ({
   const rotation = useRef<Vector3>(Vector3.zero);
   const position = useRef<Vector3>(Vector3.zero);
   const scale = useRef<Vector3>(Vector3.one);
+  const lightPos = useRef<Vector3>(Vector3.zero);
   const name = useRef<string>("");
   const normal = useRef<boolean>(false);
   const parallax = useRef<boolean>(false);
@@ -61,6 +64,9 @@ const ComponentController: React.FC<ControllerProps> = ({
   const visible = useRef<boolean>(false);
   const parallaxHeight = useRef<number>(0.1);
   const displacementHeight = useRef<number>(0);
+  const ambientColor = useRef<string>("#ffffffff");
+  const diffuseColor = useRef<string>("#ffffffff");
+  const specularColor = useRef<string>("#ffffffff");
 
   if (component && component != savedComponent.current) {
     console.log("This is component", component);
@@ -81,7 +87,20 @@ const ComponentController: React.FC<ControllerProps> = ({
       parallaxHeight.current = component.material.parallaxHeight;
       displacement.current = component.material.displacementActive;
       displacementHeight.current = component.material.displacementHeight;
+
+      if(component.material instanceof BasicMaterial){
+        diffuseColor.current = component.material.diffuseColor.getHexString();
+      }
+      else if(component.material instanceof PhongMaterial){
+        ambientColor.current = component.material.ambientColor.getHexString();
+        diffuseColor.current = component.material.diffuseColor.getHexString();
+        specularColor.current = component.material.specularColor.getHexString();
+      }
     }
+
+    lightPos.current.x = light.x;
+    lightPos.current.y = light.y;
+    lightPos.current.z = light.z;
   }
 
   let materialData: InputOptions[] = [];
@@ -119,15 +138,15 @@ const ComponentController: React.FC<ControllerProps> = ({
         z: scale.current.z,
       },
       light: {
-        x: 0,
-        y: 0,
-        z: 0,
+        x: lightPos.current.x,
+        y: lightPos.current.y,
+        z: lightPos.current.z,
       },
-      // normalTexture: normalTexture.current,
-      // parallaxTexture: parallaxTexture.current,
-      // diffuseTexture: diffuseTexture.current,
-      // specularTexture: specularTexture.current,
-      // ambientColors: "",
+
+      ambientColor: ambientColor.current,
+      diffuseColor: diffuseColor.current,
+      specularColor: specularColor.current,
+      
       visible: visible.current,
       normalActive: normal.current,
       smoothShade: smoothShade.current,
@@ -539,22 +558,6 @@ const ComponentController: React.FC<ControllerProps> = ({
                     />
                 </div>
               )}
-              {component &&
-                component instanceof Mesh &&
-                component.material instanceof PhongMaterial && (
-                  <div className="flex items-center justify-between">
-                    <div>Ambient Color</div>
-                    <div>
-                      <input
-                        id="ambientColors"
-                        name="ambientColors"
-                        type="color"
-                        // value={formik.values.ambientColors}
-                        onChange={refresh}
-                      />
-                    </div>
-                  </div>
-                )}
               <FormGroup>
                 <div className="grid grid-cols-2">
                   <FormControlLabel
@@ -692,6 +695,23 @@ const ComponentController: React.FC<ControllerProps> = ({
                     onChange={refresh}
                     value={formik.values.displacementHeight}
                   />
+                </div>
+              )}
+
+              {component &&
+              component instanceof Mesh &&
+              component.material instanceof PhongMaterial && (
+                <div className="flex items-center justify-between">
+                  <div>Ambient Color</div>
+                  <div>
+                    <input
+                      id="ambientColors"
+                      name="ambientColors"
+                      type="color"
+                      value={formik.values.ambientColor}
+                      onChange={refresh}
+                    />
+                  </div>
                 </div>
               )}
 

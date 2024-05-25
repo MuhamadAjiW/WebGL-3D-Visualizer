@@ -1,5 +1,6 @@
 import useRender from "@/hooks/useRender";
 import { AnimationClip } from "@/libs/base-types/animation";
+import Vector3 from "@/libs/base-types/vector3";
 import Object3D from "@/libs/class/object3d";
 import { AnimationControllerType, CameraControllerType } from "@/libs/controllers";
 import { Dispatch, SetStateAction } from "react";
@@ -12,6 +13,7 @@ interface RenderedComponentProps {
   animationController?: AnimationControllerType;
   setAnimationController?: Dispatch<SetStateAction<AnimationControllerType>>;
   activeAnimationClip?: AnimationClip;
+  lightPos?: Vector3;
   className?: string
 }
 
@@ -23,6 +25,7 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({
   setAnimationController,
   cameraController,
   activeAnimationClip,
+  lightPos,
   className
 }: RenderedComponentProps) => {
   const canvasRef = useRender({
@@ -32,7 +35,8 @@ const RenderedComponent: React.FC<RenderedComponentProps> = ({
     setCameraController,
     animationController,
     setAnimationController,
-    activeAnimationClip
+    activeAnimationClip,
+    lightPos
   });
 
   return <canvas id="webgl-canvas" className={`w-full h-full ${className}`} ref={canvasRef}/>;

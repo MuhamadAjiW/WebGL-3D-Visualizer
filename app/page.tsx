@@ -39,6 +39,7 @@ import {
 import { TreeViewBaseItem } from "@mui/x-tree-view";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
+import { light } from '@mui/material/styles/createPalette';
 
 export default function Home() {
   // States
@@ -49,6 +50,7 @@ export default function Home() {
   const [isComponentExpanded, setIsComponentExpanded] = useState<boolean>(true);
   const [isCameraExpanded, setIsCameraExpanded] = useState<boolean>(true);
   const [activeComponent, setActiveComponent] = useState<Object3D | null>(null);
+  const [lightPos, setlightPos] = useState<Vector3>(new Vector3(0,0,1));
   const [isControllerChange, setIsControllerChange] = useState<boolean>(false);
   const [activeAnimationClip, setActiveAnimationClip] =
     useState<AnimationClip | null>(null);
@@ -232,7 +234,7 @@ export default function Home() {
       values.position.y,
       values.position.z
     );
-
+    
     const rotation = Quaternion.Euler(
       new Euler(
         MathUtil.DegreesToRad(values.rotation.x),
@@ -241,7 +243,7 @@ export default function Home() {
       )
     );
     const scale = new Vector3(values.scale.x, values.scale.y, values.scale.z);
-
+    
     activeComponent.position = position;
     activeComponent.rotation = rotation;
     activeComponent.scale = scale;
@@ -255,12 +257,22 @@ export default function Home() {
       activeComponent.material.displacementActive = values.displacementActive;
       activeComponent.material.displacementHeight = values.displacementHeight;
       activeComponent.geometry.smoothShade = values.smoothShade;
-
+      
+      console.log(values.ambientColors);
+      console.log(typeof values.ambientColors == "string");
+      
       // const { r, g, b, a } = convertHexToRGBA(values.ambientColors);
       // const color = new Color(r, g, b, a);
     }
-
+    
     setActiveComponent(activeComponent);
+
+    const newLightPos = new Vector3(
+      values.light.x,
+      values.light.y,
+      values.light.z
+    );
+    setlightPos(newLightPos);
     setIsControllerChange(!isControllerChange);
   };
 
@@ -376,6 +388,7 @@ export default function Home() {
             isControllerChange={isControllerChange}
             cameraController={cameraController}
             setCameraController={setCameraController}
+            lightPos={lightPos}
           />
         </div>
       </div>
@@ -551,6 +564,7 @@ export default function Home() {
               setCameraController={setCameraController}
               animationController={animationController}
               setAnimationController={setAnimationController}
+              lightPos={lightPos}
             />
           </div>
         </div>
@@ -567,6 +581,7 @@ export default function Home() {
             title="Component Controller"
             component={activeComponent}
             materials={materialData}
+            light={lightPos}
             handleSubmit={handleSubmitController}
             setIsControllerChange={setIsControllerChange}
             isControllerChange={isControllerChange}
