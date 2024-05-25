@@ -1,7 +1,6 @@
 import { AnimationClip } from "@/libs/base-types/animation";
 import Vector3 from "@/libs/base-types/vector3";
 import { ProgramInfo } from "@/libs/base-types/webgl-program-info";
-import { AnimationEasingType } from "@/libs/class/animation/animation-easing";
 import Camera from "@/libs/class/camera";
 import Object3D from "@/libs/class/object3d";
 import ObliqueCamera from "@/libs/class/oblique-camera";
@@ -21,15 +20,6 @@ import fragmentShaderSource from "@/shaders/fragment-shader.frag?raw";
 import vertexShaderSource from "@/shaders/vertex-shader.vert?raw";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { AnimationRunner } from "../libs/class/animation/animation-runner";
-import { Mesh } from "@/libs/class/mesh";
-import { Color } from "@/libs/base-types/color";
-import { PhongMaterial } from "@/libs/class/material/phong-material";
-import { Scene } from "@/libs/class/scene";
-import { TextureLoader } from "@/libs/class/texture/texture-loader";
-import { BlockGeometry } from "@/libs/class/geometry/block-geometry";
-import { Loader } from "@/libs/class/loader/loader";
-import { CubeGeometry } from "@/libs/class/geometry/cube-geometry";
-import { BasicMaterial } from "@/libs/class/material/basic-material";
 
 interface HooksRenderProps {
   activeComponent: Object3D; // change this later

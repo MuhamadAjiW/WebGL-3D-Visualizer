@@ -53,13 +53,19 @@ export class PhongMaterial extends ShaderMaterial {
     this.specularTexture.format = WebGLRenderingContext.LUMINANCE;
     this.specularTexture.load(renderer, 3);
   }
+  public unloadTexture(renderer: WebGLRenderer): void {
+    this.normalTexture.unregister(renderer);
+    this.parallaxTexture.unregister(renderer);
+    this.diffuseTexture.unregister(renderer);
+    this.specularTexture.unregister(renderer);
+  }
 
   public loadUniform(renderer: WebGLRenderer): void {
     WebGLUtil.setUniforms(renderer.currentProgram, {
-      u_textureNormal: this.normalTexture.glTexture,
-      u_textureParallax: this.parallaxTexture.glTexture,
-      u_textureDiffuse: this.diffuseTexture.glTexture,
-      u_textureSpecular: this.specularTexture.glTexture,
+      u_textureNormal: this.normalTexture.get(renderer),
+      u_textureParallax: this.parallaxTexture.get(renderer),
+      u_textureDiffuse: this.diffuseTexture.get(renderer),
+      u_textureSpecular: this.specularTexture.get(renderer),
       u_ambient: this.ambient.getNormalized(),
       u_diffuse: this.diffuse.getNormalized(),
       u_specular: this.specular.getNormalized(),

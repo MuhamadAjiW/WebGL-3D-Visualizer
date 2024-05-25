@@ -1,26 +1,21 @@
-import { Color } from "@/libs/base-types/color";
 import { Euler } from "@/libs/base-types/euler";
 import { Quaternion } from "@/libs/base-types/quaternion";
 import Vector3 from "@/libs/base-types/vector3";
-import { BasicMaterial } from "@/libs/class/material/basic-material";
 import { PhongMaterial } from "@/libs/class/material/phong-material";
 import { Mesh } from "@/libs/class/mesh";
 import Object3D from "@/libs/class/object3d";
-import { Texture } from "@/libs/class/texture/texture";
-import { convertHexToRGBA, rgbaToHex } from "@/libs/helper";
 import {
   Button,
   Checkbox,
   FormControl,
   FormControlLabel,
   FormGroup,
-  InputLabel,
   MenuItem,
   Select,
-  TextField,
+  TextField
 } from "@mui/material";
 import { useFormik } from "formik";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef } from "react";
 import { Collapse } from "react-collapse";
 import { GoChevronDown, GoChevronRight } from "react-icons/go";
 
@@ -31,7 +26,8 @@ interface ControllerProps {
   title: string;
   component: Object3D;
   handleSubmit: (values: any) => void;
-  isControllerChange: boolean;
+  setIsControllerChange: Dispatch<SetStateAction<boolean>>;
+  isControllerChange: boolean
 }
 
 const ComponentController: React.FC<ControllerProps> = ({
@@ -41,6 +37,7 @@ const ComponentController: React.FC<ControllerProps> = ({
   title,
   component,
   handleSubmit,
+  setIsControllerChange,
   isControllerChange,
 }) => {
   // TODO: setFromQuaternion is a little off here for some reason on the y axis at 90 degrees
@@ -52,11 +49,6 @@ const ComponentController: React.FC<ControllerProps> = ({
   const name = useRef<string>("");
 
   // Texture
-  const normalTexture = useRef<Texture | null>(null);
-  const parallaxTexture = useRef<Texture | null>(null);
-  const diffuseTexture = useRef<Texture | null>(null);
-  const specularTexture = useRef<Texture | null>(null);
-
   if (component && component != savedComponent.current) {
     console.log("This is component", component);
     savedComponent.current = component;
@@ -67,18 +59,6 @@ const ComponentController: React.FC<ControllerProps> = ({
     position.current = component.position;
     scale.current = component.scale;
     name.current = component.name;
-
-    if (component instanceof Mesh) {
-      if (component.material instanceof BasicMaterial) {
-        normalTexture.current = component.material.normalTexture;
-        parallaxTexture.current = component.material.parallaxTexture;
-      } else if (component.material instanceof PhongMaterial) {
-        normalTexture.current = component.material.normalTexture;
-        parallaxTexture.current = component.material.parallaxTexture;
-        diffuseTexture.current = component.material.diffuseTexture;
-        specularTexture.current = component.material.specularTexture;
-      }
-    }
   }
 
   const formik = useFormik({
@@ -104,11 +84,11 @@ const ComponentController: React.FC<ControllerProps> = ({
         y: 0,
         z: 0,
       },
-      normalTexture: normalTexture.current,
-      parallaxTexture: parallaxTexture.current,
-      diffuseTexture: diffuseTexture.current,
-      specularTexture: specularTexture.current,
-      ambientColors: "",
+      // normalTexture: normalTexture.current,
+      // parallaxTexture: parallaxTexture.current,
+      // diffuseTexture: diffuseTexture.current,
+      // specularTexture: specularTexture.current,
+      // ambientColors: "",
       isNormal: false,
       isVisible: false,
       isParallax: false,
@@ -126,7 +106,7 @@ const ComponentController: React.FC<ControllerProps> = ({
     formik.submitForm();
   };
 
-  const handleNormalTextureChange = (
+  const handleNormalTextureChange = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0];
@@ -140,14 +120,12 @@ const ComponentController: React.FC<ControllerProps> = ({
         if (component instanceof Mesh) {
           component.material.normalTexture.image = image;
           component.material.normalTexture.image_path = image_path;
-
           component.material.setNeedsUpdate();
-          console.log(component.material.needsUpdate);
-
-          normalTexture.current = component.material.normalTexture;
         }
       };
       reader.readAsDataURL(file);
+      console.log(isControllerChange);
+      setIsControllerChange(!isControllerChange);
     }
   };
 
@@ -165,11 +143,11 @@ const ComponentController: React.FC<ControllerProps> = ({
         if (component instanceof Mesh) {
           component.material.parallaxTexture.image = image;
           component.material.parallaxTexture.image_path = image_path;
-
-          parallaxTexture.current = component.material.parallaxTexture;
+          component.material.setNeedsUpdate();
         }
       };
       reader.readAsDataURL(file);
+      setIsControllerChange(!isControllerChange);
     }
   };
 
@@ -185,16 +163,16 @@ const ComponentController: React.FC<ControllerProps> = ({
         const image_path = "res/" + file.name;
 
         if (
-          component instanceof Mesh &&
-          component.material instanceof PhongMaterial
+          component instanceof Mesh
         ) {
-          component.material.diffuseTexture.image = image;
-          component.material.diffuseTexture.image_path = image_path;
-
-          diffuseTexture.current = component.material.diffuseTexture;
+          console.log("Changing diffuse texture");
+          (component.material as any).diffuseTexture.image = image;
+          (component.material as any).diffuseTexture.image_path = image_path;
+          component.material.setNeedsUpdate();
         }
       };
       reader.readAsDataURL(file);
+      setIsControllerChange(!isControllerChange);
     }
   };
 
@@ -215,11 +193,11 @@ const ComponentController: React.FC<ControllerProps> = ({
         ) {
           component.material.specularTexture.image = image;
           component.material.specularTexture.image_path = image_path;
-
-          specularTexture.current = component.material.specularTexture;
+          component.material.setNeedsUpdate();
         }
       };
       reader.readAsDataURL(file);
+      setIsControllerChange(!isControllerChange);
     }
   };
 
@@ -428,9 +406,7 @@ const ComponentController: React.FC<ControllerProps> = ({
               </div>
               {component &&
                 component instanceof Mesh &&
-                component.material instanceof PhongMaterial &&
-                component.material.ambient instanceof Color &&
-                formik.values.ambientColors != null && (
+                component.material instanceof PhongMaterial && (
                   <div className="flex items-center justify-between">
                     <div>Ambient Color</div>
                     <div>
@@ -438,7 +414,7 @@ const ComponentController: React.FC<ControllerProps> = ({
                         id="ambientColors"
                         name="ambientColors"
                         type="color"
-                        value={formik.values.ambientColors}
+                        // value={formik.values.ambientColors}
                         onChange={refresh}
                       />
                     </div>
