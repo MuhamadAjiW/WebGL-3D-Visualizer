@@ -23,6 +23,8 @@ import { Collapse } from "react-collapse";
 import { GoChevronDown, GoChevronRight } from "react-icons/go";
 import UIButton from "../ui/Button";
 import { BasicMaterial } from "@/libs/class/material/basic-material";
+import { MuiColorInput } from "mui-color-input";
+import { Color } from "@/libs/base-types/color";
 
 interface ControllerProps {
   id: string;
@@ -92,6 +94,7 @@ const ComponentController: React.FC<ControllerProps> = ({
         diffuseColor.current = component.material.diffuseColor.getHexString();
       }
       else if(component.material instanceof PhongMaterial){
+        console.log(component.material.diffuseColor.getHexString());
         ambientColor.current = component.material.ambientColor.getHexString();
         diffuseColor.current = component.material.diffuseColor.getHexString();
         specularColor.current = component.material.specularColor.getHexString();
@@ -704,12 +707,67 @@ const ComponentController: React.FC<ControllerProps> = ({
                 <div className="flex items-center justify-between">
                   <div>Ambient Color</div>
                   <div>
-                    <input
+                    <MuiColorInput
+                      sx={{
+                        input: {
+                          color: "white",
+                        }
+                      }}
                       id="ambientColors"
                       name="ambientColors"
-                      type="color"
+                      format="hex8"
                       value={formik.values.ambientColor}
-                      onChange={refresh}
+                      onChange={(newValue) => {
+                        formik.setFieldValue('ambientColor', newValue);
+                        formik.submitForm();
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+              {component &&
+              component instanceof Mesh && (
+                <div className="flex items-center justify-between">
+                  <div>Diffuse Color</div>
+                  <div>
+                    <MuiColorInput
+                      sx={{
+                        input: {
+                          color: "white",
+                        }
+                      }}
+                      id="diffuseColors"
+                      name="diffuseColors"
+                      format="hex8"
+                      value={formik.values.diffuseColor}
+                      onChange={(newValue) => {
+                        formik.setFieldValue('diffuseColor', newValue);
+                        formik.submitForm();
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+              {component &&
+              component instanceof Mesh &&
+              component.material instanceof PhongMaterial && (
+                <div className="flex items-center justify-between">
+                  <div>Specular Color</div>
+                  <div>
+                    <MuiColorInput
+                      sx={{
+                        input: {
+                          color: "white",
+                        }
+                      }}
+                      id="specularColors"
+                      name="specularColors"
+                      format="hex8"
+                      value={formik.values.specularColor}
+                      onChange={(newValue) => {
+                        formik.setFieldValue('specularColor', newValue);
+                        formik.submitForm();
+                      }}
                     />
                   </div>
                 </div>
@@ -735,7 +793,7 @@ const ComponentController: React.FC<ControllerProps> = ({
                   </div>
                 )}
                 <Button variant="contained" component="label">
-                  Insert Texture
+                  Insert Image
                   <input
                     type="file"
                     hidden
@@ -775,7 +833,7 @@ const ComponentController: React.FC<ControllerProps> = ({
                   </div>
                 )}
                 <Button variant="contained" component="label">
-                  Insert Texture
+                  Insert Image
                   <input
                     type="file"
                     hidden
@@ -814,7 +872,7 @@ const ComponentController: React.FC<ControllerProps> = ({
                     </div>
                   )}
                   <Button variant="contained" component="label">
-                    Insert Texture
+                    Insert Image
                     <input
                       type="file"
                       hidden
@@ -854,7 +912,7 @@ const ComponentController: React.FC<ControllerProps> = ({
                     </div>
                   )}
                   <Button variant="contained" component="label">
-                    Insert Texture
+                    Insert Image
                     <input
                       type="file"
                       hidden
@@ -893,7 +951,7 @@ const ComponentController: React.FC<ControllerProps> = ({
                   </div>
                 )}
                 <Button variant="contained" component="label">
-                  Insert Texture
+                  Insert Image
                   <input
                     type="file"
                     hidden

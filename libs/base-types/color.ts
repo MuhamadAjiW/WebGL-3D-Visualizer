@@ -62,14 +62,14 @@ export class Color {
   }
 
   public getHexString(): string {
-    const number = (
-      ((this.r & 0xff) << 24) |
-      ((this.g & 0xff) << 16) |
-      ((this.b & 0xff) << 8) |
-      (this.a & 0xff)
-    );
-  
-    return number.toString(16).padStart(8, '0');
+    const number =
+      (((this.r & 0xff) << 24) |
+        ((this.g & 0xff) << 16) |
+        ((this.b & 0xff) << 8) |
+        (this.a & 0xff)) >>>
+      0;
+
+    return number.toString(16).padStart(8, "0");
   }
 
   public set(w: number, x: number, y: number, z: number): void {
