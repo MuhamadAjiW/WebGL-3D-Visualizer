@@ -298,8 +298,8 @@ const useRender = ({
         // dx += 0.1;
         activeCamera.setOrbitControl(dy, dx);
 
-        activeComponentRef.current!.rotateOnWorldAxis(Vector3.right, 0.001);
-        activeComponentRef.current!.rotateOnWorldAxis(Vector3.up, 0.001);
+        // activeComponentRef.current!.rotateOnWorldAxis(Vector3.right, 0.001);
+        // activeComponentRef.current!.rotateOnWorldAxis(Vector3.up, 0.001);
 
         renderer.render(activeComponentRef.current!, activeCamera, lightPos);
         if (!stop) {
