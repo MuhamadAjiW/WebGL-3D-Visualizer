@@ -389,6 +389,22 @@ export default function Home() {
       name: "Bounce in-out",
       value: AnimationEasingType.EASE_IN_OUT_BOUNCE,
     },
+    {
+      name: "Cubic in",
+      value: AnimationEasingType.EASE_IN_CUBIC,
+    },
+    {
+      name: "Elastic in",
+      value: AnimationEasingType.EASE_IN_ELASTIC,
+    },
+    {
+      name: "Exponential in",
+      value: AnimationEasingType.EASE_IN_EXPO,
+    },
+    {
+      name: "Back in",
+      value: AnimationEasingType.EASE_IN_BACK,
+    },
   ];
 
   if (!data || !activeComponent) return <div>Loading...</div>;

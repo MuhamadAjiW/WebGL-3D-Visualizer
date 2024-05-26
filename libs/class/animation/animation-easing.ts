@@ -1,4 +1,6 @@
 class AnimationEasing {
+  // Hippity hoppity: https://easings.net/
+
   public static linear(progress: number) {
     return progress;
   }
@@ -33,26 +35,67 @@ class AnimationEasing {
       ? (1 - AnimationEasing.easeOutBounce(1 - 2 * x)) / 2
       : (1 + AnimationEasing.easeOutBounce(2 * x - 1)) / 2;
   }
+  public static easeInCubic(x: number): number {
+    return x * x * x;
+  }
+  public static easeInElastic(x: number): number {
+    const c4 = (2 * Math.PI) / 3;
+
+    return x === 0
+      ? 0
+      : x === 1
+      ? 1
+      : -Math.pow(2, 10 * x - 10) * Math.sin((x * 10 - 10.75) * c4);
+  }
+  public static easeInExpo(x: number): number {
+    return x === 0 ? 0 : Math.pow(2, 10 * x - 10);
+  }
+  public static easeInBack(x: number): number {
+    const c1 = 1.70158;
+    const c3 = c1 + 1;
+
+    return c3 * x * x * x - c1 * x * x;
+  }
 }
 
 export enum AnimationEasingType {
   LINEAR,
+
   EASE_IN_SINE,
   EASE_OUT_SINE,
   EASE_IN_OUT_SINE,
+
   EASE_IN_BOUNCE,
   EASE_OUT_BOUNCE,
   EASE_IN_OUT_BOUNCE,
+
+  EASE_IN_CUBIC,
+
+  EASE_IN_ELASTIC,
+
+  EASE_IN_EXPO,
+
+  EASE_IN_BACK,
 }
 
 export const AnimationEasingFunc: {
   [key in AnimationEasingType]: (progress: number) => number;
 } = {
   [AnimationEasingType.LINEAR]: AnimationEasing.linear,
+
   [AnimationEasingType.EASE_IN_SINE]: AnimationEasing.easeInSine,
   [AnimationEasingType.EASE_OUT_SINE]: AnimationEasing.easeOutSine,
   [AnimationEasingType.EASE_IN_OUT_SINE]: AnimationEasing.easeInOutSine,
+
   [AnimationEasingType.EASE_IN_BOUNCE]: AnimationEasing.easeInBounce,
   [AnimationEasingType.EASE_OUT_BOUNCE]: AnimationEasing.easeOutBounce,
   [AnimationEasingType.EASE_IN_OUT_BOUNCE]: AnimationEasing.easeInOutBounce,
+
+  [AnimationEasingType.EASE_IN_CUBIC]: AnimationEasing.easeInCubic,
+
+  [AnimationEasingType.EASE_IN_ELASTIC]: AnimationEasing.easeInElastic,
+
+  [AnimationEasingType.EASE_IN_EXPO]: AnimationEasing.easeInExpo,
+
+  [AnimationEasingType.EASE_IN_BACK]: AnimationEasing.easeInBack,
 };
