@@ -169,6 +169,324 @@
                 }
               }
             }
+          },
+          {
+            "id": "_8xakcf45d",
+            "keyframe": {},
+            "children": {
+              "Parent": {
+                "id": "_123456",
+                "keyframe": {
+                  "translation": [
+                    0.6,
+                    0.3,
+                    0.1
+                  ],
+                  "rotation": [
+                    0,
+                    0,
+                    0.2
+                  ]
+                },
+                "children": {
+                  "Left": {
+                    "id": "_0unlpjvrw",
+                    "keyframe": {
+                      "rotation": [
+                        1,
+                        0,
+                        1
+                      ]
+                    }
+                  },
+                  "Right": {
+                    "id": "_awikwokoko",
+                    "keyframe": {
+                      "rotation": [
+                        0,
+                        0,
+                        0
+                      ]
+                    }
+                  },
+                  "Head": {
+                    "id": "_aowkoakwok",
+                    "keyframe": {
+                      "rotation": [
+                        0,
+                        1,
+                        1
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "_avlwmvwcf",
+            "keyframe": {},
+            "children": {
+              "Parent": {
+                "id": "_p6cdmet31",
+                "keyframe": {
+                  "translation": [
+                    -0.5,
+                    0,
+                    0
+                  ],
+                  "rotation": [
+                    0,
+                    0.5,
+                    0
+                  ]
+                },
+                "children": {
+                  "Left": {
+                    "id": "_l23a7h7xn",
+                    "keyframe": {
+                      "rotation": [
+                        2,
+                        0,
+                        0
+                      ]
+                    }
+                  },
+                  "Right": {
+                    "id": "_heheheheh",
+                    "keyframe": {
+                      "rotation": [
+                        -2,
+                        0,
+                        0
+                      ]
+                    }
+                  },
+                  "Head": {
+                    "id": "_aokwoajjj",
+                    "keyframe": {
+                      "rotation": [
+                        2,
+                        0,
+                        0
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "_rc3ggk1kw",
+            "keyframe": {},
+            "children": {
+              "Parent": {
+                "id": "_aktioelso",
+                "keyframe": {
+                  "translation": [
+                    0.25,
+                    0.25,
+                    0
+                  ],
+                  "rotation": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "children": {
+                  "Left": {
+                    "id": "_5g4302kwf",
+                    "keyframe": {
+                      "translation": [
+                        1,
+                        1,
+                        0
+                      ]
+                    }
+                  },
+                  "Right": {
+                    "id": "_wakacawww",
+                    "keyframe": {
+                      "translation": [
+                        -1,
+                        -1,
+                        0
+                      ]
+                    }
+                  },
+                  "Head": {
+                    "id": "_oakwokaok",
+                    "keyframe": {
+                      "rotation": [
+                        0,
+                        1,
+                        1
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "_8xakcf45d",
+            "keyframe": {},
+            "children": {
+              "Parent": {
+                "id": "_9ujw48a98",
+                "keyframe": {
+                  "translation": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "children": {
+                  "Left": {
+                    "id": "_0unlpjvrw",
+                    "keyframe": {
+                      "rotation": [
+                        0,
+                        0,
+                        0
+                      ]
+                    }
+                  },
+                  "Right": {
+                    "id": "_awikwokoko",
+                    "keyframe": {
+                      "rotation": [
+                        0,
+                        0,
+                        0
+                      ]
+                    }
+                  },
+                  "Head": {
+                    "id": "_aowkoakwok",
+                    "keyframe": {
+                      "rotation": [
+                        0,
+                        0,
+                        0
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "_avlwmvwcf",
+            "keyframe": {},
+            "children": {
+              "Parent": {
+                "id": "_p6cdmet31",
+                "keyframe": {
+                  "translation": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation": [
+                    0,
+                    0.5,
+                    0
+                  ]
+                },
+                "children": {
+                  "Left": {
+                    "id": "_l23a7h7xn",
+                    "keyframe": {
+                      "rotation": [
+                        2,
+                        0,
+                        0
+                      ]
+                    }
+                  },
+                  "Right": {
+                    "id": "_heheheheh",
+                    "keyframe": {
+                      "rotation": [
+                        -2,
+                        0,
+                        0
+                      ]
+                    }
+                  },
+                  "Head": {
+                    "id": "_aokwoajjj",
+                    "keyframe": {
+                      "rotation": [
+                        2,
+                        0,
+                        0
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "_rc3ggk1kw",
+            "keyframe": {},
+            "children": {
+              "Parent": {
+                "id": "_aktioelso",
+                "keyframe": {
+                  "translation": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation": [
+                    0,
+                    0.25,
+                    0.25
+                  ]
+                },
+                "children": {
+                  "Left": {
+                    "id": "_5g4302kwf",
+                    "keyframe": {
+                      "translation": [
+                        -0.5,
+                        -0.5,
+                        0
+                      ]
+                    }
+                  },
+                  "Right": {
+                    "id": "_wakacawww",
+                    "keyframe": {
+                      "translation": [
+                        0.5,
+                        0.5,
+                        0
+                      ]
+                    }
+                  },
+                  "Head": {
+                    "id": "_oakwokaok",
+                    "keyframe": {
+                      "rotation": [
+                        0,
+                        0,
+                        0
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         ]
       }
