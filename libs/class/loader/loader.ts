@@ -443,7 +443,7 @@ export class Loader {
         : undefined,
       displacementHeight: material.displacementHeight,
 
-      specularColor: this.saveColor(material.specular),
+      specularColor: this.saveColor(material.specularColor),
       specularTexture: material.specularTexture
         ? this.saveTexture(material.specularTexture)
         : undefined,
