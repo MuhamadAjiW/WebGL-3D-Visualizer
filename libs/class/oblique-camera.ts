@@ -28,8 +28,15 @@ class ObliqueCamera extends Camera {
   }
 
   computeProjectionMatrix() {
-    const phi = 30;
-    const theta = 30;
+    var phi = 0;
+    var theta = 0;
+    if (this.angleX == 0 || this.angleY == 0) {
+      phi = 30;
+      theta = 30;
+    } else {
+      phi = this.angleX;
+      theta = this.angleY;
+    }
 
     const ortho = M4.ortho(this.left, this.right, this.bottom, this.top, this.near, this.far);
     const shearMatrix = new M4([
