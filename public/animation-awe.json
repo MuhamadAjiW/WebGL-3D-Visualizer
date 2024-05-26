@@ -1,117 +1,405 @@
 {
-    "scene": null,
-    "nodes": [],
-    "cameras": [],
-    "meshes": [],
-    "geometries": [],
-    "materials": [],
-    "textures": [],
-    "colors": [],
-    "animations": [
-      {
-        "name": "Test",
-        "frames": [
-          {
-            "id": "_8xakcf45d",
-            "keyframe": {},
-            "children": {
-              "Parent": {
-                "id": "_9ujw48a98",
-                "keyframe": {
-                  "translation": [
-                    0,
-                    0,
-                    0
-                  ],
-                  "rotation": [
-                    0,
-                    0,
-                    0
-                  ]
-                },
-                "children": {
-                  "Left": {
-                    "id": "_0unlpjvrw",
-                    "keyframe": {
-                      "rotation": [
-                        0,
-                        0,
-                        0
-                      ]
-                    }
+  "scene": null,
+  "nodes": [],
+  "cameras": [],
+  "meshes": [],
+  "geometries": [],
+  "materials": [],
+  "textures": [],
+  "colors": [],
+  "animations": [
+    {
+      "name": "Test",
+      "frames": [
+        {
+          "id": "_8xakcf45d",
+          "keyframe": {},
+          "children": {
+            "Parent": {
+              "id": "_9ujw48a98",
+              "keyframe": {
+                "translation": [
+                  0,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "children": {
+                "Left": {
+                  "id": "_0unlpjvrw",
+                  "keyframe": {
+                    "rotation": [
+                      0,
+                      0,
+                      0
+                    ]
                   }
-                }
-              }
-            }
-          },
-          {
-            "id": "_avlwmvwcf",
-            "keyframe": {},
-            "children": {
-              "Parent": {
-                "id": "_p6cdmet31",
-                "keyframe": {
-                  "translation": [
-                    -0.5,
-                    0,
-                    0
-                  ],
-                  "rotation": [
-                    0,
-                    0.5,
-                    0
-                  ]
                 },
-                "children": {
-                  "Left": {
-                    "id": "_l23a7h7xn",
-                    "keyframe": {
-                      "rotation": [
-                        2,
-                        0,
-                        0
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          {
-            "id": "_rc3ggk1kw",
-            "keyframe": {},
-            "children": {
-              "Parent": {
-                "id": "_aktioelso",
-                "keyframe": {
-                  "translation": [
-                    0.5,
-                    0,
-                    0
-                  ],
-                  "rotation": [
-                    0,
-                    0.25,
-                    0
-                  ]
-                },
-                "children": {
-                  "Left": {
-                    "id": "_5g4302kwf",
-                    "keyframe": {
-                      "rotation": [
-                        0,
-                        1,
-                        0
-                      ]
-                    }
+                "Right": {
+                  "id": "_0right0id",
+                  "keyframe": {
+                    "rotation": [
+                      0,
+                      0,
+                      0
+                    ]
                   }
                 }
               }
             }
           }
-        ]
-      }
-    ],
-    "animationpaths": []
-  }
+        },
+        {
+          "id": "_avlwmvwcf",
+          "keyframe": {},
+          "children": {
+            "Parent": {
+              "id": "_p6cdmet31",
+              "keyframe": {
+                "translation": [
+                  -0.5,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0.5,
+                  0
+                ]
+              },
+              "children": {
+                "Left": {
+                  "id": "_l23a7h7xn",
+                  "keyframe": {
+                    "rotation": [
+                      2,
+                      0,
+                      0
+                    ]
+                  }
+                },
+                "Right": {
+                  "id": "_right1id",
+                  "keyframe": {
+                    "rotation": [
+                      0,
+                      -1,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "_rc3ggk1kw",
+          "keyframe": {},
+          "children": {
+            "Parent": {
+              "id": "_aktioelso",
+              "keyframe": {
+                "translation": [
+                  0.5,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0.25,
+                  0
+                ]
+              },
+              "children": {
+                "Left": {
+                  "id": "_5g4302kwf",
+                  "keyframe": {
+                    "rotation": [
+                      0,
+                      1,
+                      0
+                    ]
+                  }
+                },
+                "Right": {
+                  "id": "_right2id",
+                  "keyframe": {
+                    "rotation": [
+                      -1,
+                      0,
+                      1
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "_3frame4id",
+          "keyframe": {},
+          "children": {
+            "Parent": {
+              "id": "_parent4id",
+              "keyframe": {
+                "translation": [
+                  1,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0.75,
+                  0
+                ]
+              },
+              "children": {
+                "Left": {
+                  "id": "_left4id",
+                  "keyframe": {
+                    "rotation": [
+                      1,
+                      0,
+                      1
+                    ]
+                  }
+                },
+                "Right": {
+                  "id": "_right3id",
+                  "keyframe": {
+                    "rotation": [
+                      -1,
+                      1,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "_4frame5id",
+          "keyframe": {},
+          "children": {
+            "Parent": {
+              "id": "_parent5id",
+              "keyframe": {
+                "translation": [
+                  -1,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  -0.5,
+                  0
+                ]
+              },
+              "children": {
+                "Left": {
+                  "id": "_left5id",
+                  "keyframe": {
+                    "rotation": [
+                      -2,
+                      0,
+                      0
+                    ]
+                  }
+                },
+                "Right": {
+                  "id": "_right4id",
+                  "keyframe": {
+                    "rotation": [
+                      2,
+                      0,
+                      -1
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "_5frame6id",
+          "keyframe": {},
+          "children": {
+            "Parent": {
+              "id": "_parent6id",
+              "keyframe": {
+                "translation": [
+                  0.5,
+                  0,
+                  -0.5
+                ],
+                "rotation": [
+                  0.5,
+                  0,
+                  0
+                ]
+              },
+              "children": {
+                "Left": {
+                  "id": "_left6id",
+                  "keyframe": {
+                    "rotation": [
+                      0,
+                      0,
+                      1
+                    ]
+                  }
+                },
+                "Right": {
+                  "id": "_right5id",
+                  "keyframe": {
+                    "rotation": [
+                      1,
+                      -1,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "_6frame7id",
+          "keyframe": {},
+          "children": {
+            "Parent": {
+              "id": "_parent7id",
+              "keyframe": {
+                "translation": [
+                  -0.5,
+                  0.5,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  1,
+                  0.5
+                ]
+              },
+              "children": {
+                "Left": {
+                  "id": "_left7id",
+                  "keyframe": {
+                    "rotation": [
+                      1,
+                      -1,
+                      0
+                    ]
+                  }
+                },
+                "Right": {
+                  "id": "_right6id",
+                  "keyframe": {
+                    "rotation": [
+                      -1,
+                      1,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "_7frame8id",
+          "keyframe": {},
+          "children": {
+            "Parent": {
+              "id": "_parent8id",
+              "keyframe": {
+                "translation": [
+                  0,
+                  -0.5,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  -0.75,
+                  0
+                ]
+              },
+              "children": {
+                "Left": {
+                  "id": "_left8id",
+                  "keyframe": {
+                    "rotation": [
+                      -1,
+                      0,
+                      -1
+                    ]
+                  }
+                },
+                "Right": {
+                  "id": "_right7id",
+                  "keyframe": {
+                    "rotation": [
+                      1,
+                      0,
+                      1
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "_8frame9id",
+          "keyframe": {},
+          "children": {
+            "Parent": {
+              "id": "_parent9id",
+              "keyframe": {
+                "translation": [
+                  0,
+                  0,
+                  1
+                ],
+                "rotation": [
+                  0,
+                  0.5,
+                  1
+                ]
+              },
+              "children": {
+                "Left": {
+                  "id": "_left9id",
+                  "keyframe": {
+                    "rotation": [
+                      0,
+                      1,
+                      0
+                    ]
+                  }
+                },
+                "Right": {
+                  "id": "_right8id",
+                  "keyframe": {
+                    "rotation": [
+                      -1,
+                      0,
+                      -1
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "animationpaths": []
+}
