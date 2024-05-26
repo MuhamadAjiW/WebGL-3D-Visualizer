@@ -1,34 +1,69 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Tugas Besar Grafika Komputer Placeholder
 
-## Getting Started
+## Deskripsi proyek
+Proyek ini ditujukan untuk mengasah kemampuan dan pengetahuan mahasiswa mengenai WebGL dan penggunaannya untuk render grafik tiga dimensi.
 
-First, run the development server:
+Proyek memiliki bentuk sebuah website.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+## Deskripsi cara menjalankan program
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Clone repository https://github.com/GAIB20/tugas-besar-grafkom-2-placeholder
+2. Masukkan command `npm install` pada terminal repository
+3. Masukkan command `npm run dev` pada terminal repository
+4. Masukkan alamat `localhost:4000` pada browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Pembagian kerja
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
+| NIM      | Nama                           | Tugas                                                                                                                                                                                                           |
+| -------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 13521054 | Wilson Tansil                  | Euler<br>Front-end UI<br>Scene Graph<br>Model articulated, animasi model, model hollow<br>UI dan Logic Camera<br>UI Save and Load<br>2 Camera                                                                   |
+| 13521063 | Salomo Reinhart Gregory Manalu | Vector3<br>Camera, Jenis proyeksi camera<br>Orbit Control<br>Model articulated, animasi model, model hollow                                                                                                     |
+| 13521089 | Kenneth Ezekiel Suprantoni     | Matrix4<br>Object3D<br>Scene<br>Dokumentasi API<br>glTF-based loader<br>Model articulated, animasi model, model hollow<br>API Save and Load<br>Smooth Shading<br>Animation retargeting                          |
+| 13521095 | Muhamad Aji Wibisono           | Quaternion<br>WebGL Utils<br>Material<br>Mesh<br>Geometry<br>Model articulated, animasi model, model hollow<br>Phong material<br>Animation Controller<br>Texture<br>Animation tweening<br>Parallax bump mapping |
 
-To learn more about Next.js, take a look at the following resources:
+## Daftar Spesifikasi
+- [x] Fungsi WebGL yang tidak primitive
+- [x] Model objek articulated setiap anggota
+- [x] Animation articulated model setiap anggota
+- [x] Model objek berongga setiap anggota
+- [x] Schema glTF loader and saver
+- [x] Satu kamera dan satu kanvas
+- [x] Loading model
+- [x] Mengubah jenis proyeksi untuk menampilkan model
+- [x] Mengubah jarak kamera dari model 
+- [x] Melakukan translasi untuk perspektif
+- [x] Menggerakkan kamera untuk mengitari model dengan mouse
+- [x] Reset ke default view
+- [x] Material basic dan phong
+- [x] Antarmuka mengubah material mesh
+- [x] Menampilkan shading warna dasar (ambient) pada basic
+- [x] Menampilkan shading directional light pada Phong
+	- [x] Shininess
+	- [x] Warna
+	- [x] Tekstur specular
+	- [x] Tekstur diffuse
+	- [x] Warna ambient
+	- [x] Tekstur displacement
+	- [x] Tekstur normal
+	- [x] Opsi tidak menggunakan tekstur
+- [x] Animasi
+	- [x] Indikator frame
+	- [x] Control Animation
+	- [x] Control Frame
+	- [x] Frame per second
+- [x] Scene graph
+- [x] Implementasi 2 kamera
+- [x] Animation retargeting
+- [x] Animation tweening
+- [x] Smooth shading
+- [x] Parallax bump mapping
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Model setiap anggota
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+| NIM      | Nama                           | Tugas                                                                                                                      |
+| -------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| 13521054 | Wilson Tansil                  | Articulated model - articulated-wt.json<br>Animation - animation-wt.json<br>Hollow model - hollow-wt.json, hollow-wt1.json |
+| 13521063 | Salomo Reinhart Gregory Manalu | Articulated model - articulated-salomo.json<br>Animation - animation-salomo.json<br>Hollow model - hollow-salomo.json      |
+| 13521089 | Kenneth Ezekiel Suprantoni     | Articulated model - articulated-ken.json<br>Animation - animation-ken.json<br>Hollow model - hollow-ken.json               |
+| 13521095 | Muhamad Aji Wibisono           | Articulated model - articulated-awe.json<br>Animation - animation-awe.json<br>Hollow model - hollow-awe.json               |
